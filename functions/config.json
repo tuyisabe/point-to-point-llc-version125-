@@ -1,0 +1,111 @@
+{
+	"app_name": "Point To Point Express",
+	"app_description": "Ride services",
+	"app_identifier": "com.ppt.customer",
+	"ios_app_version": "1.0.0",
+	"android_app_version": "122",
+	"firebaseProjectId": "point-to-point-express-llc",
+	"googleApiKeys": {
+		"ios": "AIzaSyAyNeE-Ie21akTzLZew8T3PaQyyNHaYDro",
+		"android": "AIzaSyCx7OHrgES5cpXZi_VzZmRtYs_jL1spH2E",
+		"web": "AIzaSyBG6bUNBCd9TmMpvvYu7Ymj5iHQzo9Pkdk",
+		"server": "AIzaSyB4X5v_RXLjz7wN5L2c3-SolbPlYZmHTpM"
+	},
+	"expo_owner": "utcabs",
+	"expo_slug": "point-to-point-express-llc",
+	"expo_project_id": "6d162fd5-47ec-4937-a018-e0afa6b67200",
+	"admin_email": "cabsut.info@gmail.com",
+	"purchase_code": "db374299-8920-4871-94a9-97b690d7ed7a",
+	"paymentMethods": {
+		"braintree": {
+			"active": false,
+			"testing": true,
+			"merchantId": "XXXXXXXXXXXXXXX",
+			"publicKey": "XXXXXXXXXXXXXXX",
+			"privateKey": "XXXXXXXXXXXXXXX"
+		},
+		"culqi": {
+			"active": false,
+			"PUBLIC_KEY": "XXXXXXXXXXXXXXX",
+			"SECURE_KEY": "XXXXXXXXXXXXXXX"
+		},
+		"flutterwave": {
+			"active": false,
+			"FLUTTERWAVE_PUBLIC_KEY": "XXXXXXXXXXXXXXX",
+			"FLUTTERWAVE_SECRET_KEY": "XXXXXXXXXXXXXXX"
+		},
+		"liqpay": {
+			"active": false,
+			"public_key": "XXXXXXXXXXXXXXX",
+			"private_key": "XXXXXXXXXXXXXXX"
+		},
+		"mercadopago": {
+			"active": false,
+			"public_key": "XXXXXXXXXXXXXXX",
+			"access_token": "XXXXXXXXXXXXXXX"
+		},
+		"payfast": {
+			"active": false,
+			"testingMode": true,
+			"PAYFAST_MEWRCHANT_ID": "XXXXXXXXXXXXXXX",
+			"PAYFAST_MERCHANT_KEY": "XXXXXXXXXXXXXXX",
+			"passPhrase": null
+		},
+		"paypal": {
+			"active": true,
+			"testing": true,
+			"paypal_client_id": "AfvFzoeMNTVTYQEZwCPeJcyjB7TikW3eD6b9CncIrjhiGCbS-0PwSoL8Bl4N18DsiqPZKsJaOZUIQANI",
+			"paypal_secret": "ELyVmapWPvmUPuDseccom5nFVqV_VwMyeLo1CnHm8VK5E4QQE_EcnxCbq8smFVVXaXMVNh6OdHUxqFbk"
+		},
+		"paystack": {
+			"active": false,
+			"PAYSTACK_PUBLIC_KEY": "XXXXXXXXXXXXXXX",
+			"PAYSTACK_SECRET_KEY": "XXXXXXXXXXXXXXX"
+		},
+		"paytm": {
+			"active": false,
+			"testing": true,
+			"PAYTM_MEWRCHANT_ID": "XXXXXXXXXXXXXXX",
+			"PAYTM_MERCHANT_KEY": "XXXXXXXXXXXXXXX"
+		},
+		"payulatam": {
+			"active": false,
+			"testing": true,
+			"merchantId": 111111,
+			"apiKey": "XXXXXXXXXXXXXXX",
+			"accountId": 111111
+		},
+		"securepay": {
+			"active": false,
+			"testing": true,
+			"MERCHANT_CODE": "XXXXXXXXXXXXXXX",
+			"TXN_PASSWORD": "XXXXXXXXXXXXXXX"
+		},
+		"stripe": {
+			"active": false,
+			"stripe_private_key": "XXXXXXXXXXXXXXX",
+			"stripe_public_key": "XXXXXXXXXXXXXXX"
+		},
+		"squareup": {
+			"active": true,
+			"testing": true,
+			"APPLICATION_ID": "sandbox-sq0idb-OewnsageBKZ3r8GXc4AIPA",
+			"LOCATION_ID": "LD8GZTV5EE92R",
+			"ACCESS_TOKEN": "EAAAEJPMwMOBOsnBV3r3AC2NeZe5ZPBI2DRzsixXwa6grthYs5CimFPuxo3ULrLV"
+		},
+		"wipay": {
+			"active": false,
+			"testing": true,
+			"ACCOUNT_NO": "XXXXXXXXXXXXXXX",
+			"API_KEY": "XXXXXXXXXXXXXXX"
+		},
+		"razorpay": {
+			"active": false,
+			"KEY_ID" : "XXXXXXXXXXXXXXX",
+			"KEY_SECRET" :"XXXXXXXXXXXXXXX"
+		},
+		"test": {
+			"active": true
+		}
+	}
+}

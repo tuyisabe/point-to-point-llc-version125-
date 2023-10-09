@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>118264622282-m9ciqahtqnnr9u5lm9h0677e172kno5u.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.118264622282-m9ciqahtqnnr9u5lm9h0677e172kno5u</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>118264622282-5r66vue5p21tnbh59jlcjtdedoporqdu.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCLAurkxO0DFPv6XA-eQaqNOtXvZhsKypY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>118264622282</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ppt.customer</string>
+	<key>PROJECT_ID</key>
+	<string>point-to-point-express-llc</string>
+	<key>STORAGE_BUCKET</key>
+	<string>point-to-point-express-llc.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:118264622282:ios:db18c94f84e64c42f61833</string>
+	<key>DATABASE_URL</key>
+	<string>https://point-to-point-express-llc-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

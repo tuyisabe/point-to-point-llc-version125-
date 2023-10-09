@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "118264622282",
+    "firebase_url": "https://point-to-point-express-llc-default-rtdb.firebaseio.com",
+    "project_id": "point-to-point-express-llc",
+    "storage_bucket": "point-to-point-express-llc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:118264622282:android:84873f5a5cfd9229f61833",
+        "android_client_info": {
+          "package_name": "com.ppt.customer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "118264622282-9lee4gfju7hp471vfm320vjvh25l3rtr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ppt.customer",
+            "certificate_hash": "8f2f4c3a5651ca5ef2b8faaaff815c770499e078"
+          }
+        },
+        {
+          "client_id": "118264622282-n28v395d5loft2lbqttsr9hjtnau7q74.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ppt.customer",
+            "certificate_hash": "e491e20562850a26ad9be6c51a4c50402cad32c7"
+          }
+        },
+        {
+          "client_id": "118264622282-el0n6eclc1cmmqsm0mogeu9d8jan6i1a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBILVIIzePDQQjbkkNh3wtqY76w7iq7C9c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "118264622282-el0n6eclc1cmmqsm0mogeu9d8jan6i1a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "118264622282-5akkm1kj587vjr8rfbauu9dsr8kasal4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ptp.pointtopointexpress"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
