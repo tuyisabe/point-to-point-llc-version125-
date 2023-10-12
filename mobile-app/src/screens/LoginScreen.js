@@ -12,8 +12,10 @@ import {
     Platform,
     Linking,
     Keyboard,
-    ScrollView
+    ScrollView,
+    SafeAreaView
 } from "react-native";
+import { Icon } from "react-native-elements";
 import MaterialButtonDark from "../components/MaterialButtonDark";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,8 +31,8 @@ import moment from 'moment/min/moment-with-locales';
 import rnauth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 var { width } = Dimensions.get('window');
+import PhoneInput from "./lib/index";
 import ClientIds from '../../config/ClientIds';
-
 GoogleSignin.configure(ClientIds);
 
 export default function LoginScreen(props) {
@@ -49,7 +51,7 @@ export default function LoginScreen(props) {
     const auth = useSelector(state => state.auth);
     const settings = useSelector(state => state.settingsdata.settings);
     const dispatch = useDispatch();
-
+    const phoneInput = useRef(null);
     const formatCountries = () => {
         let arr = [];
         for (let i = 0; i < countries.length; i++) {
@@ -71,15 +73,19 @@ export default function LoginScreen(props) {
     const pageActive = useRef(false);
     const [loading, setLoading] = useState(false);
     const [newUserText, setNewUserText] = useState(false);
-
+    let [loginType, setLoginType] = useState("mobile");
+    const [value, setValue] = useState("");
     const { t } = i18n;
     const [isRTL,setIsRTL] = useState();
     const [langSelection, setLangSelection] = useState();
     const languagedata = useSelector(state => state.languagedata);
     const [eyePass,setEyePass] = useState(true);
     const [isNewUser,setIsNewUser] = useState(false);
+    const [autoFocus, setAutoFocus] = useState(false);
+    const [autoFocusPass, setAutoFocusPass] = useState(false);
     const pickerRef1 = React.createRef();
     const pickerRef2 = React.createRef();
+    const [formattedValue, setFormattedValue] = useState("");
     const [keyboardStatus, setKeyboardStatus] = useState("Keyboard Hidden");
 
     useEffect(() => {
@@ -197,6 +203,14 @@ export default function LoginScreen(props) {
             setLoading(false);
         }
     }
+
+    const onPhoneLogin = () => {
+        setLoginType("mobile");
+      };
+    
+      const onEmailLogin = () => {
+        setLoginType("email");
+      };
 
     const onSignIn = async () => {
         if(state.verificationCode){
@@ -334,17 +348,11 @@ export default function LoginScreen(props) {
         hideSubscription.remove();
       };
     }, []);
-  
+  console.log(formattedValue);
     return (
   
         <View style={styles.container}>
-            <ImageBackground
-                source={require('../../assets/images/bg.jpg')}
-                resizeMode="stretch"
-                style={[styles.imagebg,{marginTop: keyboardStatus == 'Keyboard Shown' ? -(width*0.55) : null }]}
-            >
-                <View style={styles.topBar}>
-                </View>
+                {/* <View style={styles.topBar}></View>
                 {langSelection && languagedata && languagedata.langlist && languagedata.langlist.length > 1  ?
                 <View style={[styles.headLanuage,[isRTL?{left:10}:{right: 10}]]}>
                 <Text style={{ color: colors.BLACK, marginLeft: 3 }}>{t('lang1')}</Text>
@@ -383,18 +391,474 @@ export default function LoginScreen(props) {
                         Icon={() => { return <Ionicons style={{ marginTop: 3,}} name="md-arrow-down" size={20} color="gray" />; }}
                     />
                 </View>
-                :null}
-                
-                {loading ?
-                    <View style={styles.loading}>
-                        <ActivityIndicator color={colors.BLACK} size='large' />
-                    {newUserText?
-                        <Text style={styles.sepText}>{t('create_new_user')}</Text>
-                    :null}
-                    </View>
-                : null}
-                <ScrollView>
-                {!isNaN(state.contact) && settings.mobileLogin ?
+                :null} */}
+                <ScrollView style={styles.scrollViewStyle}
+        showsVerticalScrollIndicator={false}>
+      
+        <View style={styles.topBar}></View>
+
+        <View
+          style={{
+            width: "90%",
+            alignSelf: "center",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            marginTop: "-85%",
+          }}
+        >
+          {loginType == "mobile" ? (
+            <View style={{ marginBottom: 10 }}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  marginBottom: 10,
+                  fontFamily: "Uber Move",
+                  fontWeight: "bold",
+                  color: colors.BLUE,
+                }}
+              >
+                {"Enter your mobile number"}
+              </Text>
+              <SafeAreaView>
+                <PhoneInput
+                  ref={phoneInput}
+                  defaultValue={value}
+                  textInputStyle={{ fontSize: 18 }}
+                  textContainerStyle={{
+                    borderColor: autoFocus ? colors.BLUE : colors.LIGHT_GREY,
+                    borderWidth: 3,
+                    borderRadius: 8,
+                    marginLeft: 10,
+                    backgroundColor: colors.LIGHT_GREY,
+                  }}
+                  codeTextStyle={{
+                    fontSize: 18,
+                    marginTop: -7,
+                  }}
+                  flagButtonStyle={{
+                    backgroundColor: colors.LIGHT_GREY,
+                    borderRadius: 8,
+                    width: "27%",
+                    height: 55,
+                  }}
+                  containerStyle={{
+                    width: "100%",
+                    justifyContent: "space-between",
+                    backgroundColor: "none",
+                    marginBottom: 10,
+                    height: 55,
+                  }}
+                  defaultCode="US"
+                  layout="first"
+                  editable={!!state.verificationId ? false : true}
+                  onChangeText={(value) =>
+                    setState({ ...state, contact:value })
+                  }
+                  onChangeFormattedText={(text) => {
+                    setFormattedValue(text);
+                  }}
+                  withShadow
+                  onFocus={() => {
+                    setAutoFocus(true);
+                  }}
+                  onBlur={() => {
+                    setAutoFocus(false);
+                  }}
+                />
+              </SafeAreaView>
+            </View>
+          ) : (
+            <>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    marginBottom: 10,
+                    fontFamily: "Uber Move",
+                    fontWeight: "bold",
+                    color: colors.BLUE,
+                  }}
+                >
+                  {"Enter your Email"}
+                </Text>
+              </View>
+              <View style={styles.box2}>
+                <TextInput
+                  style={[
+                    styles.textInput,
+                    {
+                      textAlign: isRTL ? "right" : "left",
+                      borderColor: autoFocus ? colors.BLUE : colors.LIGHT_GREY,
+                      borderWidth: 3,
+                      borderRadius: 8,
+                      backgroundColor: colors.LIGHT_GREY,
+                      padding: 10,
+                      height: 50,
+                    },
+                  ]}
+                  placeholder={"Enter your Email"}
+                  onChangeText={(value) =>
+                    setState({ ...state, contact: value })
+                  }
+                  value={state.contact}
+                  editable={!!state.verificationId ? false : true}
+                  placeholderTextColor={colors.MAP_TEXT}
+                  autoCapitalize="none"
+                  onFocus={() => {
+                    setAutoFocus(true);
+                  }}
+                  onBlur={() => {
+                    setAutoFocus(false);
+                  }}
+                />
+              </View>
+            </>
+          )}
+
+          {isNaN(state.contact) && loginType == "email" ? (
+            <View
+              style={[
+                styles.box2,
+                {
+                  flexDirection: isRTL ? "row-reverse" : "row",
+                  borderWidth: 1,
+                  alignContent: "center",
+                  borderWidth: 3,
+                  borderColor: autoFocusPass ? colors.BLUE : colors.LIGHT_GREY,
+                },
+              ]}
+            >
+              <TextInput
+                style={[
+                  styles.textInput1,
+                  {
+                    textAlign: isRTL ? "right" : "left",
+                  },
+                ]}
+                placeholder={t("password")}
+                onChangeText={(value) =>
+                  setState({ ...state, verificationCode: value })
+                }
+                value={state.verificationCode}
+                secureTextEntry={eyePass}
+                placeholderTextColor={colors.MAP_TEXT}
+                onFocus={() => {
+                  setAutoFocusPass(true);
+                }}
+                onBlur={() => {
+                  setAutoFocusPass(false);
+                }}
+              />
+              <TouchableOpacity
+                onPress={() => setEyePass(!eyePass)}
+                style={{ marginTop: 10, width: 40, marginLeft: isRTL ? 0 : 10 }}
+              >
+                {eyePass ? (
+                  <Feather name="eye-off" size={20} color={colors.BLUE} />
+                ) : (
+                  <Feather name="eye" size={20} color={colors.BLUE} />
+                )}
+              </TouchableOpacity>
+            </View>
+          ) : null}
+
+          {state.verificationId ? null : (
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#1d74e7",
+                alignItems: "center",
+                flexDirection: "row",
+                justifyContent: "center",
+                paddingHorizontal: 10,
+                paddingVertical: 15,
+                borderRadius: 25,
+                elevation: 15,
+                height: 50,
+              }}
+              onPress={onPressLogin}
+            >
+              <Text
+                style={{
+                  color: colors.WHITE,
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  marginTop: -5,
+                }}
+              >
+                {"Continue"}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {!!state.verificationId ? (
+          <View style={[styles.box2, { marginLeft: 15 }]}>
+            <TextInput
+              style={[
+                styles.textInput,
+                { textAlign: isRTL ? "right" : "left" },
+                { borderWidth: 3, borderColor: colors.BLUE },
+              ]}
+              placeholder={t("otp_here")}
+              onChangeText={(value) =>
+                setState({ ...state, verificationCode: value })
+              }
+              value={state.verificationCode}
+              editable={!!state.verificationId}
+              keyboardType="phone-pad"
+              secureTextEntry={true}
+              placeholderTextColor={colors.BLUE}
+            />
+          </View>
+        ) : null}
+        {!!state.verificationId ? (
+          <MaterialButtonDark
+            onPress={onSignIn}
+            style={[styles.materialButtonDark, { fontSize: 22 }]}
+          >
+            <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+              {t("verify_otp")}
+            </Text>
+          </MaterialButtonDark>
+        ) : null}
+
+        {state.verificationId || isNaN(state.contact) ? (
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-around" }}
+          >
+            {state.verificationId ||
+            (isNaN(state.contact) && loginType == "email") ? (
+              <View style={styles.actionLine}>
+                <TouchableOpacity
+                  style={styles.actionItem}
+                  onPress={CancelLogin}
+                >
+                  <Text style={styles.actionText}>{t("cancel")}</Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
+
+            {isNaN(state.contact) && loginType == "email" ? (
+              <View style={styles.actionLine}>
+                <TouchableOpacity
+                  style={styles.actionItem}
+                  onPress={forgotPassword}
+                >
+                  <Text style={styles.actionText}>{t("forgot_password")}</Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
+          </View>
+        ) : null}
+        {(Platform.OS == "ios" && settings && settings.AppleLoginEnabled) ||
+        (settings && settings.FacebookLoginEnabled) ? (
+          <View style={styles.seperator}>
+            <View style={styles.lineLeft}></View>
+            <View style={styles.lineLeftFiller}>
+              <Text style={styles.sepText}>{t("spacer_message")}</Text>
+            </View>
+            <View style={styles.lineRight}></View>
+          </View>
+        ) : null}
+        <View
+          style={{
+            width: "90%",
+            alignSelf: "center",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          {loginType == "mobile" ? (
+            <View style={{ marginBottom: 8 }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colors.LIGHT_GREY,
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  paddingHorizontal: 10,
+                  paddingVertical: 10,
+                  borderRadius: 12,
+                  elevation: 15,
+                  height: 50,
+                }}
+                onPress={onEmailLogin}
+              >
+                <Image
+                  source={require("../../assets/images/image.png")}
+                  resizeMode="contain"
+                  style={styles.socialIconImage}
+                ></Image>
+                <Text
+                  style={{
+                    color: colors.BLUE,
+                    fontSize: 18,
+                    marginLeft: 6,
+                  }}
+                >
+                  {"Continue with Email"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={{ marginBottom: 8 }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colors.LIGHT_GREY,
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  paddingHorizontal: 10,
+                  paddingVertical: 10,
+                  borderRadius: 12,
+                  elevation: 15,
+                  height: 50,
+                }}
+                onPress={onPhoneLogin}
+              >
+                <Image
+                  source={require("../../assets/images/phone.png")}
+                  resizeMode="contain"
+                  style={styles.socialIconImage}
+                ></Image>
+                <Text
+                  style={{
+                    color: colors.BLUE,
+                    fontSize: 18,
+                    marginLeft: 6,
+                  }}
+                >
+                  {"Continue with Phone OTP"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {Platform.OS == "ios" ||
+          (Platform.OS == "android" && settings.AppleLoginEnabled) ? (
+            <View style={{ marginBottom: 8 }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colors.LIGHT_GREY,
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  paddingHorizontal: 10,
+                  paddingVertical: 10,
+                  borderRadius: 12,
+                  elevation: 15,
+                  height: 50,
+                }}
+                onPress={AppleLogin}
+              >
+                <Icon
+                  name="logo-apple"
+                  type="ionicon"
+                  color={colors.BLACK}
+                  size={32}
+                  style={{ paddingRight: 8 }}
+                />
+                <Text
+                  style={{
+                    color: colors.BLUE,
+                    fontSize: 18,
+                  }}
+                >
+                  {"Continue with Apple"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          {(Platform.OS == "ios" && settings && settings.AppleLoginEnabled) ||
+          (settings && settings.FacebookLoginEnabled) ? (
+            <View style={{ marginBottom: 8 }}>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: colors.LIGHT_GREY,
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  paddingHorizontal: 10,
+                  paddingVertical: 10,
+                  borderRadius: 12,
+                  elevation: 15,
+                }}
+                onPress={GoogleLogin}
+              >
+
+                                <Image
+                                source={require("../../assets/images/google.jpeg")}
+                                resizeMode="contain"
+                                style={styles.socialIconImage}
+                            ></Image>
+                <Text
+                  style={{
+                    color: colors.BLUE,
+                    fontSize: 18,
+                  }}
+                >
+                  {"Continue with Google"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : null}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              alignSelf: "center",
+              opacity: 0.65,
+              marginTop: 15,
+              paddingBottom: 15,
+            }}
+          >
+            <Text style={{ fontSize: 20, paddingRight: 4 }}>
+              {"Don't have Account?"}
+            </Text>
+            <TouchableOpacity onPress={openRegister}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontFamily: "Roboto-Regular",
+                  fontWeight: "bold",
+                  textDecorationLine: "underline",
+                  color: colors.BLUE,
+                }}
+              >
+                {"Sign Up"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              paddingHorizontal: 17,
+              marginTop: 15,
+              textAlign: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                color: "#838383",
+                fontFamily: "Roboto-Regular",
+                lineHeight: 25,
+                paddingBottom: 80,
+              }}
+            >
+              By proceeding, you consent to get calls, WatsApp or SMS messages,
+              including by automated dialer, from Point To Point Express on
+              +1(801) 528-7825 to the number provided.
+            </Text>
+          </View>
+        </View>
+        {loading ? (
+          <View style={styles.loading}>
+            <ActivityIndicator color={colors.BLUE} size="large" />
+          </View>
+        ) : null}
+
+
+                {/* {!isNaN(state.contact) && settings.mobileLogin ?
                 <View style={[styles.box1]}>
                     <RNPickerSelect
                         pickerRef={pickerRef2}
@@ -533,9 +997,9 @@ export default function LoginScreen(props) {
                 <TouchableOpacity style={styles.terms} onPress={openTerms}>
                     <Text style={styles.actionText}>{t('terms')}</Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
             </ScrollView>
-            </ImageBackground>
+     
         </View>
 
     );
@@ -595,28 +1059,33 @@ const styles = StyleSheet.create({
         borderRadius:5
     },
     box2: {
-        height: 45,
-        backgroundColor: colors.WHITE,
-        marginTop: 10,
-        marginLeft: 35,
-        marginRight: 35,
-        borderWidth: 1,
-        borderColor: colors.BORDER_BACKGROUND,
-        justifyContent: 'center',
-        borderRadius:5
+      height: 55,
+      width: width - 50,
+      backgroundColor: colors.WHITE,
+      marginTop: 5,
+      borderWidth: 1,
+      borderColor: colors.BORDER_BACKGROUND,
+      justifyContent: "center",
+      borderRadius: 8,
+      margin: 5,
     },
     textInput: {
-        color: colors.BACKGROUND,
-        fontSize: 18,
-        fontFamily: "Roboto-Regular",
-        marginTop: 8,
-        marginLeft: 5
+      color: colors.BACKGROUND,
+      fontSize: 18,
+      fontFamily: "Roboto-Regular",
+      width: "100%",
+      height: 60,
+      padding: 10,
+      borderWidth: 2,
+      borderColor: colors.BLUE,
     },
     textInput1: {
-        color: colors.BACKGROUND,
-        fontSize: 18,
-        fontFamily: "Roboto-Regular",
-        width: width-130
+      color: colors.BACKGROUND,
+      fontSize: 18,
+      fontFamily: "Roboto-Regular",
+      width: width-100,
+      height: 60,
+      marginLeft:20,
     },
     materialButtonDark: {
         height: 45,

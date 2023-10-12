@@ -57,11 +57,6 @@ export default function App() {
   const _loadResourcesAsync = async () => {
     return Promise.all([
       Asset.loadAsync([
-        require('./assets/images/background.jpg'),
-        require('./assets/images/logo165x90white.png'),
-        require('./assets/images/bg.jpg'),
-        require('./assets/images/intro.jpg'),
-        require('./assets/images/g4.gif'),
         require('./assets/images/lodingDriver.gif')
       ]),
       Font.loadAsync({
@@ -93,7 +88,7 @@ export default function App() {
   if (!assetsLoaded) {
     return <View style={styles.container}>
       <ImageBackground
-        source={require('./assets/images/intro.jpg')}
+        source={require('./assets/images/intro.gif')}
         resizeMode="stretch"
         style={styles.imagebg}
       >

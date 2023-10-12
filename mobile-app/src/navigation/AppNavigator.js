@@ -29,7 +29,8 @@ import {
     Notifications as NotificationsPage,
     SettingsScreen,
     CarsScreen,
-    CarEditScreen
+    CarEditScreen,
+    Home
 } from '../screens';
 var { height, width } = Dimensions.get('window');
 import { useSelector } from "react-redux";
@@ -236,6 +237,7 @@ export default function AppContainer() {
                     </Stack.Group>
                     :
                     <Stack.Group screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name="Home" component={Home}/>
                         <Stack.Screen name="Login" component={LoginScreen}/>
                         <Stack.Screen name="Register" component={RegistrationPage}/>
                     </Stack.Group>
