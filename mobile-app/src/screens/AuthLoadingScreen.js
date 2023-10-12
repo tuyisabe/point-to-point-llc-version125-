@@ -12,8 +12,8 @@ export default function AuthLoadingScreen(props) {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../../assets/images/intro.jpg')}
-        resizeMode="stretch"
+        source={require('../../assets/images/intro.gif')}
+        resizeMode="cover"
         style={styles.imagebg}
       >
         <ActivityIndicator style={{ paddingBottom: 100 }} color={colors.INDICATOR_BLUE} size='large' />
