@@ -30,7 +30,6 @@ import * as ImagePicker from 'expo-image-picker';
 import moment from 'moment/min/moment-with-locales';
 import { CommonActions } from '@react-navigation/native';
 import { appConsts } from '../common/sharedFunctions';
-import { Ionicons } from '@expo/vector-icons';
 
 const hasNotch = Platform.OS === 'ios' && !Platform.isPad && !Platform.isTVOS && ((height === 780 || width === 780) || (height === 812 || width === 812) || (height === 844 || width === 844) || (height === 896 || width === 896) || (height === 926 || width === 926))
 export default function BookedCabScreen(props) {
@@ -136,17 +135,7 @@ export default function BookedCabScreen(props) {
         let startLoc = point1.lat + ',' + point1.lng;
         let destLoc = point2.lat + ',' + point2.lng;
         if (settings.showLiveRoute) {
-            let waypoints = "";
-            if(curBooking.waypoints &&  curBooking.waypoints.length > 0){
-                const arr = curBooking.waypoints;
-                for (let i = 0; i < arr.length; i++) {
-                    waypoints = waypoints + arr[i].lat + "," + arr[i].lng;
-                    if (i < arr.length -1) {
-                        waypoints = waypoints + "|";
-                    }
-                }
-            }
-            getDirectionsApi(startLoc, destLoc, waypoints).then((details) => {
+            getDirectionsApi(startLoc, destLoc, null).then((details) => {
                 setArrivalTime(details.time_in_secs ? parseFloat(details.time_in_secs / 60).toFixed(0) : 0);
                 let points = DecodePolyLine.decode(details.polylinePoints);
                 let coords = points.map((point, index) => {
@@ -258,8 +247,8 @@ export default function BookedCabScreen(props) {
                             <Button
                                 title={t('cancel_ride')}
                                 loading={false}
-                                loadingProps={{ size: "large", color: colors.INDICATOR_BLUE }}
-                                titleStyle={{ color: colors.WHITE, fontWeight: 'bold' }}
+                                loadingProps={{ size: "large", color: colors.BLUE }}
+                                titleStyle={{ color: colors.WHITE, fontWeight: 'bold',fontSize:22,fontWeight:'600' }}
                                 onPress={() => {
                                     role == 'customer' ?
                                         setModalVisible(true) :
@@ -273,7 +262,7 @@ export default function BookedCabScreen(props) {
                                         );
                                 }
                                 }
-                                buttonStyle={{ height: '100%', backgroundColor: colors.HEADER }}
+                                buttonStyle={{ height: '100%', backgroundColor: colors.BLUE }}
                                 containerStyle={{ height: '100%' }}
                             />
                         </View>
@@ -388,27 +377,8 @@ export default function BookedCabScreen(props) {
             Linking.openURL(url);
         }
         else if (curBooking.status == 'STARTED') {
-            if (curBooking.waypoints && curBooking.waypoints.length && curBooking.waypoints.length > 0 ) {
-                let abc = url +'&destination=' + curBooking.drop.lat + "," + curBooking.drop.lng + '&waypoints=';
-               if(curBooking.waypoints.length > 1){
-                    for(let i = 0; i < curBooking.waypoints.length; i++){
-                        let obj = curBooking.waypoints[i];
-                        if(i < curBooking.waypoints.length - 1){
-                            abc = abc  + obj.lat + ',' + obj.lng + '%7C'
-                        }else {
-                            abc = abc  + obj.lat + ',' + obj.lng 
-
-                        }
-                    }
-                   Linking.openURL(abc);
-                } else {
-                    url = url +'&destination=' + curBooking.drop.lat + "," + curBooking.drop.lng + '&waypoints=' + curBooking.waypoints[0].lat + "," + curBooking.waypoints[0].lng;
-                    Linking.openURL(url);
-                }
-            } else {
-                url = url + '&destination=' + curBooking.drop.lat + "," + curBooking.drop.lng;
-                Linking.openURL(url);
-            }
+            url = url + '&destination=' + curBooking.drop.lat + "," + curBooking.drop.lng;
+            Linking.openURL(url);
         } else {
             Alert.alert(t('alert'), t('navigation_available'));
         }
@@ -484,7 +454,7 @@ export default function BookedCabScreen(props) {
                                     initial={0}
                                     animation={false}
                                     buttonColor={colors.RADIO_BUTTON}
-                                    selectedButtonColor={colors.RADIO_BUTTON_SELECTION}
+                                    selectedButtonColor={colors.BLUE}
                                     buttonSize={10}
                                     buttonOuterSize={20}
                                     style={styles.radioContainerStyle}
@@ -542,9 +512,9 @@ export default function BookedCabScreen(props) {
             >
                <View style={{ flex: 1, backgroundColor: colors.BACKGROUND, justifyContent: 'center', alignItems: 'center' }}>
                     {curBooking && curBooking.driverOffers && !curBooking.selectedBid?
-                    <View style={{ width: width - 40, backgroundColor: colors.WHITE, borderRadius: 10, flex: 1, maxHeight: height - 200,marginTop:15 }}>
+                    <View style={{ width: width - 40, backgroundColor: colors.TRANSPARENT, borderRadius: 10, flex: 1, maxHeight: height - 200,marginTop:15 }}>
                         <View style={{ color: colors.BLACK, position:'absolute', top:20, alignSelf:'center' }}>
-                            <Text style={{ color: colors.BLACK, fontSize: 20 }}>{t('drivers')}</Text>
+                            <Text style={{ color: colors.WHITE, fontSize: 20 }}>{t('drivers')}</Text>
                         </View>
                         <View style={{marginTop: 60,width: width - 60, height: height - 340, marginRight:10,marginLeft:10, alignSelf:'center',maxWidth:350,}}>
                             <ScrollView showsVerticalScrollIndicator={false} style={{ flex:1}}>
@@ -552,10 +522,10 @@ export default function BookedCabScreen(props) {
                                     <View key={key} style={styles.vew}>
                                         <View style={{height:'70%',width:'100%',flexDirection:isRTL?'row-reverse':'row'}}>
                                             <View style={{width:'25%',justifyContent:'center',alignItems:'center'}}>
-                                            <Image source={curBooking && curBooking.driverOffers[key].driver_image ? { uri: curBooking.driverOffers[key].driver_image} : require('../../assets/images/profilePic.png')} style={{ borderRadius: 30, width: 65, height: 65 }} />
+                                            <Image source={curBooking && curBooking.driverOffers[key].driver_image ? { uri: curBooking.driverOffers[key].driver_image} : require('../../assets/images/profilePic.png')} style={{ borderRadius: 30, width: 60, height: 60 }} />
                                             </View>
                                             <View style={{width:'75%',alignItems:'center'}}>
-                                                <Text style={{ color: colors.BLACK, fontSize: 16,marginTop:4,textAlign:'center',}}>{curBooking.driverOffers[key].driver_name}</Text>
+                                                <Text style={{ color: colors.BLACK, fontSize: 16,marginTop:8,textAlign:'center',}}>{curBooking.driverOffers[key].driver_name}</Text>
                                                 <StarRating
                                                     maxStars={5}
                                                     starSize={20}
@@ -566,10 +536,9 @@ export default function BookedCabScreen(props) {
                                                     onChange={()=>{
                                                         //console.log('hello')
                                                     }}
-                                                    style={[isRTL ? {transform: [{ scaleX:-1}] } : null]}
                                                 />
-                                                <View style={{flexDirection:isRTL?'row-reverse':'row',width:'100%',justifyContent:'center',alignItems:'center',marginTop:4}}>
-                                                    <Text style={{ color: colors.BLACK, fontSize: 22, fontWeight: '700',}}>{settings.symbol} {parseFloat(curBooking.driverOffers[key].trip_cost).toFixed(2)}</Text>
+                                                <View style={{flexDirection:isRTL?'row-reverse':'row',width:'100%',justifyContent:'center',alignItems:'center',marginTop:8}}>
+                                                    <Text style={{ color: colors.BLACK, fontSize: 22, fontWeight: '700',}}>{settings.symbol} {curBooking.driverOffers[key].trip_cost}</Text>
                                                         <Button
                                                             title={t('accept')}
                                                             titleStyle={styles.buttonTitleText}
@@ -577,15 +546,13 @@ export default function BookedCabScreen(props) {
                                                             buttonStyle={styles.accpt}
                                                         />
                                                 </View>
-                                                <Text style={{ color: colors.BLACK, fontSize: 16,fontWeight: '600',alignSelf:'center'}}>{moment(curBooking.driverOffers[key].deliveryDate).format('lll')}</Text>
+                                            </View>
+                                        </View>
+                                        <Text style={{ color: colors.BLACK, fontSize: 16,fontWeight: '600',alignSelf:'center'}}>{moment(curBooking.driverOffers[key].deliveryDate).format('lll')}</Text>
                                         <View style={{flexDirection:isRTL?'row-reverse':'row',alignSelf:'center'}}>
                                         <Text style={{ color: colors.BLACK, fontSize: 12,marginTop:3}}>{t('driver_distance')} - </Text>
                                         <Text style={{ color: colors.BLACK, fontSize: 16, fontWeight: '600', }}>{curBooking && curBooking.driverEstimates && curBooking.driverEstimates[key].timein_text ? curBooking.driverEstimates[key].timein_text : t('within_min')}</Text>
                                         </View>
-                                            </View>
-                                            
-                                        </View>
-                                       
                                     </View>
                                 )}
                             </ScrollView>
@@ -759,7 +726,7 @@ export default function BookedCabScreen(props) {
                                         name="ios-call"
                                         type="ionicon"
                                         size={15}
-                                        color={colors.INDICATOR_BLUE}
+                                        color={colors.BLUE}
                                     />
                                     {curBooking ? curBooking.deliveryPersonPhone : ''}
                                 </Text>
@@ -772,7 +739,7 @@ export default function BookedCabScreen(props) {
                                         name="ios-call"
                                         type="ionicon"
                                         size={15}
-                                        color={colors.INDICATOR_BLUE}
+                                        color={colors.BLUE}
                                     />
                                     {curBooking ? curBooking.customer_contact : ''}
                                 </Text>
@@ -842,7 +809,7 @@ export default function BookedCabScreen(props) {
                             latitudeDelta: latitudeDelta,
                             longitudeDelta: longitudeDelta
                         }}
-                        minZoomLevel={3}
+                        minZoomLevel={13}
                     >
 
                         {(curBooking.status == 'ACCEPTED' || curBooking.status == 'ARRIVED' || curBooking.status == 'STARTED') && lastLocation ?
@@ -866,18 +833,6 @@ export default function BookedCabScreen(props) {
                             title={curBooking.pickup.add}
                             pinColor={colors.GREEN_DOT}
                         />
-                         {curBooking != null && curBooking.waypoints && curBooking.waypoints.length > 0 ? curBooking.waypoints.map((point, index) => {
-                                return (
-                                    <Marker
-                                        coordinate={{ latitude: point.lat, longitude: point.lng }}
-                                        pinColor={colors.GREEN}
-                                        title={point.add}
-                                        key={point.add}
-                                    >
-                                    </Marker>
-                                )
-                            })
-                        : null}
                         <Marker
                             coordinate={{ latitude: (curBooking.drop.lat), longitude: (curBooking.drop.lng) }}
                             title={curBooking.drop.add}
@@ -888,14 +843,16 @@ export default function BookedCabScreen(props) {
                                 coordinates={liveRouteCoords}
                                 strokeWidth={5}
                                 strokeColor={colors.INDICATOR_BLUE}
+                               // lineDashPattern={[1]}
                             />
                             : null}
 
-                        {(curBooking.status == 'NEW' || curBooking.status == 'ARRIVED' || curBooking.status == 'REACHED') && curBooking.coords ?
+                        {(curBooking.status == 'ARRIVED' || curBooking.status == 'REACHED') && curBooking.coords ?
                             <Polyline
                                 coordinates={curBooking.coords}
                                 strokeWidth={4}
                                 strokeColor={colors.INDICATOR_BLUE}
+                               // lineDashPattern={[1]}
                             />
                             : null}
                     </MapView>
@@ -905,7 +862,7 @@ export default function BookedCabScreen(props) {
                         <Icon
                             name={isRTL?'arrow-right':'arrow-left'}
                             type='font-awesome'
-                            color='#517fa4'
+                            color={colors.BLUE}
                             size={26}
                         />
                     </TouchableOpacity>
@@ -986,30 +943,6 @@ export default function BookedCabScreen(props) {
                     </TouchableOpacity>
                     : null}
             </View>
-
-            {curBooking != null && curBooking.waypoints && curBooking.waypoints.length > 0 ?
-            <View style={[styles.addressBarMul, { flexDirection: isRTL ? 'row-reverse' : 'row', height: (curBooking != null && curBooking.waypoints && curBooking.waypoints.length > 0)? curBooking.waypoints.length == 1 ? 95 : 120 : 90}]}>
-                <ScrollView style={[styles.contentStyleMul, {width: width-15}]} showsVerticalScrollIndicator={false} >
-                    <View style={{flexDirection: isRTL ? 'row-reverse' : 'row', alignItems:'center', marginTop: 5}}>
-                        <View style={styles.hbox1} />
-                        <Text numberOfLines={1} style={[styles.textStyle, { flexDirection: isRTL ? "row-reverse" : "row", marginHorizontal: 5 }]}>{curBooking ? curBooking.pickup.add : ""}</Text>
-                    </View>
-                    {curBooking != null && curBooking.waypoints && curBooking.waypoints.length > 0 ? curBooking.waypoints.map((point, index) => {
-                        return (
-                            <View key={"key" + index} style={{ flexDirection: isRTL ? 'row-reverse' : 'row', alignItems: 'center', marginTop:10 }}>
-                                <View style={styles.hboxMul} />
-                                <Text numberOfLines={1} style={[styles.textStyle, { textAlign: isRTL ? 'right' : 'left', marginHorizontal: 5 }]}>{point.add}</Text>
-                            </View>
-                        ) 
-                        })
-                    : null}
-                    <View style={{flexDirection: isRTL ? 'row-reverse' : 'row', alignItems:'center', marginTop: 10, marginBottom: 10}}>
-                        <View style={styles.hbox3} />
-                        <Text numberOfLines={1} style={[styles.textStyle, { flexDirection: isRTL ? "row-reverse" : "row", marginHorizontal: 5 }]}>{curBooking ? curBooking.drop.add : ""}</Text>
-                    </View>
-                </ScrollView>
-            </View>
-            : 
             <View style={[styles.addressBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                 <View style={styles.ballandsquare}>
                     <View style={styles.hbox1} /><View style={styles.hbox2} /><View style={styles.hbox3} />
@@ -1023,7 +956,6 @@ export default function BookedCabScreen(props) {
                     </TouchableOpacity>
                 </View>
             </View>
-            }
             <View style={[styles.bottomContainer, { height: (curBooking && curBooking.status && (curBooking.status == "NEW" || curBooking.status == "ARRIVED" || curBooking.status == "ACCEPTED")) ? 150 : 120 }]}>
                 <View style={styles.cabDetailsContainer}>
                     {curBooking && curBooking.status == "NEW" && (curBooking.bookLater == false || (curBooking.bookLater && (((new Date(curBooking.tripdate)) - (new Date())) / (1000 * 60)) <= 15))?
@@ -1085,7 +1017,7 @@ export default function BookedCabScreen(props) {
                                         color={colors.STAR}
                                         emptyColor={colors.STAR}
                                         rating={parseFloat(curBooking.driverRating)}
-                                        style={[styles.ratingContainerStyle,isRTL ? { marginRight: 0, transform: [{ scaleX:-1}] } : { marginLeft: -5}]}
+                                        style={styles.ratingContainerStyle}
                                         onChange={()=>{
                                             //console.log('hello')
                                         }}
@@ -1157,7 +1089,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 2,
         elevation: 3,
-        borderWidth:1
     },
     headerTitleStyle: {
         color: colors.WHITE,
@@ -1266,7 +1197,7 @@ const styles = StyleSheet.create({
     radioStyle: { paddingBottom: 25 },
     cancelModalButtosContainer: { flex: 1, backgroundColor: colors.BUTTON, alignItems: 'center', justifyContent: 'center' },
     buttonSeparataor: { height: height / 35, width: 0.8, backgroundColor: colors.WHITE, alignItems: 'center', marginTop: 3 },
-    cancelModalButttonStyle: { backgroundColor: colors.BUTTON, borderRadius: 0 },
+    cancelModalButttonStyle: { backgroundColor: colors.BLUE, borderRadius: 0 },
     cancelModalButtonContainerStyle: { flex: 1, width: (width * 2) / 2, backgroundColor: colors.BUTTON, alignSelf: 'center', margin: 0 },
     signInTextStyle: {
         fontFamily: 'Roboto-Bold',
@@ -1275,15 +1206,16 @@ const styles = StyleSheet.create({
     },
     floatButton: {
         borderWidth: 1,
-        borderColor: colors.BLACK,
+        borderColor: colors.WHITE,
         alignItems: "center",
         justifyContent: "center",
         width: 60,
         position: "absolute",
         right: 10,
         height: 60,
-        backgroundColor: colors.BLACK,
-        borderRadius: 30
+        backgroundColor: colors.BLUE,
+        borderRadius: 30,
+        elevation:20
     },
     centeredView: {
         flex: 1,
@@ -1381,23 +1313,12 @@ const styles = StyleSheet.create({
     addressBar: {
         borderBottomWidth: 0.7,
         bottom: 0,
+        height: 90,
         width: '100%',
         flexDirection: 'row',
         backgroundColor: colors.WHITE,
         paddingLeft: 8,
         paddingRight: 8,
-        shadowColor: colors.BLACK,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 3,
-        elevation: 3,
-    },
-    addressBarMul: {
-        borderBottomWidth: 0.7,
-        bottom: 0,
-        width: '100%',
-        flexDirection: 'row',
-        backgroundColor: colors.WHITE,
         shadowColor: colors.BLACK,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
@@ -1426,20 +1347,11 @@ const styles = StyleSheet.create({
         width: 12,
         backgroundColor: colors.DULL_RED
     },
-    hboxMul: {
-        height: 12,
-        width: 12,
-        backgroundColor: colors.BUTTON_YELLOW
-    },
     contentStyle: {
         justifyContent: 'center',
         width: '95%',
         height: 90,
         left: 7
-    },
-    contentStyleMul: {
-        width: '100%',
-        marginHorizontal: 5
     },
     addressStyle1: {
         borderBottomWidth: 1,

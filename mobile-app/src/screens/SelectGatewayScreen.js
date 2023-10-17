@@ -111,28 +111,38 @@ export default function SelectGatewayPage(props) {
   };
 
   return (
-    <View style={styles.container}>
-      {state.selectedProvider ? <PaymentWebView serverUrl={serverUrl} provider={state.selectedProvider} payData={state.payData} onSuccess={onSuccessHandler} onCancel={onCanceledHandler} /> : null}
-      {state.providers && state.selectedProvider == null ?
-        <ScrollView>
-          {
-            state.providers.map((provider) => {
-              return (
-                <TouchableWithoutFeedback onPress={()=>{selectProvider(provider)}} key={provider.name}>
-                  <View style={[styles.box, { marginTop: 6 }]} underlayColor={colors.PAYMENT_BUTTON_BLUE}>
-                    <Image
-                      style={styles.thumb}
-                      source={icons[provider.name]}
-                    />
-                  </View>
-                </TouchableWithoutFeedback>
-              );
-            })
-          }
-        </ScrollView>
-        : null
-      }
-    </View>
+    <>
+    
+    <Text
+        style={{ fontSize: 18, fontWeight: "500", margin: 20, color: colors.BLUE,marginTop:100 }}
+      >
+Sorry! Payment methods are not available at the moment. Please Pay the Driver Directly before or after your trip while we work to add more payment options. 
+      </Text>
+      <Text style={{ fontSize: 20, fontWeight: "500", margin: 20, color: colors.BLUE }}>Thank you for your patience and understanding.</Text>
+
+    </>
+    // <View style={styles.container}>
+    //   {state.selectedProvider ? <PaymentWebView serverUrl={serverUrl} provider={state.selectedProvider} payData={state.payData} onSuccess={onSuccessHandler} onCancel={onCanceledHandler} /> : null}
+    //   {state.providers && state.selectedProvider == null ?
+    //     <ScrollView>
+    //       {
+    //         state.providers.map((provider) => {
+    //           return (
+    //             <TouchableWithoutFeedback onPress={()=>{selectProvider(provider)}} key={provider.name}>
+    //               <View style={[styles.box, { marginTop: 6 }]} underlayColor={colors.PAYMENT_BUTTON_BLUE}>
+    //                 <Image
+    //                   style={styles.thumb}
+    //                   source={icons[provider.name]}
+    //                 />
+    //               </View>
+    //             </TouchableWithoutFeedback>
+    //           );
+    //         })
+    //       }
+    //     </ScrollView>
+    //     : null
+    //   }
+    // </View>
   );
 
 }

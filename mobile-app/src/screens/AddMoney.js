@@ -4,7 +4,7 @@ import {
   StyleSheet,
   View,
   Text,
-  Alert,
+  TouchableWithoutFeedback,
   TextInput,
   FlatList
 } from 'react-native';
@@ -65,7 +65,6 @@ export default function AddMoneyScreen(props) {
   const reference = [...Array(4)].map(_ => c[~~(Math.random()*c.length)]).join('');
 
   const payNow = () => {
-    if(parseFloat(state.amount)>= 1){
     var d = new Date();
     var time = d.getTime();
     let payData = {
@@ -86,14 +85,11 @@ export default function AddMoneyScreen(props) {
         providers: state.providers
       });
     }
-  }else{
-    Alert.alert(t('alert'),t('valid_amount'));
-  }
   }
 
   const newData = ({ item, index }) => {
     return (
-      <TouchableOpacity style={[styles.boxView, { backgroundColor: item.selected ? colors.BUTTON_BACKGROUND : colors.BACKGROUND_PRIMARY }]} onPress={() => { quckAdd(index); }}>
+      <TouchableOpacity style={[styles.boxView, { backgroundColor: item.selected ? colors.BLUE : colors.BACKGROUND_PRIMARY }]} onPress={() => { quckAdd(index); }}>
         {settings.swipe_symbol===false?
           <Text style={[styles.quckMoneyText, { color: item.selected ? colors.WHITE : colors.BLACK }]} >{settings.symbol}{item.amount}</Text>
           :
@@ -171,10 +167,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12
   },
   walletbalText: {
-    fontSize: 17
+    fontSize: 20,
+    fontWeight:'bold'
   },
   ballance: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontSize:20
   },
   inputTextStyle: {
     marginTop: 10,
@@ -189,12 +187,13 @@ const styles = StyleSheet.create({
     height: 55,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.BUTTON_BACKGROUND,
+    backgroundColor: colors.BLUE,
     borderRadius: 8,
   },
   buttonTitle: {
     color: colors.WHITE,
-    fontSize: 18,
+    fontSize: 22,
+    fontWeight:'bold'
   },
   quickMoneyContainer: {
     marginTop: 18,

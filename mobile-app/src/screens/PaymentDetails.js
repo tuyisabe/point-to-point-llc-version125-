@@ -1,4 +1,6 @@
-import React, { useState, useEffect} from 'react';
+/** @format */
+
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -9,54 +11,69 @@ import {
   Modal,
   Alert,
   ActivityIndicator,
-  Platform
-} from 'react-native';
-import { Header } from 'react-native-elements';
-import { colors } from '../common/theme';
-var { width, height } = Dimensions.get('window');
+  Platform,
+} from "react-native";
+import { Header } from "react-native-elements";
+import { colors } from "../common/theme";
+var { width, height } = Dimensions.get("window");
 import { PromoComp } from "../components";
-import i18n from 'i18n-js';
-import { useSelector,useDispatch } from 'react-redux';
-import { api } from 'common';
-import { MAIN_COLOR, appConsts } from '../common/sharedFunctions';
-import { CommonActions } from '@react-navigation/native';
-import { MaterialIcons } from '@expo/vector-icons';
+import i18n from "i18n-js";
+import { useSelector, useDispatch } from "react-redux";
+import { api } from "common";
+import { MAIN_COLOR, appConsts } from "../common/sharedFunctions";
+import { CommonActions } from "@react-navigation/native";
 
-const hasNotch = Platform.OS === 'ios' && !Platform.isPad && !Platform.isTVOS && ((height === 780 || width === 780) || (height === 812 || width === 812) || (height === 844 || width === 844) || (height === 852 || width === 852) || (height === 896 || width === 896) || (height === 926 || width === 926) || (height === 932 || width === 932))
+const hasNotch =
+  Platform.OS === "ios" &&
+  !Platform.isPad &&
+  !Platform.isTVOS &&
+  (height === 780 ||
+    width === 780 ||
+    height === 812 ||
+    width === 812 ||
+    height === 844 ||
+    width === 844 ||
+    height === 852 ||
+    width === 852 ||
+    height === 896 ||
+    width === 896 ||
+    height === 926 ||
+    width === 926 ||
+    height === 932 ||
+    width === 932);
 
 export default function PaymentDetails(props) {
-  const {
-    updateBooking,
-    cancelBooking,
-    editPromo,
-  } = api;
+  const { updateBooking, cancelBooking, editPromo } = api;
   const dispatch = useDispatch();
-  const auth = useSelector(state => state.auth);
-  const settings = useSelector(state => state.settingsdata.settings);
-  const providers = useSelector(state => state.paymentmethods.providers);
+  const auth = useSelector((state) => state.auth);
+  const settings = useSelector((state) => state.settingsdata.settings);
+  const providers = useSelector((state) => state.paymentmethods.providers);
   const { booking } = props.route.params;
   const [promodalVisible, setPromodalVisible] = useState(false);
   const { t } = i18n;
-  const isRTL = i18n.locale.indexOf('he') === 0 || i18n.locale.indexOf('ar') === 0;
+  const isRTL =
+    i18n.locale.indexOf("he") === 0 || i18n.locale.indexOf("ar") === 0;
 
-  const [profile,setProfile] = useState();
-  const [isLoading,setIsLoading] = useState();
+  const [profile, setProfile] = useState();
+  const [isLoading, setIsLoading] = useState();
 
   useEffect(() => {
     if (auth.profile && auth.profile.uid) {
-        setProfile(auth.profile);
+      setProfile(auth.profile);
     } else {
-        setProfile(null);
+      setProfile(null);
     }
   }, [auth.profile]);
 
   const [payDetails, setPayDetails] = useState({
     amount: booking.trip_cost,
-    discount: booking.discount? booking.discount:0,
-    usedWalletMoney: booking.payment_mode === 'wallet'? booking.trip_cost:0,
-    promo_applied: booking.promo_applied?booking.promo_applied:false,
-    promo_details: booking.promo_details?booking.promo_details:null,
-    payableAmount: booking.payableAmount?booking.payableAmount:booking.trip_cost
+    discount: booking.discount ? booking.discount : 0,
+    usedWalletMoney: booking.payment_mode === "wallet" ? booking.trip_cost : 0,
+    promo_applied: booking.promo_applied ? booking.promo_applied : false,
+    promo_details: booking.promo_details ? booking.promo_details : null,
+    payableAmount: booking.payableAmount
+      ? booking.payableAmount
+      : booking.trip_cost,
   });
 
   const promoModal = () => {
@@ -107,7 +124,7 @@ export default function PaymentDetails(props) {
     data.promo_details = null;
     data.usedWalletMoney = 0;
     setPayDetails(data);
-  }
+  };
 
   const removePromo = () => {
     let data = { ...payDetails };
@@ -120,47 +137,63 @@ export default function PaymentDetails(props) {
     data.promo_details = null;
     data.usedWalletMoney = 0;
     setPayDetails(data);
-  }
+  };
 
   const doPayment = (payment_mode) => {
-
-    if (payment_mode == 'cash'){
+    if (payment_mode == "cash") {
       let curBooking = { ...booking };
-      if(booking.status == "PAYMENT_PENDING"){
-        curBooking.status = 'NEW';
-
-      } else if(booking.status == "REACHED"){
-        if(booking.prepaid || curBooking.booking_from_web || curBooking.payment_mode == 'cash'){
-          curBooking.status = 'PAID';
-        } else{
-          curBooking.status = 'PENDING';
+      if (booking.status == "PAYMENT_PENDING") {
+        curBooking.status = "NEW";
+      } else if (booking.status == "REACHED") {
+        if (
+          booking.prepaid ||
+          curBooking.booking_from_web ||
+          curBooking.payment_mode == "cash"
+        ) {
+          curBooking.status = "PAID";
+        } else {
+          curBooking.status = "PENDING";
         }
-      } else if(booking.status == "PENDING"){
-        curBooking.status = 'PAID';
-      }else if(booking.status == "NEW"){
-        curBooking.status = 'ACCEPTED';
+      } else if (booking.status == "PENDING") {
+        curBooking.status = "PAID";
+      } else if (booking.status == "NEW") {
+        curBooking.status = "ACCEPTED";
       }
       curBooking.payment_mode = payment_mode;
-      curBooking.customer_paid = curBooking.status == 'NEW'? 0:((parseFloat(payDetails.amount) - parseFloat(payDetails.discount)).toFixed(settings.decimal));
-      curBooking.discount = parseFloat(payDetails.discount).toFixed(settings.decimal);
+      curBooking.customer_paid =
+        curBooking.status == "NEW"
+          ? 0
+          : (
+              parseFloat(payDetails.amount) - parseFloat(payDetails.discount)
+            ).toFixed(settings.decimal);
+      curBooking.discount = parseFloat(payDetails.discount).toFixed(
+        settings.decimal
+      );
       curBooking.usedWalletMoney = 0;
       curBooking.cardPaymentAmount = 0;
-      curBooking.cashPaymentAmount = curBooking.status == 'NEW'? 0 :parseFloat(payDetails.amount- parseFloat(payDetails.discount)).toFixed(settings.decimal);
-      curBooking.payableAmount = parseFloat(payDetails.payableAmount).toFixed(settings.decimal);
+      curBooking.cashPaymentAmount =
+        curBooking.status == "NEW"
+          ? 0
+          : parseFloat(
+              payDetails.amount - parseFloat(payDetails.discount)
+            ).toFixed(settings.decimal);
+      curBooking.payableAmount = parseFloat(payDetails.payableAmount).toFixed(
+        settings.decimal
+      );
       curBooking.promo_applied = payDetails.promo_applied;
       curBooking.promo_details = payDetails.promo_details;
 
-      if(curBooking.status === 'ACCEPTED'){
+      if (curBooking.status === "ACCEPTED") {
         curBooking.driver = curBooking.selectedBid.driver;
-        curBooking.driver_image =  curBooking.selectedBid.driver_image; 
+        curBooking.driver_image = curBooking.selectedBid.driver_image;
         curBooking.driver_name = curBooking.selectedBid.driver_name;
         curBooking.driver_contact = curBooking.selectedBid.driver_contact;
         curBooking.driver_token = curBooking.selectedBid.driver_token;
         curBooking.vehicle_number = curBooking.selectedBid.vehicle_number;
         curBooking.driverRating = curBooking.selectedBid.driverRating;
-        curBooking.trip_cost =  curBooking.selectedBid.trip_cost;
-        curBooking.convenience_fees =  curBooking.selectedBid.convenience_fees;
-        curBooking.driver_share =  curBooking.selectedBid.driver_share;
+        curBooking.trip_cost = curBooking.selectedBid.trip_cost;
+        curBooking.convenience_fees = curBooking.selectedBid.convenience_fees;
+        curBooking.driver_share = curBooking.selectedBid.driver_share;
         curBooking.driverOffers = {};
         curBooking.requestedDrivers = {};
         curBooking.driverEstimates = {};
@@ -168,58 +201,66 @@ export default function PaymentDetails(props) {
       }
       setIsLoading(true);
       dispatch(updateBooking(curBooking));
-      setTimeout(()=>{
-        if(profile.usertype == 'customer') {
-          if(curBooking.status == 'NEW' || curBooking.status == 'ACCEPTED'){
-            props.navigation.navigate('BookedCab',{bookingId:booking.id});
-          }else{
-            props.navigation.navigate('DriverRating',{bookingId:booking});
+      setTimeout(() => {
+        if (profile.usertype == "customer") {
+          if (curBooking.status == "NEW" || curBooking.status == "ACCEPTED") {
+            props.navigation.navigate("BookedCab", { bookingId: booking.id });
+          } else {
+            props.navigation.navigate("DriverRating", { bookingId: booking });
           }
-        }else{
-          props.navigation.dispatch(CommonActions.reset({index: 0,routes: [{ name: 'TabRoot'}]}));
+        } else {
+          props.navigation.dispatch(
+            CommonActions.reset({ index: 0, routes: [{ name: "TabRoot" }] })
+          );
         }
         setIsLoading(false);
       }, 2000);
-
-
-    } else if(payment_mode == 'wallet') {
+    } else if (payment_mode == "wallet") {
       let curBooking = { ...booking };
-      if(booking.status == "PAYMENT_PENDING"){
+      if (booking.status == "PAYMENT_PENDING") {
         curBooking.prepaid = true;
-        curBooking.status = 'NEW';
-      } else if(booking.status == "REACHED"){
-        if(booking.prepaid || curBooking.booking_from_web ){
-          curBooking.status = 'PAID';
-        } else{
-          curBooking.status = 'PENDING';
+        curBooking.status = "NEW";
+      } else if (booking.status == "REACHED") {
+        if (booking.prepaid || curBooking.booking_from_web) {
+          curBooking.status = "PAID";
+        } else {
+          curBooking.status = "PENDING";
         }
-      } else if(booking.status == "PENDING"){
-        curBooking.status = 'PAID';
-      }else if(booking.status == "NEW"){
+      } else if (booking.status == "PENDING") {
+        curBooking.status = "PAID";
+      } else if (booking.status == "NEW") {
         curBooking.prepaid = true;
-        curBooking.status = 'ACCEPTED';
+        curBooking.status = "ACCEPTED";
       }
       curBooking.payment_mode = payment_mode;
-      curBooking.customer_paid = (parseFloat(payDetails.amount) - parseFloat(payDetails.discount)).toFixed(settings.decimal);
-      curBooking.discount = parseFloat(payDetails.discount).toFixed(settings.decimal);
-      curBooking.usedWalletMoney = (parseFloat(payDetails.amount) - parseFloat(payDetails.discount)).toFixed(settings.decimal);
+      curBooking.customer_paid = (
+        parseFloat(payDetails.amount) - parseFloat(payDetails.discount)
+      ).toFixed(settings.decimal);
+      curBooking.discount = parseFloat(payDetails.discount).toFixed(
+        settings.decimal
+      );
+      curBooking.usedWalletMoney = (
+        parseFloat(payDetails.amount) - parseFloat(payDetails.discount)
+      ).toFixed(settings.decimal);
       curBooking.cardPaymentAmount = 0;
       curBooking.cashPaymentAmount = 0;
-      curBooking.payableAmount = parseFloat(payDetails.payableAmount).toFixed(settings.decimal);
+      curBooking.payableAmount = parseFloat(payDetails.payableAmount).toFixed(
+        settings.decimal
+      );
       curBooking.promo_applied = payDetails.promo_applied;
       curBooking.promo_details = payDetails.promo_details;
 
-      if(curBooking.status === 'ACCEPTED'){
+      if (curBooking.status === "ACCEPTED") {
         curBooking.driver = curBooking.selectedBid.driver;
-        curBooking.driver_image =  curBooking.selectedBid.driver_image; 
+        curBooking.driver_image = curBooking.selectedBid.driver_image;
         curBooking.driver_name = curBooking.selectedBid.driver_name;
         curBooking.driver_contact = curBooking.selectedBid.driver_contact;
         curBooking.driver_token = curBooking.selectedBid.driver_token;
         curBooking.vehicle_number = curBooking.selectedBid.vehicle_number;
         curBooking.driverRating = curBooking.selectedBid.driverRating;
-        curBooking.trip_cost =  curBooking.selectedBid.trip_cost;
-        curBooking.convenience_fees =  curBooking.selectedBid.convenience_fees;
-        curBooking.driver_share =  curBooking.selectedBid.driver_share;
+        curBooking.trip_cost = curBooking.selectedBid.trip_cost;
+        curBooking.convenience_fees = curBooking.selectedBid.convenience_fees;
+        curBooking.driver_share = curBooking.selectedBid.driver_share;
         curBooking.driverOffers = {};
         curBooking.requestedDrivers = {};
         curBooking.driverEstimates = {};
@@ -227,22 +268,23 @@ export default function PaymentDetails(props) {
       }
       setIsLoading(true);
       dispatch(updateBooking(curBooking));
-      setTimeout(()=>{
-        if(profile.usertype == 'customer') {
-          if(curBooking.status == 'NEW' || curBooking.status == 'ACCEPTED'){
-            props.navigation.navigate('BookedCab',{bookingId:booking.id});
-          }else{
-            props.navigation.navigate('DriverRating',{bookingId:booking});
+      setTimeout(() => {
+        if (profile.usertype == "customer") {
+          if (curBooking.status == "NEW" || curBooking.status == "ACCEPTED") {
+            props.navigation.navigate("BookedCab", { bookingId: booking.id });
+          } else {
+            props.navigation.navigate("DriverRating", { bookingId: booking });
           }
-        }else{
-          props.navigation.dispatch(CommonActions.reset({index: 0,routes: [{ name: 'TabRoot'}]}));
+        } else {
+          props.navigation.dispatch(
+            CommonActions.reset({ index: 0, routes: [{ name: "TabRoot" }] })
+          );
         }
         setIsLoading(false);
       }, 2000);
-    }else{
+    } else {
       let curBooking = { ...booking };
-      if(profile.usertype == 'customer') {
-  
+      if (profile.usertype == "customer") {
         let payData = {
           first_name: profile.firstName,
           last_name: profile.lastName,
@@ -250,134 +292,149 @@ export default function PaymentDetails(props) {
           email: profile.email,
           amount: payDetails.payableAmount,
           order_id: booking.id,
-          name: t('bookingPayment'),
-          description: t('order_id') + booking.id,
+          name: t("bookingPayment"),
+          description: t("order_id") + booking.id,
           currency: settings.code,
-          quantity: 1
-        }
+          quantity: 1,
+        };
 
-        const paymentPacket = { 
+        const paymentPacket = {
           payment_mode: payment_mode,
-          customer_paid: (parseFloat(payDetails.amount) - parseFloat(payDetails.discount)).toFixed(settings.decimal),
+          customer_paid: (
+            parseFloat(payDetails.amount) - parseFloat(payDetails.discount)
+          ).toFixed(settings.decimal),
           discount: parseFloat(payDetails.discount).toFixed(settings.decimal),
-          usedWalletMoney: parseFloat(payDetails.usedWalletMoney).toFixed(settings.decimal),
-          cardPaymentAmount: parseFloat(payDetails.payableAmount).toFixed(settings.decimal),
+          usedWalletMoney: parseFloat(payDetails.usedWalletMoney).toFixed(
+            settings.decimal
+          ),
+          cardPaymentAmount: parseFloat(payDetails.payableAmount).toFixed(
+            settings.decimal
+          ),
           cashPaymentAmount: 0,
-          payableAmount: parseFloat(payDetails.payableAmount).toFixed(settings.decimal),
+          payableAmount: parseFloat(payDetails.payableAmount).toFixed(
+            settings.decimal
+          ),
           promo_applied: payDetails.promo_applied,
-          promo_details: payDetails.promo_details 
+          promo_details: payDetails.promo_details,
         };
 
         curBooking.paymentPacket = paymentPacket;
-        
+
         setIsLoading(true);
         dispatch(updateBooking(curBooking));
-      
-        setTimeout(()=>{
+
+        setTimeout(() => {
           props.navigation.navigate("paymentMethod", {
             payData: payData,
             profile: profile,
             settings: settings,
             providers: providers,
-            booking: curBooking
+            booking: curBooking,
           });
           setIsLoading(false);
-        },3000);
-      }else{
-       if(booking.status == "REACHED"){
-          if((booking.prepaid || curBooking.booking_from_web) && settings.prepaid ){
-            curBooking.status = 'PAID';
-          } else{
-            curBooking.status = 'PENDING';
+        }, 3000);
+      } else {
+        if (booking.status == "REACHED") {
+          if (
+            (booking.prepaid || curBooking.booking_from_web) &&
+            !appConsts.makePending
+          ) {
+            curBooking.status = "PAID";
+          } else {
+            curBooking.status = "PENDING";
           }
           dispatch(updateBooking(curBooking));
-        } 
-        props.navigation.dispatch(CommonActions.reset({index: 0,routes: [{ name: 'TabRoot'}]}));
+        }
+        props.navigation.dispatch(
+          CommonActions.reset({ index: 0, routes: [{ name: "TabRoot" }] })
+        );
       }
-    
     }
-  }
+  };
 
   const selectCoupon = (item, index) => {
     var toDay = new Date();
-    var expDate = new Date(item.promo_validity)
+    var expDate = new Date(item.promo_validity);
     expDate.setDate(expDate.getDate() + 1);
-    item.usersUsed = item.usersUsed? item.usersUsed :{};
+    item.usersUsed = item.usersUsed ? item.usersUsed : {};
     if (payDetails.amount < item.min_order) {
-      Alert.alert(t('alert'),t('promo_eligiblity'))
+      Alert.alert(t("alert"), t("promo_eligiblity"));
     } else if (item.user_avail && item.user_avail >= item.promo_usage_limit) {
-      Alert.alert(t('alert'),t('promo_exp_limit'))
+      Alert.alert(t("alert"), t("promo_exp_limit"));
     } else if (item.usersUsed[auth.profile.uid]) {
-      Alert.alert(t('alert'),t('promo_used'))
+      Alert.alert(t("alert"), t("promo_used"));
     } else if (toDay > expDate) {
-      Alert.alert(t('alert'),t('promo_exp'))
+      Alert.alert(t("alert"), t("promo_exp"));
     } else {
       let discounttype = item.promo_discount_type.toUpperCase();
-      if (discounttype == 'PERCENTAGE') {
-        let discount = parseFloat(payDetails.amount * item.promo_discount_value / 100).toFixed(settings.decimal);
+      if (discounttype == "PERCENTAGE") {
+        let discount = parseFloat(
+          (payDetails.amount * item.promo_discount_value) / 100
+        ).toFixed(settings.decimal);
         if (discount > item.max_promo_discount_value) {
           let discount = item.max_promo_discount_value;
           let data = { ...payDetails };
-          data.discount = discount
-          data.promo_applied = true
-          item.user_avail = item.user_avail? parseInt(item.user_avail) + 1 : 1;
-          item.usersUsed[auth.profile.uid]=true;
+          data.discount = discount;
+          data.promo_applied = true;
+          item.user_avail = item.user_avail ? parseInt(item.user_avail) + 1 : 1;
+          item.usersUsed[auth.profile.uid] = true;
           dispatch(editPromo(item));
-          data.promo_details = item
-          data.payableAmount = parseFloat(data.payableAmount - discount).toFixed(settings.decimal);
+          data.promo_details = item;
+          data.payableAmount = parseFloat(
+            data.payableAmount - discount
+          ).toFixed(settings.decimal);
           setPayDetails(data);
           setPromodalVisible(false);
         } else {
           let data = { ...payDetails };
-          data.discount = discount
-          data.promo_applied = true
-          item.user_avail = item.user_avail? parseInt(item.user_avail) + 1 : 1;
-          item.usersUsed[auth.profile.uid]=true;
+          data.discount = discount;
+          data.promo_applied = true;
+          item.user_avail = item.user_avail ? parseInt(item.user_avail) + 1 : 1;
+          item.usersUsed[auth.profile.uid] = true;
           dispatch(editPromo(item));
-          data.promo_details = item,
-          data.payableAmount = parseFloat(data.payableAmount - discount).toFixed(settings.decimal);
+          (data.promo_details = item),
+            (data.payableAmount = parseFloat(
+              data.payableAmount - discount
+            ).toFixed(settings.decimal));
           setPayDetails(data);
           setPromodalVisible(false);
         }
       } else {
         let discount = item.max_promo_discount_value;
         let data = { ...payDetails };
-        data.discount = discount
-        data.promo_applied = true
-        item.user_avail = item.user_avail? parseInt(item.user_avail) + 1 : 1;
-        item.usersUsed[auth.profile.uid]=true;
+        data.discount = discount;
+        data.promo_applied = true;
+        item.user_avail = item.user_avail ? parseInt(item.user_avail) + 1 : 1;
+        item.usersUsed[auth.profile.uid] = true;
         dispatch(editPromo(item));
-        data.promo_details = item,
-        data.payableAmount = parseFloat(data.payableAmount - discount).toFixed(settings.decimal);
+        (data.promo_details = item),
+          (data.payableAmount = parseFloat(
+            data.payableAmount - discount
+          ).toFixed(settings.decimal));
         setPayDetails(data);
         setPromodalVisible(false);
       }
     }
-
-  }
+  };
 
   const cancelCurBooking = () => {
-    Alert.alert(
-      t('alert'),
-      t('cancel_confirm'),
-      [
-          { text: t('cancel'), onPress: () => {}, style: 'cancel' },
-          { text: t('ok'), onPress: () => {
-              payDetails.promo_applied? removePromo(): null;
-              dispatch(
-                cancelBooking(
-                  { 
-                    booking: booking, 
-                    reason: t('cancelled_incomplete_booking'),
-                    cancelledBy: profile.usertype 
-                  }
-                )
-              );
-              props.navigation.navigate('TabRoot', { screen: 'Map' });
-            }
-          },
-      ]
-    );
+    Alert.alert(t("alert"), t("cancel_confirm"), [
+      { text: t("cancel"), onPress: () => {}, style: "cancel" },
+      {
+        text: t("ok"),
+        onPress: () => {
+          payDetails.promo_applied ? removePromo() : null;
+          dispatch(
+            cancelBooking({
+              booking: booking,
+              reason: t("cancelled_incomplete_booking"),
+              cancelledBy: profile.usertype,
+            })
+          );
+          props.navigation.navigate("TabRoot", { screen: "Map" });
+        },
+      },
+    ]);
   };
 
   return (
@@ -495,20 +552,7 @@ export default function PaymentDetails(props) {
                   </View>
                 ) : null}
               </View>
-              {booking && booking.waypoints && booking.waypoints.length > 0 ? 
-                booking.waypoints.map((point, index) => {
-                  return (
-                    <View key={"key" + index} style={[styles.location, isRTL?{flexDirection:'row-reverse'}:{flexDirection:'row'}, {justifyContent: 'center', alignItems:'center'}]}>
-                        <View>
-                            <MaterialIcons name="multiple-stop" size={32} color={colors.SECONDARY}/> 
-                        </View>
-                        <View  style={[styles.address, isRTL?{flexDirection:'row-reverse', marginRight:65}:{flexDirection:'row', marginLeft:6}]}>
-                            <Text numberOfLines={2} style={[styles.adressStyle, isRTL?{marginRight:6, textAlign:'right'}:{marginLeft:6, textAlign:'left'}]}>{point.add}</Text>
-                        </View>
-                    </View>
-                  ) 
-                })
-              : null}
+
               <View
                 style={[
                   styles.location,
@@ -837,11 +881,9 @@ export default function PaymentDetails(props) {
                 doPayment("wallet");
               }}
             >
-               <View style={styles.cardPayBtnInnner}>
+              <View style={styles.cardPayBtnInnner}>
                 {isLoading && <ActivityIndicator size="small" color="white" />}
-                <Text style={styles.buttonTitle}>
-                  {t("complete_payment")}
-                </Text>
+                <Text style={styles.buttonTitle}>{t("complete_payment")}</Text>
               </View>
             </TouchableOpacity>
           ) : null}
@@ -857,7 +899,9 @@ export default function PaymentDetails(props) {
                 <Text style={styles.buttonTitle}>
                   {booking.status == "PAYMENT_PENDING"
                     ? t("cash_on_delivery")
-                    : booking.payment_mode == "cash"? t("pay_cash") : t("complete_payment")}
+                    : booking.payment_mode == "cash"
+                    ? t("pay_cash")
+                    : t("complete_payment")}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -887,38 +931,38 @@ export default function PaymentDetails(props) {
       {promoModal()}
     </View>
   );
-
 }
 
 const styles = StyleSheet.create({
   mainView: {
     flex: 1,
-    backgroundColor: colors.WHITE
+    backgroundColor: colors.WHITE,
   },
   headerStyle: {
-    borderBottomWidth: 0
+    borderBottomWidth: 0,
   },
   headerTitleStyle: {
     color: colors.WHITE,
-    fontFamily: 'Roboto-Bold',
+    fontFamily: "Roboto-Bold",
     fontSize: 20,
-    marginTop: 15
-  }, scrollStyle: {
+    marginTop: 15,
+  },
+  scrollStyle: {
     flex: 1,
     height: height,
-    backgroundColor: colors.WHITE
+    backgroundColor: colors.WHITE,
   },
   container: {
     flex: 1,
     marginTop: 5,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   buttonContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop:20
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
   },
 
   buttonWrapper: {
@@ -927,11 +971,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 20,
     height: 55,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.BUTTON_BACKGROUND,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.BLUE,
     borderRadius: 8,
-    width: '45%'
+    width: "45%",
   },
   buttonWrapper2: {
     marginLeft: 8,
@@ -939,24 +983,24 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 20,
     height: 55,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: colors.LIGHT_RED,
     borderRadius: 8,
-    width: '45%'
+    width: "45%",
   },
   cardPayBtn: {
     marginHorizontal: 6,
     height: 55,
     borderRadius: 8,
-    marginTop: 10
+    marginTop: 10,
   },
   cardPayBtnInnner: {
     height: 55,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 8,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   buttonTitle: {
     color: colors.WHITE,
@@ -964,10 +1008,10 @@ const styles = StyleSheet.create({
   },
   newname: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   emailInputContainer: {
     borderTopRightRadius: 10,
@@ -976,39 +1020,62 @@ const styles = StyleSheet.create({
     backgroundColor: colors.WHITE,
     paddingRight: 10,
     paddingTop: 10,
-    width: width - 80
+    width: width - 80,
   },
   errorMessageStyle: {
     fontSize: 15,
-    fontWeight: 'bold'
+    fontWeight: "bold",
   },
   inputTextStyle: {
     color: colors.BLACK,
-    fontSize: 16
+    fontSize: 16,
   },
-  pinbuttonStyle: { elevation: 0, bottom: 15, width: '80%', alignSelf: "center", borderRadius: 20, borderColor: "transparent", backgroundColor: colors.BUTTON_RIGHT, },
-  pinbuttonContainer: { flex: 1, justifyContent: 'center' },
+  pinbuttonStyle: {
+    elevation: 0,
+    bottom: 15,
+    width: "80%",
+    alignSelf: "center",
+    borderRadius: 20,
+    borderColor: "transparent",
+    backgroundColor: colors.BUTTON_RIGHT,
+  },
+  pinbuttonContainer: { flex: 1, justifyContent: "center" },
   inputContainer: { flex: 3, justifyContent: "center", marginTop: 40 },
-  pinheaderContainer: { height: 250, backgroundColor: colors.WHITE, width: '80%', justifyContent: 'space-evenly' },
-  pinheaderStyle: { flex: 1, flexDirection: 'column', backgroundColor: colors.HEADER, justifyContent: "center" },
-  forgotPassText: { textAlign: "center", color: colors.WHITE, fontSize: 20, width: "100%" },
+  pinheaderContainer: {
+    height: 250,
+    backgroundColor: colors.WHITE,
+    width: "80%",
+    justifyContent: "space-evenly",
+  },
+  pinheaderStyle: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: colors.HEADER,
+    justifyContent: "center",
+  },
+  forgotPassText: {
+    textAlign: "center",
+    color: colors.WHITE,
+    fontSize: 20,
+    width: "100%",
+  },
   pinContainer: { flexDirection: "row", justifyContent: "space-between" },
-  forgotStyle: { flex: 3, justifyContent: "center", alignItems: 'center' },
-  crossIconContainer: { flex: 1, left: '40%' },
+  forgotStyle: { flex: 3, justifyContent: "center", alignItems: "center" },
+  crossIconContainer: { flex: 1, left: "40%" },
   forgot: { flex: 1 },
   pinbuttonTitle: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 18,
-    width: '100%',
-    textAlign: 'center'
+    width: "100%",
+    textAlign: "center",
   },
   newname2: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   emailInputContainer2: {
     borderTopRightRadius: 10,
@@ -1018,28 +1085,50 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingTop: 10,
     width: width - 80,
-
   },
 
   inputTextStyle2: {
     color: colors.BLACK,
-    fontSize: 14
+    fontSize: 14,
   },
-  buttonStyle2: { elevation: 0, bottom: 15, width: '80%', alignSelf: "center", borderRadius: 20, borderColor: "transparent", backgroundColor: colors.BUTTON_RIGHT, },
-  buttonContainer2: { flex: 1, justifyContent: 'center', marginTop: 5 },
+  buttonStyle2: {
+    elevation: 0,
+    bottom: 15,
+    width: "80%",
+    alignSelf: "center",
+    borderRadius: 20,
+    borderColor: "transparent",
+    backgroundColor: colors.BUTTON_RIGHT,
+  },
+  buttonContainer2: { flex: 1, justifyContent: "center", marginTop: 5 },
   inputContainer2: { flex: 4, paddingBottom: 25 },
-  headerContainer2: { height: 380, backgroundColor: colors.WHITE, width: '80%', justifyContent: 'center' },
-  headerStyle2: { flex: 1, flexDirection: 'column', backgroundColor: colors.HEADER, justifyContent: "center" },
-  forgotPassText2: { textAlign: "center", color: colors.WHITE, fontSize: 16, width: "100%" },
+  headerContainer2: {
+    height: 380,
+    backgroundColor: colors.WHITE,
+    width: "80%",
+    justifyContent: "center",
+  },
+  headerStyle2: {
+    flex: 1,
+    flexDirection: "column",
+    backgroundColor: colors.HEADER,
+    justifyContent: "center",
+  },
+  forgotPassText2: {
+    textAlign: "center",
+    color: colors.WHITE,
+    fontSize: 16,
+    width: "100%",
+  },
   forgotContainer2: { flexDirection: "row", justifyContent: "space-between" },
   forgotStyle2: { flex: 3, justifyContent: "center" },
-  crossIconContainer2: { flex: 1, left: '40%' },
+  crossIconContainer2: { flex: 1, left: "40%" },
   forgot2: { flex: 1 },
   buttonTitle2: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
-    width: '100%',
-    textAlign: 'center'
+    width: "100%",
+    textAlign: "center",
   },
 
   containercvv: {
@@ -1049,102 +1138,101 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent",
-    paddingTop: 120
+    paddingTop: 120,
   },
   modalContainercvv: {
     height: 200,
     backgroundColor: colors.WHITE,
     width: "80%",
     borderRadius: 10,
-    elevation: 15
+    elevation: 15,
   },
   crossIconContainercvv: {
     flex: 1,
-    left: "40%"
+    left: "40%",
   },
   blankViewStylecvv: {
     flex: 1,
     flexDirection: "row",
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginTop: 15,
-    marginRight: 15
+    marginRight: 15,
   },
   blankViewStyleOTP: {
     flex: 1,
     flexDirection: "row",
-    alignSelf: 'flex-end',
-
+    alignSelf: "flex-end",
   },
   modalHeaderStylecvv: {
     textAlign: "center",
     fontSize: 20,
-    paddingTop: 10
+    paddingTop: 10,
   },
   modalContainerViewStylecvv: {
     flex: 9,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   itemsViewStylecvv: {
-    flexDirection: "column"
+    flexDirection: "column",
   },
   textStylecvv: {
-    fontSize: 20
+    fontSize: 20,
   },
   location: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginVertical: 6
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginVertical: 6,
   },
   timeStyle: {
-    fontFamily: 'Roboto-Regular',
+    fontFamily: "Roboto-Regular",
     fontSize: 16,
-    marginTop: 1
+    marginTop: 1,
   },
   greenDot: {
     backgroundColor: colors.GREEN_DOT,
     width: 10,
     height: 10,
     borderRadius: 50,
-    alignSelf: 'flex-start',
-    marginTop: 5
+    alignSelf: "flex-start",
+    marginTop: 5,
   },
   redDot: {
     backgroundColor: colors.RED,
     width: 10,
     height: 10,
     borderRadius: 50,
-    alignSelf: 'flex-start',
-    marginTop: 5
+    alignSelf: "flex-start",
+    marginTop: 5,
   },
   address: {
-    flexDirection: 'row',
+    flexDirection: "row",
     flexGrow: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
     width: 0,
-    marginLeft: 6
+    marginLeft: 6,
   },
   adressStyle: {
     marginLeft: 6,
     fontSize: 15,
-    lineHeight: 20
+    lineHeight: 20,
   },
   emailStyle: {
     fontSize: 17,
     color: colors.BLACK,
-    fontFamily: 'Roboto-Bold',
-    textAlign: 'center'
+    fontFamily: "Roboto-Bold",
+    textAlign: "center",
   },
   vew3: {
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 40,
     width: 140,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
     backgroundColor: colors.LIGHT_RED,
     borderRadius: 10,
-    marginVertical:15
+    marginVertical: 15,
   },
 });

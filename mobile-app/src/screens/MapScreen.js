@@ -14,6 +14,7 @@ import {
     Linking
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { CheckBox } from "@rneui/themed";
 import { Icon, Button } from 'react-native-elements';
 import { colors } from '../common/theme';
 import * as Location from 'expo-location';
@@ -28,10 +29,45 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { CommonActions } from '@react-navigation/native';
 import { MAIN_COLOR, CarHorizontal, CarVertical, validateBookingObj } from '../common/sharedFunctions';
 import { startActivityAsync, ActivityAction } from 'expo-intent-launcher';
-
-const hasNotch = Platform.OS === 'ios' && !Platform.isPad && !Platform.isTVOS && ((height === 780 || width === 780) || (height === 812 || width === 812) || (height === 844 || width === 844) || (height === 852 || width === 852) || (height === 896 || width === 896) || (height === 926 || width === 926) || (height === 932 || width === 932))
-
+import Svg, { Path } from "react-native-svg";
+import { scale } from "react-native-size-scaling";
+import { getPath, getPathUp } from "./svg/path";
+const { width: maxW } = Dimensions.get("window");
+const hasNotch =
+  Platform.OS === "ios" &&
+  !Platform.isPad &&
+  !Platform.isTVOS &&
+  (height === 780 ||
+    width === 780 ||
+    height === 812 ||
+    width === 812 ||
+    height === 844 ||
+    width === 844 ||
+    height === 852 ||
+    width === 852 ||
+    height === 896 ||
+    width === 896 ||
+    height === 926 ||
+    width === 926 ||
+    height === 932 ||
+    width === 932);
 export default function MapScreen(props) {
+    const SVG = Svg;
+    const PATH = Path;
+    const widths = null;
+  const [circleWidth, setCircleWidth] = useState(50);
+  const [bgColor, setBgcolor] = useState("white");
+  const [strokeColor, setStrokeColor] = useState("#DDDDDD");
+  const [strokeWidth, setStrokeWidth] = useState(0);
+  const [maxWidth, setMaxWidth] = useState(widths || maxW);
+  const [heights, setHeights] = useState(60);
+  useEffect(() => {
+    const { width: w } = Dimensions.get("window");
+    if (!widths) {
+      setMaxWidth(w);
+    }
+  }, [widths]);
+  const d = getPath(maxWidth, heights, circleWidth >= 50 ? circleWidth : 50);
     const {
         fetchAddressfromCoords,
         fetchDrivers,
@@ -69,7 +105,6 @@ export default function MapScreen(props) {
     const [datePickerOpen, setDatePickerOpen] = useState(false)
     const latitudeDelta = 0.0922;
     const longitudeDelta = 0.0421;
-
     const [allCarTypes, setAllCarTypes] = useState([]);
     const [freeCars, setFreeCars] = useState([]);
     const [pickerConfig, setPickerConfig] = useState({
@@ -84,6 +119,8 @@ export default function MapScreen(props) {
     const [bookLoading, setBookLoading] = useState(false);
     const [bookLaterLoading, setBookLaterLoading] = useState(false);
     const [initDate, setInitDate] = useState(new Date());
+    const [toairportSelected, setToairportSelected] = useState(true);
+    const [fromairportSelected, setFromairportSelected] = useState(false);
 
     const instructionInitData = {
         deliveryPerson: "",
@@ -148,7 +185,7 @@ export default function MapScreen(props) {
 
     useEffect(() => {
         if (settings && providers) {
-            let arr = [{ label: t('wallet'), value: 0, cat: 'wallet' }];
+            let arr = [{ label: t('cash'), value: 0, cat: 'cash' }];
             let val = 0;
             if (!settings.disable_online && providers && providers.length > 0) {
                 val++;
@@ -156,7 +193,7 @@ export default function MapScreen(props) {
             }
             if (!settings.disable_cash) {
                 val++;
-                arr.push({ label: t('cash'), value: val, cat: 'cash' });
+                arr.push({ label: t('wallet'), value: val, cat: 'wallet' });
             }
             setRadioProps(arr);
         }
@@ -474,12 +511,16 @@ export default function MapScreen(props) {
         }
     }
 
-    const selectCarType = (value, key) => {
+    const selectCarType = (value, key,_vl) => {
         let carTypes = allCarTypes;
         for (let i = 0; i < carTypes.length; i++) {
-            carTypes[i].active = false;
+            carTypes[i].active = _vl;
             if (carTypes[i].name == value.name) {
-                carTypes[i].active = true;
+                if (carTypes[i].active == _vl) {
+                    carTypes[i].active = !_vl;
+                  } else {
+                    carTypes[i].active = _vl;
+                  }
                 let instObj = { ...instructionData };
                 if (Array.isArray(carTypes[i].parcelTypes)) {
                     instObj.parcelTypeSelected = carTypes[i].parcelTypes[0];
@@ -616,9 +657,20 @@ export default function MapScreen(props) {
                 savedAddresses.push(allAddresses[key]);
             }
             if (selection == 'drop') {
-                props.navigation.navigate('Search', { locationType: "drop", addParam: savedAddresses });
+                props.navigation.navigate('Search', { 
+                    locationType: "drop", 
+                    addParam: savedAddresses,
+                    toairportSelected: toairportSelected ? true : false,
+                    fromairportSelected: fromairportSelected ? true : false, 
+            });
+            
             } else {
-                props.navigation.navigate('Search', { locationType: "pickup", addParam: savedAddresses });
+                props.navigation.navigate('Search', { 
+                    locationType: "pickup", 
+                    addParam: savedAddresses,
+                    toairportSelected: toairportSelected ? true : false,
+                    fromairportSelected: fromairportSelected ? true : false, 
+            });
             }
         } else {
             setDragging(0)
@@ -1044,7 +1096,7 @@ export default function MapScreen(props) {
     const  onTermLink  = async () => {
         Linking.openURL(settings.CompanyTermCondition).catch(err => console.error("Couldn't load page", err));
    }
-
+//console.log(tripdata);
     return (
         <View style={styles.container}>
             <StatusBar hidden={true} />
@@ -1108,8 +1160,8 @@ export default function MapScreen(props) {
                         <TouchableOpacity onPress={locateUser} style={styles.locateButtonStyle}>
                             <Icon
                                 name='gps-fixed'
-                                color={"#666699"}
-                                size={26}
+                                color={colors.BLUE}
+                                size={33}
                             />
                         </TouchableOpacity>
                     </View>
@@ -1120,7 +1172,7 @@ export default function MapScreen(props) {
                     </View>
                     : null}
             </View>
-            <View style={[styles.buttonBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+            {/* <View style={[styles.buttonBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
                 {bookLoading ?
                     null :
                     <Button
@@ -1142,10 +1194,82 @@ export default function MapScreen(props) {
                     buttonStyle={[styles.buttonStyle, { backgroundColor: MAIN_COLOR, width: bookLoading ? width : width / 2 }]}
                     containerStyle={[styles.buttonContainer, { width: bookLoading ? width : width / 2 }]}
                 />
-            </View>
+            </View> */}
             <View style={styles.menuIcon}>
                 <ImageBackground source={require('../../assets/images/white-grad6.png')} style={{ height: '100%', width: '100%' }}>
-                    <Text style={{ color: colors.HEADER, fontWeight: 'bold', fontSize: 20, alignSelf: 'center', marginTop: Platform.OS == 'android' ? (__DEV__ ? 20 : 40) : (hasNotch ? 48 : 20) }}>{t("book_ride")}</Text>
+                <View
+            style={{
+              width: width - 40,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop:
+                Platform.OS == "android"
+                  ? __DEV__
+                    ? 30
+                    : 30
+                  : hasNotch
+                  ? 38
+                  : 30,
+              marginLeft: 20,
+            }}
+          >
+            <Button
+              title={"To Airport"}
+              titleStyle={{
+                color: toairportSelected ? colors.WHITE : colors.BLUE,
+              }}
+              onPress={() => {
+                setToairportSelected(true), setFromairportSelected(false);
+              }}
+              icon={{
+                name: "airplane-takeoff",
+                type: "material-community",
+                size: 26,
+                color: toairportSelected ? colors.WHITE : colors.BLUE,
+              }}
+              buttonStyle={[
+                {
+                  backgroundColor: toairportSelected
+                    ? colors.BLUE
+                    : colors.WHITE,
+                  width: 150,
+                  borderWidth: 1,
+                  borderColor: colors.BLUE,
+                },
+              ]}
+            />
+            <Button
+              title={"From Airport"}
+              titleStyle={{
+                color: fromairportSelected ? colors.WHITE : colors.BLUE,
+              }}
+              onPress={() => {
+                setFromairportSelected(true), setToairportSelected(false);
+              }}
+              icon={{
+                name: "car",
+                type: "material-community",
+                size: 26,
+                color: fromairportSelected ? colors.WHITE : colors.BLUE,
+              }}
+              buttonStyle={[
+                {
+                  backgroundColor: fromairportSelected
+                    ? colors.BLUE
+                    : colors.WHITE,
+                  width: 150,
+                  borderWidth: 1,
+                  borderColor: colors.BLUE,
+                },
+              ]}
+            />
+          </View>
+                    <Text style={{ color: colors.BLUE, fontWeight: 'bold', fontSize: 22,textAlign:'center', marginTop: Platform.OS == 'android' ? (__DEV__ ? 10 : 10) : (hasNotch ? 10 : 10) }}>            
+                    {toairportSelected
+              ? "To Salt Lake City Airport"
+              : "From Salt Lake City Airport"}</Text>
                 </ImageBackground>
             </View>
 
@@ -1187,22 +1311,190 @@ export default function MapScreen(props) {
                 :null}
                 </View>
             :
-                <View style={[styles.addressBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-                    <View style={styles.ballandsquare}>
-                        <View style={styles.hbox1} /><View style={styles.hbox2} /><View style={styles.hbox3} />
+                // <View style={[styles.addressBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+                //     <View style={styles.ballandsquare}>
+                //         <View style={styles.hbox1} /><View style={styles.hbox2} /><View style={styles.hbox3} />
+                //     </View>
+                //     <View style={[styles.contentStyle, isRTL ? { paddingRight: 10 } : { paddingLeft: 10 }]}>
+                //         <TouchableOpacity onPress={() => tapAddress('pickup')} style={styles.addressStyle1}>
+                //             <Text numberOfLines={1} style={[styles.textStyle, tripdata.selected == 'pickup' ? { fontSize: 18 } : { fontSize: 14 }, { textAlign: isRTL ? "right" : "left" }]}>{tripdata.pickup && tripdata.pickup.add ? tripdata.pickup.add : t('map_screen_where_input_text')}</Text>
+                //         </TouchableOpacity>
+                //         <TouchableOpacity onPress={() => tapAddress('drop')} style={styles.addressStyle2}>
+                //             <Text numberOfLines={1} style={[styles.textStyle, tripdata.selected == 'drop' ? { fontSize: 18 } : { fontSize: 14 }, { textAlign: isRTL ? "right" : "left" }]}>{tripdata.drop && tripdata.drop.add ? tripdata.drop.add : t('map_screen_drop_input_text')}</Text>
+                //         </TouchableOpacity>
+                //     </View>
+                // </View>
+
+                <>
+                <View
+                  style={[
+                    styles.addressBar,
+                    { flexDirection: isRTL ? "row-reverse" : "row" },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.contentStyle,
+                      isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
+                    ]}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginTop: -8,
+                      }}
+                    >
+                      <Icon
+                        name={
+                          fromairportSelected
+                            ? "airplane-takeoff"
+                            : "map-marker-outline"
+                        }
+                        type="material-community"
+                        size={30}
+                        color={colors.BALANCE_GREEN}
+                        style={{
+                          marginRight: 10,
+                        }}
+                      />
+                      <TouchableOpacity
+                        onPress={() => tapAddress("pickup")}
+                        style={styles.addressStyle1}
+                      >
+                        <Text
+                          style={{
+                            color: colors.BLUE,
+                            fontFamily: "Uber Move",
+                            fontStyle: "normal",
+                            fontWeight: "bold",
+                            lineHeight: 24,
+                            fontSize: 18,
+                          }}
+                        >
+                          {fromairportSelected
+                            ? "Choose Airport Pickup"
+                            : "Pickup Address"}
+                        </Text>
+      
+                        {(fromairportSelected&&
+                        tripdata.pickup &&
+                        tripdata.pickup.source == "gps") ? (
+                          <Text
+                            style={[
+                              styles.textStyle,
+                              tripdata.selected == "pickup"
+                                ? { fontSize: 17 }
+                                : { fontSize: 17 },
+                              { textAlign: isRTL ? "right" : "left" },
+                            ]}
+                          >
+                            Select Airport Here ...
+                          </Text>
+                        ) : (
+                          <Text
+                            numberOfLines={1}
+                            style={[
+                              styles.textStyle,
+                              tripdata.selected == "pickup"
+                                ? { fontSize: 18 }
+                                : { fontSize: 16 },
+                              { textAlign: isRTL ? "right" : "left" },
+                            ]}
+                          >
+                            {tripdata.pickup && tripdata.pickup.add
+                              ? tripdata.pickup.add
+                              : ("Enter pickup Location")}
+                          </Text>
+                        )}
+                      </TouchableOpacity>
                     </View>
-                    <View style={[styles.contentStyle, isRTL ? { paddingRight: 10 } : { paddingLeft: 10 }]}>
-                        <TouchableOpacity onPress={() => tapAddress('pickup')} style={styles.addressStyle1}>
-                            <Text numberOfLines={1} style={[styles.textStyle, tripdata.selected == 'pickup' ? { fontSize: 18 } : { fontSize: 14 }, { textAlign: isRTL ? "right" : "left" }]}>{tripdata.pickup && tripdata.pickup.add ? tripdata.pickup.add : t('map_screen_where_input_text')}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => tapAddress('drop')} style={styles.addressStyle2}>
-                            <Text numberOfLines={1} style={[styles.textStyle, tripdata.selected == 'drop' ? { fontSize: 18 } : { fontSize: 14 }, { textAlign: isRTL ? "right" : "left" }]}>{tripdata.drop && tripdata.drop.add ? tripdata.drop.add : t('map_screen_drop_input_text')}</Text>
-                        </TouchableOpacity>
-                    </View>
+                  </View>
                 </View>
+                <View
+                  style={[
+                    styles.addressBar1,
+                    { flexDirection: isRTL ? "row-reverse" : "row" },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.contentStyle,
+                      isRTL ? { paddingRight: 10 } : { paddingLeft: 10 },
+                    ]}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginTop: -7,
+                      }}
+                    >
+                      <Icon
+                        name={toairportSelected ? "airplane-takeoff" : "magnify"}
+                        type="material-community"
+                        size={35}
+                        color={colors.BLUE}
+                        style={{
+                          marginRight: 10,
+                        }}
+                      />
+                      <TouchableOpacity
+                        onPress={() => tapAddress("drop")}
+                        style={styles.addressStyle2}
+                      >
+                        <Text
+                          style={{
+                            color: colors.BLUE,
+                            fontFamily: "Uber Move",
+                            fontStyle: "normal",
+                            fontWeight: "bold",
+                            lineHeight: 24,
+                            fontSize: 18,
+                          }}
+                        >
+                          {toairportSelected
+                            ? "Choose Airport Drop off"
+                            : "Drop off Address"}
+                        </Text>
+                        {toairportSelected &&
+                        tripdata.drop &&
+                        tripdata.drop.source == "init" ? (
+                          <Text
+                            style={[
+                              styles.textStyle,
+                              tripdata.selected == "pickup"
+                                ? { fontSize: 18 }
+                                : { fontSize: 16 },
+                              { textAlign: isRTL ? "right" : "left" },
+                            ]}
+                          >
+                            Select Airport Here ...
+                          </Text>
+                        ) : (
+                          <Text
+                            numberOfLines={1}
+                            style={[
+                              styles.textStyle,
+                              tripdata.selected == "drop"
+                                ? { fontSize: 18 }
+                                : { fontSize: 16 },
+                              { textAlign: isRTL ? "right" : "left" },
+                            ]}
+                          >
+                            {tripdata.drop && tripdata.drop.add
+                              ? tripdata.drop.add
+                              : "Where are you going ?"}
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </>
             }
 
-            {settings && settings.horizontal_view ?
+            {/* {settings && settings.horizontal_view ?
 
                 <View style={styles.fullCarView}>
                     <ScrollView horizontal={true} style={styles.fullCarScroller} showsHorizontalScrollIndicator={false}>
@@ -1232,9 +1524,501 @@ export default function MapScreen(props) {
                 >
                     <View style={[styles.bar, { backgroundColor: MAIN_COLOR }]} ></View>
                 </View>
-            }
+            } */}
 
-            {isEditing == true && settings && !settings.horizontal_view ?
+
+      {/* new update choosing car design */}
+
+      {isEditing == true && settings && !settings.horizontal_view ? (
+        <View
+          style={[
+            styles.fullCarView,
+            {
+              paddingTop: 0,
+              alignItems: "center",
+              flexDirection: "column",
+              backgroundColor:
+                isEditing == true ? colors.TRANSPARENT : colors.TRANSPARENT,
+              height:
+                isEditing == true
+                  ? height >= 600
+                    ? height / 2.4
+                    : height / 2.12
+                  : height >= 600
+                  ? height / 2.4
+                  : height / 2.12,
+            },
+          ]}
+          onTouchStart={(e) => setTouchY(e.nativeEvent.pageY)}
+          onTouchEnd={(e) => {
+            if (touchY - e.nativeEvent.pageY > 10 && !isEditing)
+              setIsEditing(!isEditing);
+            if (e.nativeEvent.pageY - touchY > 10 && isEditing)
+              setIsEditing(!isEditing);
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              position: "absolute",
+              bottom: height >= 600 ? height / 2.73 : height / 2.4,
+              zIndex: 20,
+              width: height / 13,
+              height: height / 13,
+              borderRadius: 80 / 2,
+              backgroundColor: colors.BLUE,
+              borderWidth: 3,
+              borderColor: colors.WHITE,
+            }}
+          >
+            <TouchableOpacity onPress={() => tapAddress("drop")}>
+              <Text
+                style={{
+                  fontFamily: "Lucida Console",
+                  fontSize: 28,
+                  fontWeight: "bold",
+                  color: colors.WHITE,
+                }}
+              >
+                {"GO"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text
+            style={{
+              fontSize: 22,
+              fontWeight: "bold",
+              color: colors.BLACK,
+              position: "absolute",
+              zIndex: 20,
+              top: 10,
+              left: 20,
+            }}
+          >
+            {"Choose car"}
+          </Text>
+          <Text
+            onPress={() => {
+              setIsEditing(false);
+            }}
+            style={{
+              fontSize: 22,
+              fontWeight: "bold",
+              textDecorationLine: "underline",
+              color: colors.BLUE,
+              position: "absolute",
+              zIndex: 20,
+              top: 10,
+              right: 20,
+            }}
+          >
+            {"Hide cars"}
+          </Text>
+          <SVG
+            width={maxWidth}
+            height={scale(heights)}
+            style={{ elevation: 10, zIndex: 10 }}
+          >
+            <PATH
+              fill={bgColor}
+              stroke={strokeColor}
+              strokeWidth={strokeWidth}
+              {...{ d }}
+            ></PATH>
+          </SVG>
+
+          <Animated.View
+            style={{
+              // alignItems: "center",
+              backgroundColor: colors.WHITE,
+              flex: animation,
+              paddingTop: 10,
+            }}
+          >
+            <ScrollView
+              horizontal={true}
+              style={styles.fullCarScroller}
+              showsHorizontalScrollIndicator={false}
+            >
+              {allCarTypes.map((prop, key) => {
+                return (
+                  <View
+                    key={key}
+                    style={{
+                      borderWidth: prop.active == true ? 3 : 3,
+                      borderColor: prop.active
+                        ? colors.BALANCE_GREEN
+                        : colors.BLUE,
+
+                      borderRadius: 12,
+                      marginRight: 5,
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={[styles.cabDivStyle]}
+                      onPress={() => {
+                        selectCarType(prop, key, prop.active);
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          width: "100%",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <View
+                          style={{ flexDirection: "row", alignItems: "center" }}
+                        >
+                          {prop.active ? (
+                            <Icon
+                              name="people"
+                              type="ionicon"
+                              color={colors.GREEN_DOT}
+                            />
+                          ) : (
+                            <Icon
+                              name="people"
+                              type="ionicon"
+                              color={colors.BLUE}
+                            />
+                          )}
+                          <Text
+                            style={{
+                              color: colors.BLACK,
+                              fontFamily: "Uber Move",
+                              fontSize: 18,
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {prop.name === "MiniVan" && "6"}
+                            {prop.name === "Full Size SUV" && "6"}
+                            {prop.name === "Full Size Van" && "10"}
+                          </Text>
+                        </View>
+
+                        <CheckBox
+                          containerStyle={{
+                            padding: 0,
+                            alignSelf: "flex-end",
+                            height: height >= 600 ? 23 : 15,
+                          }}
+                          checkedColor={colors.BLUE}
+                          uncheckedColor={colors.BLUE}
+                          checked={prop.active}
+                          checkedIcon={
+                            <Icon
+                              name="checkbox-sharp"
+                              type="ionicon"
+                              color={colors.GREEN_DOT}
+                              size={height >= 600 ? 20 : 15}
+                            />
+                          }
+                          uncheckedIcon={
+                            <Icon
+                              name="square-outline"
+                              type="ionicon"
+                              color={colors.BLUE}
+                              size={height >= 600 ? 20 : 15}
+                            />
+                          }
+                        />
+                      </View>
+
+                      <View
+                        style={[
+                          styles.imageStyle,
+                          {
+                            width: prop.active ? width / 4.5 : width / 4.5,
+                            height: prop.active ? height / 18 : height / 18,
+                          },
+                        ]}
+                      >
+                        <Image
+                          resizeMode="contain"
+                          source={
+                            prop.image
+                              ? { uri: prop.image }
+                              : require("../../assets/images/microBlackCar.png")
+                          }
+                          style={styles.imageStyle1}
+                        />
+                      </View>
+                      <View style={styles.textViewStyle}>
+                        <Text style={styles.text1}>{prop.name}</Text>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            marginLeft: 10,
+                          }}
+                        >
+                          {isRTL ? null : settings.swipe_symbol === false ? (
+                            <Text
+                              style={[
+                                styles.text2,
+                                { fontWeight: "bold", color: colors.MAP_TEXT },
+                              ]}
+                            >
+                              {settings.symbol}
+                              {prop.min_fare} /{" "}
+                              {settings.convert_to_mile ? "min" : t("km")}{" "}
+                            </Text>
+                          ) : (
+                            <Text
+                              style={[
+                                styles.text2,
+                                { fontWeight: "bold", color: colors.MAP_TEXT },
+                              ]}
+                            >
+                              {prop.min_fare}
+                              {settings.symbol} /{" "}
+                              {settings.convert_to_mile ? t("mile") : t("km")}{" "}
+                            </Text>
+                          )}
+
+                          {isRTL ? (
+                            settings.swipe_symbol === false ? (
+                              <Text
+                                style={[
+                                  styles.text2,
+                                  {
+                                    fontWeight: "bold",
+                                    color: colors.MAP_TEXT,
+                                  },
+                                ]}
+                              >
+                                {settings.symbol}
+                                {prop.min_fare} /{" "}
+                                {settings.convert_to_mile ? t("mile") : t("km")}{" "}
+                              </Text>
+                            ) : (
+                              <Text
+                                style={[
+                                  styles.text2,
+                                  {
+                                    fontWeight: "bold",
+                                    color: colors.MAP_TEXT,
+                                  },
+                                ]}
+                              >
+                                {prop.min_fare}
+                                {settings.symbol} /
+                                {settings.convert_to_mile ? t("mile") : t("km")}{" "}
+                              </Text>
+                            )
+                          ) : null}
+                        </View>
+                        <View>
+                          {prop.minTime != "" ? (
+                            <Text style={[styles.text2, { color: "green" }]}>
+                              Online
+                            </Text>
+                          ) : (
+                            <Text style={[styles.text2, { color: "#052d5e" }]}>
+                              Offline
+                            </Text>
+                          )}
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
+            </ScrollView>
+          </Animated.View>
+          <View
+            style={[
+              styles.buttonBar,
+              { padding: 20, justifyContent: "space-between" },
+            ]}
+          >
+            {bookLoading ? null : (
+              <Button
+                title={"Schedule SLC Airport Shuttle Now"}
+                loading={bookLaterLoading}
+                loadingProps={{ size: "large", color: colors.WHITE }}
+                titleStyle={styles.buttonTitleStyle}
+                onPress={onPressBookLater}
+                icon={{
+                  name: "car-clock",
+                  type: "material-community",
+                  size: 22,
+                  color: "white",
+                  marginLeft: 10,
+                }}
+                iconRight
+                buttonStyle={[
+                  styles.buttonStyle,
+                  {
+                    backgroundColor: colors.BLUE,
+                    marginRight: bookLaterLoading ? 0 : 0,
+                    marginLeft: bookLaterLoading ? 0 : 0,
+                    paddingRight: 0,
+                    width: bookLaterLoading ? width + 20 : width / 1.07,
+                    height: bookLaterLoading ? 50 : 50,
+                    borderRadius: bookLaterLoading ? 0 : 25,
+                    marginBottom: bookLaterLoading ? -20 : 0,
+                  },
+                ]}
+                containerStyle={[
+                  styles.buttonContainer,
+                  {
+                    marginLeft: bookLaterLoading ? 0 : 15,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  },
+                ]}
+              />
+            )}
+
+            {/* <Button
+              title={t("book_now_button")}
+              loading={bookLoading}
+              loadingProps={{ size: "large", color: colors.BLUE }}
+              type="outline"
+              titleStyle={{
+                color: colors.BLUE,
+                fontFamily: "Uber Move",
+                fontStyle: "normal",
+                fontWeight: "700",
+                lineHeight: 24,
+                fontSize: 18,
+              }}
+              onPress={onPressBook}
+              buttonStyle={[
+                styles.buttonStyle,
+                {
+                  width: bookLoading ? width - 49 : width / 2.3,
+                  marginLeft: bookLaterLoading ? 22 : 0,
+                },
+              ]}
+              containerStyle={[
+                {
+                  height: 50,
+                },
+              ]}
+            /> */}
+          </View>
+        </View>
+      ) : (
+        <View
+          style={[
+            {
+              position: "absolute",
+              bottom: 0,
+              width: width,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              height: height >= 600 ? height / 9 : height / 2.1,
+              paddingTop: height <= 600 ? 190 : 20,
+              alignItems: "center",
+              flexDirection: "column",
+              backgroundColor:
+                isEditing == true ? colors.TRANSPARENT : colors.TRANSPARENT,
+            },
+          ]}
+          onTouchStart={(e) => setTouchY(e.nativeEvent.pageY)}
+          onTouchEnd={(e) => {
+            if (touchY - e.nativeEvent.pageY > 10 && !isEditing)
+              setIsEditing(!isEditing);
+            if (e.nativeEvent.pageY - touchY > 10 && isEditing)
+              setIsEditing(!isEditing);
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              position: "absolute",
+              bottom: height <= 600 ? height / 10 : height / 30,
+              zIndex: 20,
+              width: height / 13,
+              height: height / 13,
+              borderRadius: 80 / 2,
+              backgroundColor: colors.BLUE,
+              borderWidth: 3,
+              borderColor: colors.WHITE,
+            }}
+          >
+            <TouchableOpacity onPress={() => tapAddress("drop")}>
+              <Text
+                style={{
+                  fontFamily: "Lucida Console",
+                  fontSize: 28,
+                  fontWeight: "bold",
+                  color: colors.WHITE,
+                }}
+              >
+                {"GO"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <Text
+            style={{
+              fontSize: 22,
+              fontWeight: "bold",
+              color: colors.BLACK,
+              position: "absolute",
+              zIndex: 20,
+              top: height <= 600 ? 190 : 30,
+              left: 20,
+            }}
+          >
+            {"Choose car"}
+          </Text>
+          <Text
+            onPress={() => {
+              setIsEditing(true);
+            }}
+            style={{
+              fontSize: 22,
+              fontWeight: "bold",
+              textDecorationLine: "underline",
+              color: colors.BLUE,
+              position: "absolute",
+              zIndex: 20,
+              top: height <= 600 ? 190 : 30,
+              right: 20,
+            }}
+          >
+            {"See cars"}
+          </Text>
+          <SVG
+            width={maxWidth}
+            height={scale(heights)}
+            style={{ elevation: 10, zIndex: 10 }}
+          >
+            <PATH
+              fill={bgColor}
+              stroke={strokeColor}
+              strokeWidth={strokeWidth}
+              {...{ d }}
+            ></PATH>
+          </SVG>
+          <Animated.View
+            style={{
+              backgroundColor: colors.WHITE,
+              paddingTop: 0,
+              width: "100%",
+            }}
+          ></Animated.View>
+          <View
+            style={[
+              styles.buttonBar,
+              {
+                padding: 20,
+                justifyContent: "space-between",
+                marginBottom: 50,
+              },
+            ]}
+          ></View>
+        </View>
+      )}
+            {/* {isEditing == true && settings && !settings.horizontal_view ?
                 <View style={[styles.carShow, { paddingTop: 10, height: 250, minHeight: 80, alignItems: 'center', flexDirection: 'column', backgroundColor: isEditing == true ? colors.BACKGROUND_PRIMARY : colors.WHITE }]}
                     onTouchStart={e => setTouchY(e.nativeEvent.pageY)}
                     onTouchEnd={e => {
@@ -1266,7 +2050,7 @@ export default function MapScreen(props) {
                         }
                     </Animated.View>
                 </View>
-                : null}
+                : null} */}
 
             <OptionModal
                 settings={settings}
@@ -1299,20 +2083,11 @@ export default function MapScreen(props) {
                 auth={auth}
                 bookModelLoading={bookModelLoading}
             />
-            {/* <DateTimePickerModal
-                date={pickerConfig.selectedDateTime}
-                minimumDate={new Date()}
-                isVisible={pickerConfig.dateModalOpen}
-                mode={pickerConfig.dateMode}
-                onConfirm={handleDateConfirm}
-                onCancel={hideDatePicker}
-            /> */}
               <DatePicker
         modal
-        title={t("select_date")}
+        title={("Select Date")}
         confirmText={t('confirm')}
         cancelText={t('cancel')}
-        // locale={auth.profile && auth.profile.lang && auth.profile.lang.dateLocale ? auth.profile.lang.dateLocale : null}
         open={datePickerOpen}
         date={initDate}
         onConfirm={handleDateConfirm}
@@ -1419,8 +2194,8 @@ const styles = StyleSheet.create({
     },
     locationButtonView: {
         position: 'absolute',
-        height: Platform.OS == 'ios' ? 55 : 42,
-        width: Platform.OS == 'ios' ? 55 : 42,
+        height: Platform.OS == 'ios' ? 55 : 50,
+        width: Platform.OS == 'ios' ? 55 : 50,
         bottom: 180,
         right: 10,
         backgroundColor: '#fff',
@@ -1434,8 +2209,8 @@ const styles = StyleSheet.create({
         },
     },
     locateButtonStyle: {
-        height: Platform.OS == 'ios' ? 55 : 42,
-        width: Platform.OS == 'ios' ? 55 : 42,
+        height: Platform.OS == 'ios' ? 55 : 50,
+        width: Platform.OS == 'ios' ? 55 : 50,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -1546,6 +2321,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'center',
+        
     },
     text1: {
         fontFamily: 'Roboto-Bold',
@@ -1640,5 +2416,265 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: '400',
         color: colors.BLACK
-    }
+    },
+    fullCarView: {
+        position: "absolute",
+        bottom: 0,
+        width: width,
+        height: height >= 600 ? height / 2.4 : height / 2.1,
+      },
+      carShow: {
+        width: "100%",
+        justifyContent: "center",
+        backgroundColor: colors.BACKGROUND_PRIMARY,
+        position: "absolute",
+        bottom: 0,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        alignItems: "center",
+        elevation: 10,
+      },
+      bar: {
+        width: 100,
+        height: 6,
+        backgroundColor: colors.BLUE,
+        borderRadius: 5,
+      },
+    
+      carContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: width - 30,
+        height: 70,
+        marginBottom: 5,
+        marginLeft: 15,
+        marginRight: 15,
+        backgroundColor: colors.WHITE,
+        borderRadius: 6,
+        borderWidth: 1,
+        borderColor: colors.BORDER_BACKGROUND,
+        elevation: 3,
+      },
+    
+      buttonBar: {
+        height: 70,
+        alignItems: "center",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: width + 20,
+        marginLeft: -25,
+        backgroundColor: colors.WHITE,
+      },
+      buttonContainer: {
+        height: 80,
+        borderColor: colors.BLUE,
+        marginTop: 10,
+        marginBottom: 10,
+        justifyContent: "center",
+      },
+      buttonStyle: {
+        borderColor: colors.BLUE,
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      buttonTitleStyle: {
+        color: colors.WHITE,
+        fontFamily: "Uber Move",
+        fontStyle: "normal",
+        fontWeight: "700",
+        lineHeight: 24,
+        fontSize: 18,
+        marginLeft: 5,
+      },
+      locationButtonView: {
+        position: "absolute",
+        height: Platform.OS == "ios" ? 45 : 50,
+        width: Platform.OS == "ios" ? 45 : 50,
+        marginBottom: 35,
+        right: 10,
+        backgroundColor: "#fff",
+        borderRadius: Platform.OS == "ios" ? 30 : 12,
+        elevation: 15,
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        shadowOffset: {
+          height: 0,
+          width: 0,
+        },
+      },
+      locateButtonStyle: {
+        height: Platform.OS == "ios" ? 45 : 50,
+        width: Platform.OS == "ios" ? 45 : 50,
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      addressBar: {
+        position: "absolute",
+        marginHorizontal: 20,
+        top: Platform.OS == "android" ? (__DEV__ ? 125 : 125) : hasNotch ? 95 : 95,
+        height: 70,
+        width: width - 40,
+        flexDirection: "row",
+        backgroundColor: colors.WHITE,
+        paddingLeft: 10,
+        paddingRight: 10,
+        shadowColor: "black",
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        borderRadius: 12,
+        elevation: 20,
+      },
+    
+      addressBar1: {
+        position: "absolute",
+        marginHorizontal: 20,
+        top:
+          Platform.OS == "android" ? (__DEV__ ? 205 : 205) : hasNotch ? 175 : 175,
+        height: 70,
+        width: width - 40,
+        flexDirection: "row",
+        backgroundColor: colors.WHITE,
+        paddingLeft: 10,
+        paddingRight: 10,
+        shadowColor: "black",
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        borderRadius: 12,
+        elevation: 10,
+      },
+    
+      ballandsquare: {
+        width: 12,
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      hbox1: {
+        height: 12,
+        width: 12,
+        borderRadius: 6,
+        backgroundColor: colors.GREEN_DOT,
+      },
+      hbox2: {
+        height: 36,
+        width: 1,
+        backgroundColor: colors.MAP_TEXT,
+      },
+      hbox3: {
+        height: 12,
+        width: 12,
+        backgroundColor: colors.DULL_RED,
+      },
+      contentStyle: {
+        justifyContent: "center",
+        width: width - 74,
+      },
+      addressStyle1: {
+        height: 60,
+        width: width - 120,
+        justifyContent: "center",
+        paddingTop: 2,
+      },
+      addressStyle2: {
+        height: 60,
+        width: width - 120,
+        justifyContent: "center",
+        paddingTop: -4,
+      },
+      textStyle: {
+        color: colors.BLACK,
+        fontFamily: "Uber Move",
+        fontStyle: "normal",
+        fontWeight: "700",
+        lineHeight: 24,
+        fontSize: 15,
+      },
+      fullCarScroller: {
+        width: width - 15,
+        marginLeft: 15,
+        marginTop: 10,
+      },
+      cabDivStyle: {
+        width: (width - 0) / 3,
+        height: "100%",
+        alignItems: "flex-start",
+        paddingHorizontal: 10,
+      },
+    
+      imageStyle1: {
+        width: "100%",
+        height: "100%",
+      },
+      textViewStyle: {
+        height: height / 14.9,
+        alignItems: "center",
+        flexDirection: "column",
+      },
+      text1: {
+        fontFamily: "Uber Move",
+        fontSize: height >= 600 ? 13 : 10,
+        fontWeight: "900",
+        color: colors.BLACK,
+      },
+      text2: {
+        fontFamily: "Uber Move",
+        fontSize: height >= 600 ? 12 : 9,
+        fontWeight: "900",
+        color: colors.BORDER_TEXT,
+      },
+        bodyContent: {
+    flex: 1,
+  },
+  titleStyles: {
+    fontSize: 14,
+    color: colors.HEADER,
+    paddingBottom: 2,
+    fontWeight: "bold",
+  },
+  subtitleStyle: {
+    fontSize: 12,
+    color: colors.BALANCE_ADD,
+    lineHeight: 16,
+    paddingBottom: 2,
+  },
+  priceStyle: {
+    color: colors.BALANCE_ADD,
+    fontWeight: "bold",
+    fontSize: 12,
+    lineHeight: 14,
+  },
+  cardItemImagePlace: {
+    width: 60,
+    height: 50,
+    margin: 10,
+  },
+  alrt1: {
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  alrt: {
+    width: width - 40,
+    height: 60,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: colors.BORDER_BACKGROUND,
+    borderRadius: 5,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  checkButtonStyle: {
+    backgroundColor: colors.DRIVER_TRIPS_BUTTON,
+    width: 100,
+    height: 40,
+    borderColor: colors.TRANSPARENT,
+    borderWidth: 0,
+    borderRadius: 5,
+  },
+  checkButtonTitle: {
+    fontFamily: "Roboto-Bold",
+    fontSize: 12,
+    fontWeight: "400",
+    color: colors.BLACK,
+  },
 });

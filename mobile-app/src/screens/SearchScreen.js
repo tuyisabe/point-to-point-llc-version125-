@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from 'react-native-elements';
+import { Dropdown } from "react-native-element-dropdown";
 import { colors } from '../common/theme';
 import {
   View,
@@ -27,7 +28,34 @@ var { width,height } = Dimensions.get('window');
 import {  StackActions } from '@react-navigation/native';
 import { Entypo, MaterialIcons, AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Button } from 'react-native-elements';
-
+const datas = [
+  {
+    add: "Kigali international airport",
+    lat: -1.963042,
+    lng: 30.135014,
+  },
+  {
+    add: "Atlantic Aviation SLC",
+    lat: 40.77795,
+    lng: 111.95812,
+  },
+  {
+    add: "Salt Lake City International Airport (SLC)",
+    lat: 40.78739,
+    lng: 111.98538,
+  },
+  {
+    add: "Signature Flight Support SLC",
+    lat: 40.77584,
+    lng: 111.95785,
+  },
+  {
+    add: "TAC Air SLC",
+    lat: 40.77584,
+    lng: 111.95785,
+  },
+];
+const appcat = "taxi";
 const hasNotch =
   Platform.OS === "ios" &&
   !Platform.isPad &&
@@ -57,6 +85,8 @@ export default function SearchScreen(props) {
     editAddress
   } = api;
   const dispatch = useDispatch();
+  const [searchKeywordPickup, setSearchKeywordPickup] = useState('');
+  const [searchKeywordDrop, setSearchKeywordDrop] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isShowingResults, setIsShowingResults] = useState(false);
   const tripdata = useSelector(state => state.tripdata);
@@ -67,6 +97,8 @@ export default function SearchScreen(props) {
   const settingsdata = useSelector(state => state.settingsdata.settings);
   const [settings, setSettings] = useState({});
   const [selLocations, setSelLocations] = useState([]);
+  const [selLocationsPickup, setSelLocationsPickup] = useState([]);
+  const [selLocationsDrop, setSelLocationsDrop] = useState([]);
   const auth = useSelector(state => state.auth);
   const [profile, setProfile] = useState();
   const [modalVisible, setModalVisible] = useState(false);
@@ -75,8 +107,16 @@ export default function SearchScreen(props) {
   const [searchKeyword2, setSearchKeyword2] = useState('');
   const [addressName,setAddressName] = useState('');
   const [address,setAddress] = useState('');
+  const { fromairportSelected } = props.route.params;
+  const { toairportSelected } = props.route.params;
   const addressdata = useSelector(state => state.addressdata);
   const [saveNameValue, setSaveNameValue] = useState('');
+  let [locationTypes, setLocationTypes] = useState(locationType);
+  const [fromairportSelect, setFromairportSelect] = useState(fromairportSelected);
+  const [toairportSelect, setToairportSelect] = useState(toairportSelected);
+  const [hideDrop, setHideDrop] = useState(false);
+  const [add, setAdd] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
   const saveName = [
     {value: t('home'), lable: t('home'), icon: 'home-outline', type: 'material-community'},
     {value: t('work'), lable: t('work'), icon: 'work-outline', type: 'materialIcons'},
@@ -111,16 +151,8 @@ export default function SearchScreen(props) {
     }
   }, [settingsdata]);
 
-  // useEffect(() => {
-  //   if (addParam.length <= 5) {
-  //     setSavedAddresses(addParam);
-  //   } else {
-  //     setSavedAddresses(addParam.sort((a, b) => (a.count < b.count)).slice(0, 5));
-  //   }
-  // }, []);
-
   useEffect(() => {
-    if (tripdata.drop && locationType == 'drop') {
+    if (tripdata.drop && locationTypes == 'drop' || tripdata.drop && locationTypes == 'pickup') {
       let arr = []
       if (tripdata.drop && tripdata.drop.waypoints) {
         const waypoints = tripdata.drop.waypoints;
@@ -136,9 +168,65 @@ export default function SearchScreen(props) {
           source: tripdata.drop.source
         });
       }
-      setSelLocations(arr);
+      setSelLocationsDrop(arr);
     }
-  }, [locationType, tripdata.drop]);
+  }, [locationTypes, tripdata.drop]);
+
+  useEffect(() => {
+    if (
+      (tripdata.pickup && locationTypes == "pickup") ||
+      (tripdata.drop && locationTypes == "drop")
+    ) {
+      let arr1 = [];
+      if (tripdata.pickup && tripdata.pickup.waypoints) {
+        const waypoints1 = tripdata.pickup.waypoints;
+        for (let i = 0; i < waypoints1.length; i++) {
+          arr1.push(waypoints1[i]);
+        }
+      }
+      if (tripdata.pickup.add) {
+        arr1.push({
+          lat: tripdata.pickup.lat,
+          lng: tripdata.pickup.lng,
+          add: tripdata.pickup.add,
+          source: tripdata.pickup.source,
+        });
+      }
+      setSelLocationsPickup(arr1);
+    }
+  }, [locationTypes, tripdata.pickup]);
+
+  const searchLocationDrop = async (text) => {
+    setSearchKeywordDrop(text);
+
+    if (text.length > (settings.AllowCriticalEditsAdmin ? 3 : 2)) {
+      const res = await fetchPlacesAutocomplete(text);
+      if (res) {
+        setSearchResults(res);
+        setIsShowingResults(true);
+      }
+    }
+  };
+
+  const searchLocationPickup = async (text) => {
+    setSearchKeywordPickup(text);
+
+    if (text.length > (settings.AllowCriticalEditsAdmin ? 3 : 5)) {
+      const res = await fetchPlacesAutocomplete(text);
+      if (res) {
+        setSearchResults(res);
+        setIsShowingResults(true);
+      }
+    }
+  };
+  
+  const changepickup = () => {
+    setLocationTypes("pickup");
+  };
+
+  const changedrop = () => {
+    setLocationTypes("drop");
+  };
 
   const searchLocation = async (text) => {
     setSearchKeyword(text);
@@ -151,102 +239,224 @@ export default function SearchScreen(props) {
     }
   };
 
-  const updateLocation = (data) => {
-    setModalVisible(false);
+  const updateSelectLocation = (data) => {
+    if (data.lat && data.lng) {
+      if (locationTypes == "pickup") {
+        dispatch(
+          updateTripPickup({
+            lat: data.lat,
+            lng: data.lng,
+            add: data.add,
+            source: "search",
+          })
+        );
+        if (appcat == "taxi") {
+          setSelLocationsPickup(searchKeywordPickup);
+        }
+      } else {
+        dispatch(
+          updateTripDrop({
+            lat: data.lat,
+            lng: data.lng,
+            add: data.add,
+            source: "search1",
+          })
+        );
+        props.navigation.pop();
+      }
+    }
+  };
+
+  const updateLocation = (data, data1) => {
     setLoading(true);
-    setSearchKeyword(checkSearchPhrase(data.description));
+    appcat == "taxi"
+      ? setSearchKeywordDrop("") && setSearchKeywordPickup("")
+      : setSearchKeywordDrop(data.description) &&
+        setSearchKeywordPickup(data1.description);
     setIsShowingResults(false);
+
     if (data.place_id) {
       fetchCoordsfromPlace(data.place_id).then((res) => {
         if (res && res.lat) {
-          if (locationType == 'pickup') {
-            dispatch(updateTripPickup({
-              lat: res.lat,
-              lng: res.lng,
-              add: data.description,
-              source: 'search'
-            }));
-            if (appConsts.hasMultiDrop) {
-              props.navigation.dispatch(StackActions.pop(1));
+          if (locationTypes == "pickup") {
+            dispatch(
+              updateTripPickup({
+                lat: res.lat,
+                lng: res.lng,
+                add: data.description,
+                source: "search",
+              })
+            );
+            if (appcat == "taxi") {
+              //props.navigation.pop();
+              setSelLocationsPickup(searchKeywordPickup);
+              setHideDrop(false);
             }
           } else {
-            if (appConsts.hasMultiDrop) {
-              let arr = selLocations;
-              arr.push({
+            dispatch(
+              updateTripDrop({
                 lat: res.lat,
                 lng: res.lng,
                 add: data.description,
-                source: 'search'
-              });
-              Keyboard.dismiss();
-              setSelLocations(arr);
-            } else {
-              dispatch(updateTripDrop({
-                lat: res.lat,
-                lng: res.lng,
-                add: data.description,
-                source: 'search'
-              }));
+                source: "search1",
+              })
+            );
+            if (appcat == "taxi") {
+              props.navigation.pop();
             }
           }
           setLoading(false);
-          if (!appConsts.hasMultiDrop) {
-            props.navigation.dispatch(StackActions.pop(1));
+          if (appcat == "delivery") {
+            props.navigation.pop();
           }
         } else {
-          Alert.alert(t('alert'), t('place_to_coords_error'));
+          Alert.alert(t("alert"), t("place_to_coords_error"));
         }
       });
     } else {
       if (data.description) {
-        if (locationType == 'pickup') {
-          dispatch(updateTripPickup({
-            lat: data.lat,
-            lng: data.lng,
-            add: data.description,
-            source: 'search'
-          }));
-          if (appConsts.hasMultiDrop) {
-            props.navigation.dispatch(StackActions.pop(1));
-          }
-        } else {
-          if (appConsts.hasMultiDrop) {
-            let arr = [...selLocations];
-            let notFound = true;
-            for (let i = 0; i < arr.length; i++) {
-              if (arr[i].add == data.description) {
-                notFound = false;
-                break;
-              }
-            }
-            if (notFound) {
-              let entry = {
-                lat: data.lat,
-                lng: data.lng,
-                add: data.description,
-                source: 'search'
-              };
-              arr.push(entry);
-            }
-            Keyboard.dismiss();
-            setSelLocations(arr);
-          } else {
-            dispatch(updateTripDrop({
+        if (locationTypes == "pickup") {
+          dispatch(
+            updateTripPickup({
               lat: data.lat,
               lng: data.lng,
               add: data.description,
-              source: 'search'
-            }));
+              source: "search",
+            })
+          );
+          if (appcat == "taxi") {
+            //props.navigation.pop();
+            setSelLocationsPickup(searchKeywordPickup);
+            setHideDrop(false);
           }
-
+        } else {
+          if (appcat == "taxi") {
+            dispatch(
+              updateTripDrop({
+                lat: data.lat,
+                lng: data.lng,
+                add: data.description,
+                source: "search1",
+              })
+            );
+            if (appcat == "taxi") {
+              props.navigation.pop();
+            }
+          } else {
+            dispatch(
+              updateTripDrop({
+                lat: data.lat,
+                lng: data.lng,
+                add: data.description,
+                source: "search1",
+              })
+            );
+          }
         }
         setLoading(false);
-        if (!appConsts.hasMultiDrop) {
-          props.navigation.dispatch(StackActions.pop(1));
+        if (appcat == "delivery") {
+          props.navigation.pop();
         }
       }
     }
-  }
+  };
+
+  // const updateLocation = (data) => {
+  //   setModalVisible(false);
+  //   setLoading(true);
+  //   setSearchKeyword(checkSearchPhrase(data.description));
+  //   setIsShowingResults(false);
+  //   if (data.place_id) {
+  //     fetchCoordsfromPlace(data.place_id).then((res) => {
+  //       if (res && res.lat) {
+  //         if (locationType == 'pickup') {
+  //           dispatch(updateTripPickup({
+  //             lat: res.lat,
+  //             lng: res.lng,
+  //             add: data.description,
+  //             source: 'search'
+  //           }));
+  //           if (appConsts.hasMultiDrop) {
+  //             props.navigation.dispatch(StackActions.pop(1));
+  //           }
+  //         } else {
+  //           if (appConsts.hasMultiDrop) {
+  //             let arr = selLocations;
+  //             arr.push({
+  //               lat: res.lat,
+  //               lng: res.lng,
+  //               add: data.description,
+  //               source: 'search'
+  //             });
+  //             Keyboard.dismiss();
+  //             setSelLocations(arr);
+  //           } else {
+  //             dispatch(updateTripDrop({
+  //               lat: res.lat,
+  //               lng: res.lng,
+  //               add: data.description,
+  //               source: 'search'
+  //             }));
+  //           }
+  //         }
+  //         setLoading(false);
+  //         if (!appConsts.hasMultiDrop) {
+  //           props.navigation.dispatch(StackActions.pop(1));
+  //         }
+  //       } else {
+  //         Alert.alert(t('alert'), t('place_to_coords_error'));
+  //       }
+  //     });
+  //   } else {
+  //     if (data.description) {
+  //       if (locationType == 'pickup') {
+  //         dispatch(updateTripPickup({
+  //           lat: data.lat,
+  //           lng: data.lng,
+  //           add: data.description,
+  //           source: 'search'
+  //         }));
+  //         if (appConsts.hasMultiDrop) {
+  //           props.navigation.dispatch(StackActions.pop(1));
+  //         }
+  //       } else {
+  //         if (appConsts.hasMultiDrop) {
+  //           let arr = [...selLocations];
+  //           let notFound = true;
+  //           for (let i = 0; i < arr.length; i++) {
+  //             if (arr[i].add == data.description) {
+  //               notFound = false;
+  //               break;
+  //             }
+  //           }
+  //           if (notFound) {
+  //             let entry = {
+  //               lat: data.lat,
+  //               lng: data.lng,
+  //               add: data.description,
+  //               source: 'search'
+  //             };
+  //             arr.push(entry);
+  //           }
+  //           Keyboard.dismiss();
+  //           setSelLocations(arr);
+  //         } else {
+  //           dispatch(updateTripDrop({
+  //             lat: data.lat,
+  //             lng: data.lng,
+  //             add: data.description,
+  //             source: 'search'
+  //           }));
+  //         }
+
+  //       }
+  //       setLoading(false);
+  //       if (!appConsts.hasMultiDrop) {
+  //         props.navigation.dispatch(StackActions.pop(1));
+  //       }
+  //     }
+  //   }
+  // }
 
   const searchSaveLocation = async (text) => {
     setSearchKeyword2(text);
@@ -259,26 +469,6 @@ export default function SearchScreen(props) {
     }
   };
 
-  useEffect(() => {
-    if (tripdata.drop && locationType == 'drop') {
-      let arr = []
-      if (tripdata.drop && tripdata.drop.waypoints) {
-        const waypoints = tripdata.drop.waypoints;
-        for (let i = 0; i < waypoints.length; i++) {
-          arr.push(waypoints[i]);
-        }
-      }
-      if (tripdata.drop.add) {
-        arr.push({
-          lat: tripdata.drop.lat,
-          lng: tripdata.drop.lng,
-          add: tripdata.drop.add,
-          source: tripdata.drop.source
-        });
-      }
-      setSelLocations(arr);
-    }
-  }, [locationType, tripdata.drop]);
 
   const okClicked = () => {
     let waypoints = [...selLocations];
@@ -348,13 +538,355 @@ export default function SearchScreen(props) {
     setAddress('')
     setSaveNameValue('')
   }
+  const removePickupItem = (index) => {
+    let arr = [...selLocationsPickup];
+    arr.splice(index, 1);
+    setSelLocationsPickup(arr);
+  };
 
+  const removeDropItem = (index) => {
+    let arr1 = [...selLocationsDrop];
+    arr1.splice(index, 1);
+    setSelLocationsDrop(arr1);
+  };
 
   return (
     <View style={{flex:1}}>
       <View style={{flex: 1,backgroundColor: colors.TRANSPARENT, height:'100%', width: '100%', alignContent: 'center', alignItems:'center' }}>
 
-      <View style={[styles.addressBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+      <View
+          style={{
+            width: width - 40,
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: 10,
+            marginLeft: 20,
+          }}
+        >
+          <Button
+            title={"To Airport"}
+            titleStyle={{ color: toairportSelect ? colors.WHITE : colors.BLUE }}
+            onPress={() => {
+              setToairportSelect(true), setFromairportSelect(false);
+            }}
+            icon={{
+              name: "airplane-takeoff",
+              type: "material-community",
+              size: 26,
+              color: toairportSelect ? colors.WHITE : colors.BLUE,
+            }}
+            buttonStyle={[
+              {
+                backgroundColor: toairportSelect ? colors.BLUE : colors.WHITE,
+                width: 150,
+                borderWidth: 1,
+                borderColor: colors.BLUE,
+              },
+            ]}
+          />
+          <Button
+            title={"From Airport"}
+            titleStyle={{
+              color: fromairportSelect ? colors.WHITE : colors.BLUE,
+            }}
+            onPress={() => {
+              setFromairportSelect(true), setToairportSelect(false);
+            }}
+            icon={{
+              name: "car",
+              type: "material-community",
+              size: 26,
+              color: fromairportSelect ? colors.WHITE : colors.BLUE,
+            }}
+            buttonStyle={[
+              {
+                backgroundColor: fromairportSelect ? colors.BLUE : colors.WHITE,
+                width: 150,
+                borderWidth: 1,
+                borderColor: colors.BLUE,
+              },
+            ]}
+          />
+        </View>
+        <View>
+          <Text
+            style={{
+              color: colors.BLUE,
+              fontWeight: "bold",
+              fontSize: 20,
+              alignSelf: "center",
+              marginTop:
+                Platform.OS == "android"
+                  ? __DEV__
+                    ? 20
+                    : 20
+                  : hasNotch
+                  ? 48
+                  : 20,
+            }}
+          >
+            {toairportSelect
+              ? "To Salt Lake City Airport"
+              : "From Salt Lake City Airport"}
+          </Text>
+        </View>
+
+{fromairportSelect ? (
+          <Dropdown
+            style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={datas}
+            returnKeyType="search"
+            maxHeight={300}
+            labelField="add"
+            valueField="add"
+            placeholder={!isFocus ? "Select airport" : "..."}
+            searchPlaceholder="Search..."
+            value={add}
+            onFocus={() => {
+              setIsFocus(true), changepickup();
+            }}
+            onBlur={() => setIsFocus(false)}
+            onChange={(text) => {
+              updateSelectLocation(text), changepickup();
+            }}
+            renderLeftIcon={() => (
+              <Icon
+                name="airplane-takeoff"
+                type="material-community"
+                color={colors.BLUE}
+                size={25}
+                style={[
+                  { marginEnd: 15 },
+                  isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
+                ]}
+              />
+            )}
+          />
+        ) : (
+          <View
+            style={[
+              styles.autocompleteMain,
+              { flexDirection: isRTL ? "row-reverse" : "row" },
+            ]}
+          >
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+              <Icon
+                name={
+                  fromairportSelect ? "airplane-takeoff" : "map-marker-outline"
+                }
+                type="material-community"
+                color={colors.BALANCE_GREEN}
+                size={35}
+                style={[isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 }]}
+              />
+            </TouchableOpacity>
+
+            {selLocationsPickup && selLocationsPickup.length > 0 ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "90%",
+                  alignItems: "center",
+                  height: 70,
+                }}
+              >
+                <Text
+                  style={{
+                    paddingLeft: 10,
+                    width: width - 100,
+                    color: colors.BLACK,
+                    fontFamily: "Uber Move",
+                    fontStyle: "normal",
+                    fontWeight: "500",
+                    lineHeight: 24,
+                    fontSize: 20,
+                  }}
+                  numberOfLines={3}
+                >
+                  {selLocationsPickup[0].add}
+                </Text>
+                <TouchableOpacity
+                  style={{ paddingLeft: 0 }}
+                  onPress={() => removePickupItem(selLocationsPickup[0])}
+                >
+                  <Icon
+                    name="close-sharp"
+                    type="ionicon"
+                    color="#1d74e7"
+                    size={30}
+                    style={[
+                      isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
+                    ]}
+                  />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    width: "90%",
+                    alignItems: "center",
+                    height: 70,
+                  }}
+                >
+                  <TextInput
+                    placeholder={"Enter pickup Location"}
+                    returnKeyType="search"
+                    style={[
+                      styles.searchBox,
+                      isRTL
+                        ? { paddingRight: 15, textAlign: "right" }
+                        : { paddingLeft: 15, textAlign: "left" },
+                    ]}
+                    placeholderTextColor="#000"
+                    onChangeText={(text) => {
+                      {
+                        searchLocation(text),
+                          changepickup(),
+                          setHideDrop(true);
+                      }
+                    }}
+                   // value={searchKeywordPickup}
+                  />
+                </View>
+              </>
+            )}
+          </View>
+        )}
+
+        {toairportSelect ? (
+          <>
+            {hideDrop ? null : (
+              <Dropdown
+                style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={datas}
+                returnKeyType="search1"
+                maxHeight={300}
+                labelField="add"
+                valueField="add"
+                placeholder={!isFocus ? "Select airport" : "..."}
+                searchPlaceholder="Search..."
+                value={add}
+                onFocus={() => {
+                  setIsFocus(true), changedrop();
+                }}
+                onBlur={() => setIsFocus(false)}
+                onChange={(text) => {
+                  updateSelectLocation(text), changedrop();
+                }}
+                renderLeftIcon={() => (
+                  <Icon
+                    name="airplane-takeoff"
+                    type="material-community"
+                    color={colors.BLUE}
+                    size={25}
+                    style={[
+                      { marginEnd: 15 },
+                      isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
+                    ]}
+                  />
+                )}
+              />
+            )}
+          </>
+        ) : (
+          <View
+            style={[
+              styles.autocompleteMain,
+              { flexDirection: isRTL ? "row-reverse" : "row" },
+            ]}
+          >
+            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+              <Icon
+                name={toairportSelect ? "airplane-takeoff" : "magnify"}
+                type="material-community"
+                color={colors.RED}
+                size={35}
+                style={[isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 }]}
+              />
+            </TouchableOpacity>
+
+            {selLocationsDrop && selLocationsDrop.length > 0 ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  width: "90%",
+                  alignItems: "center",
+                  height: 70,
+                }}
+              >
+                <Text
+                  style={{
+                    paddingLeft: 10,
+                    width: width - 100,
+                    color: colors.BLACK,
+                    fontFamily: "Uber Move",
+                    fontStyle: "normal",
+                    fontWeight: "500",
+                    lineHeight: 24,
+                    fontSize: 20,
+                  }}
+                  numberOfLines={3}
+                >
+                  {selLocationsDrop[0].add}
+                </Text>
+                <TouchableOpacity
+                  style={{ paddingLeft: 0, marginEnd: 5 }}
+                  onPress={() => removeDropItem(selLocationsDrop[0])}
+                >
+                  <Icon
+                    name="close-sharp"
+                    type="ionicon"
+                    color="#1d74e7"
+                    size={30}
+                    style={[
+                      isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
+                    ]}
+                  />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    width: "90%",
+                    alignItems: "center",
+                    height: 70,
+                  }}
+                >
+                  <TextInput
+                    placeholder={"Enter Drop Off Address"}
+                    returnKeyType="search1"
+                    style={[
+                      styles.searchBox,
+                      isRTL
+                        ? { paddingRight: 15, textAlign: "right" }
+                        : { paddingLeft: 15, textAlign: "left" },
+                    ]}
+                    placeholderTextColor="#000"
+                    onChangeText={(text) => {
+                      searchLocation(text), changedrop();
+                    }}                    
+                   // value={searchKeywordDrop}
+                  />
+                </View>
+              </>
+            )}
+          </View>
+        )}
+      {/* <View style={[styles.addressBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
         <View style={[styles.contentStyle]}>
           {locationType == 'drop' ?
             <View style={[styles.addressBox, {flexDirection:isRTL? 'row-reverse':'row'}]}>
@@ -406,7 +938,7 @@ export default function SearchScreen(props) {
             </View>
           </View>
         </View>
-      </View>
+      </View> */}
 
       {!searchKeyword ?
       <TouchableOpacity onPress={() => setModalVisible(true)} style={[styles.saveBox,{flexDirection:isRTL? 'row-reverse':'row'}]}>
@@ -426,9 +958,18 @@ export default function SearchScreen(props) {
               <TouchableOpacity
                 key={item.description}
                 style={styles.resultItem}
-                onPress={() => updateLocation(item)}>
-                <Text numberOfLines={1} style={{fontSize: 16, textAlign: isRTL ? "right" : "left", width: width-20}}>{item.description}</Text>
+                onPress={() => updateLocation(item)}
+                
+                >
+                                <Icon
+                name={"location-sharp"}
+                type={"ionicon"}
+                size={25}
+                color="#1d74e7"
+              />
+                <Text numberOfLines={1} style={[styles.description,{fontSize: 16, textAlign: isRTL ? "right" : "left", width: width-20}]}>{item.description}</Text>
               </TouchableOpacity>
+             
             );
           }}
           style={styles.searchResultsContainer}
@@ -437,7 +978,7 @@ export default function SearchScreen(props) {
 
         {loading ?
           <View style={styles.loading}>
-            <ActivityIndicator color={colors.BLACK} size='large' />
+            <ActivityIndicator color={colors.BLUE} size='large' />
           </View>
         : null}
         {selLocations.length > 0 && locationType == 'drop' ?
@@ -635,19 +1176,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.WHITE,
   },
   floting:{
-    minWidth: 130,
-    height:45,
-    position:'absolute',
-    bottom:40,
-    justifyContent:'center',
-    alignItems:'center',
-    alignSelf:'center',
-    borderRadius:10,
-    backgroundColor:MAIN_COLOR,
+    width: "70%",
+    height: 45,
+    position: "absolute",
+    bottom: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    borderRadius: 10,
+    backgroundColor: colors.WHITE,
     shadowColor: colors.BLACK,
     shadowOffset: {
-        width: 0,
-        height: 4,
+      width: 0,
+      height: 4,
     },
     shadowOpacity: 0.2,
     shadowRadius: 2,
@@ -664,32 +1205,39 @@ const styles = StyleSheet.create({
     paddingBottom: 40
   },
   autocompleteMain: {
-    alignItems: 'center'
+    backgroundColor: colors.WHITE,
+    alignItems: "center",
+    marginHorizontal: 15,
+    marginTop: 10,
+    borderRadius: 10,
+    elevation: 20,
   },
   searchBox: {
-    width: width-45,
-    height: 40,
-    fontSize: 14,
-    borderColor: colors.WHITE,
-    color:  colors.BLACK,
-    borderRadius: 10
+    width: "90%",
+    height: 50,
+    fontSize: 18,
+    borderColor: "#ccc",
+    color: "#000",
+    backgroundColor: colors.WHITE,
+    borderRadius: 10,
   },
   description: {
-    color: colors.BLACK,
+    color: colors.BLUE,
     textAlign: 'left',
-    fontSize: 14
+    fontSize: 18
   },
   resultItem: {
-    width: '100%',
-    justifyContent: 'center',
-    borderBottomColor: colors.BLACK,
-    borderBottomWidth: 1,
-    backgroundColor: colors.TRANSPARENT,
-    alignItems: 'flex-start',
-    height: 40,
-    justifyContent:'center',
-    borderBottomWidth: .5,
-    paddingHorizontal: 5
+    width: "95%",
+    paddingVertical: 10,
+    borderBottomColor: colors.HEADER,
+    borderBottomWidth: 0.3,
+    backgroundColor: colors.WHITE,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 2,
+    marginLeft:10,
+    paddingLeft:10
   },
   searchResultsContainer: {
     width: width,
@@ -760,7 +1308,7 @@ const styles = StyleSheet.create({
   },
   saveBox:{
     height: 50,
-    width: width-10,
+    width: width-30,
     justifyContent:'space-between',
     alignItems: 'center',
     paddingHorizontal: 10,
@@ -770,7 +1318,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 5,
     borderRadius: 10,
-    elevation: 3
+    elevation: 3,
+    marginTop:20
   },
   centeredView: {
     flex: 1,
@@ -841,7 +1390,7 @@ const styles = StyleSheet.create({
   savedbox:{
     height: 45,
     width: width-80,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   savesadd:{
     textAlign: 'center',
@@ -894,7 +1443,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     borderRadius: 5,
     borderColor: colors.SECONDARY,
-    borderWidth: 1
+    borderWidth: 1,
   },
   categoryLabel:{
     fontFamily: "Roboto-Regular",
@@ -917,5 +1466,41 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center'
-  }
+  },
+  dropdown: {
+    height: 70,
+    borderColor: "gray",
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginTop: 20,
+    marginBottom: 5,
+    width: width - 30,
+    marginLeft: 5,
+  },icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: "absolute",
+    backgroundColor: "white",
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
 })

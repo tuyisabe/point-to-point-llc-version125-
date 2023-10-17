@@ -120,12 +120,12 @@ const styles = StyleSheet.create({
     height: 55,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.BUTTON_BACKGROUND,
+    backgroundColor: colors.BLUE,
     borderRadius: 8,
   },
   buttonTitle: {
     color: colors.WHITE,
-    fontSize: 18,
+    fontSize: 22,
   },
   quickMoneyContainer: {
     marginTop: 18,

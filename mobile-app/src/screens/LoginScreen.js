@@ -430,6 +430,7 @@ export default function LoginScreen(props) {
                     borderRadius: 8,
                     marginLeft: 10,
                     backgroundColor: colors.LIGHT_GREY,
+                    elevation: 15,
                   }}
                   codeTextStyle={{
                     fontSize: 18,
@@ -440,6 +441,7 @@ export default function LoginScreen(props) {
                     borderRadius: 8,
                     width: "27%",
                     height: 55,
+                    elevation: 15,
                   }}
                   containerStyle={{
                     width: "100%",
@@ -1061,13 +1063,13 @@ const styles = StyleSheet.create({
     box2: {
       height: 55,
       width: width - 50,
-      backgroundColor: colors.WHITE,
+      backgroundColor: colors.LIGHT_GREY,
       marginTop: 5,
-      borderWidth: 1,
-      borderColor: colors.BORDER_BACKGROUND,
       justifyContent: "center",
       borderRadius: 8,
       margin: 5,
+      marginBottom:10,
+      elevation: 15,
     },
     textInput: {
       color: colors.BACKGROUND,

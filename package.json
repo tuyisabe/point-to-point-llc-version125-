@@ -1,7 +1,7 @@
 {
-  "name": "exicubeapps",
+  "name": "point_to_point_express",
   "version": "3.5.0",
-  "description": "Exicube App Solutions",
+  "description": "POINT TO POINT EXPRESS LLC Solutions",
   "scripts": {
     "app": "yarn workspace mobile-app start",
     "app:publish": "cd mobile-app && eas update",
@@ -22,7 +22,7 @@
     "functions",
     "common"
   ],
-  "author": "Exicube App Solutions (OPC) Private Limited",
+  "author": "POINT TO POINT EXPRESS LLC",
   "private": true,
   "dependencies": {
     "concurrently": "7.0.0",

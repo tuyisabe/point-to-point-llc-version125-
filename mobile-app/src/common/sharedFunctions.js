@@ -27,7 +27,7 @@ export const checkSearchPhrase = (str) => {
 
 export const FormIcon = (props)=>{
     return <View style={{width: '15%',alignItems: 'center'}}>
-        <MaterialCommunityIcons name="car-info" size={24} color={colors.HEADER} />
+        <MaterialCommunityIcons name="car-info" size={28} color={colors.BLUE} />
     </View>
 }
 

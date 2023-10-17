@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
     },
     buttonTitle: {
-        fontSize: 16
+        fontSize: 22
     },
     pickerStyle: {
         color: colors.HEADER,
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
     },
     inputTextStyle: {
         color: colors.BLACK,
-        fontSize: 13,
+        fontSize: 18,
         marginLeft: 0,
         height: 32,
     },

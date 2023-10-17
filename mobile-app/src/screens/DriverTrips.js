@@ -296,9 +296,9 @@ export default function DriverTrips(props) {
                                     pinColor={colors.HEADER}
                                 >
                                     <View style={{ alignItems: 'center' }}>
-                                        <View style={{ alignItems: 'center', backgroundColor: '#fff', opacity: 0.8, borderColor: '#000', borderWidth: 1, borderRadius: 10, paddingVertical: 10, paddingHorizontal: 5, marginBottom: 5 }}>
-                                            <Text style={{ fontWeight: 'bold', color: colors.BUTTON_ORANGE }}>{t('where_are_you')}</Text>
-                                            <Text style={{ fontWeight: 'bold', color: colors.BUTTON_ORANGE }}>{auth.profile.driverActiveStatus ? t('rider_not_here') : t('service_off')}</Text>
+                                        <View style={{ alignItems: 'center', backgroundColor: '#fff', opacity: 0.8, borderColor: 'blue', borderWidth: 1, borderRadius: 10, paddingVertical: 10, paddingHorizontal: 5, marginBottom: 5 }}>
+                                            <Text style={{ fontWeight: 'bold', color: colors.BLUE }}>{t('where_are_you')}</Text>
+                                            <Text style={{ fontWeight: 'bold', color: colors.BLUE }}>{auth.profile.driverActiveStatus ? t('rider_not_here') : t('service_off')}</Text>
                                         </View>
                                         <Image
                                             source={carImageIcon}

@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+//to change to payment method change wallet to index 0 on mapscreen and duplicate button
+import React, { useRef,useState} from 'react';
 import {
     StyleSheet,
     View,
@@ -8,13 +9,15 @@ import {
     Platform,
     Modal,
     StatusBar,
-    ScrollView
+    ScrollView,
+    Alert
 } from 'react-native';
 import { Icon, Button, Input } from 'react-native-elements';
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from 'react-native-maps';
 import { colors } from '../common/theme';
 var { width, height } = Dimensions.get('window');
 import i18n from 'i18n-js';
+import { CheckBox } from "@rneui/themed";
 import RadioForm from 'react-native-simple-radio-button';
 
 const hasNotch = Platform.OS === 'ios' && !Platform.isPad && !Platform.isTVOS && ((height === 780 || width === 780) || (height === 812 || width === 812) || (height === 844 || width === 844) || (height === 896 || width === 896) || (height === 926 || width === 926))
@@ -23,7 +26,13 @@ export default function TaxiModal(props) {
     const { t } = i18n;
     const isRTL = i18n.locale.indexOf('he') === 0 || i18n.locale.indexOf('ar') === 0;
     const { settings, tripdata, estimate, bookingModalStatus, onPressCancel, bookNow, payment_mode, setPaymentMode, radioProps, profileData, setProfileData, auth, bookModelLoading } = props;
-
+    const [checkPayment, setCheckPayment] = useState(false);
+    const notbookNow = () => {
+        Alert.alert(
+          "Message",
+          "Please Agree to Pay The Driver Directly Before you Confirm"
+        );
+      };
     const mapRef = useRef(null);
 
     const runFitCoords = () => {
@@ -32,7 +41,7 @@ export default function TaxiModal(props) {
             animated: true,
         });
     };
-
+console.log(checkPayment);
     return (
         <View>
             <StatusBar
@@ -142,7 +151,7 @@ export default function TaxiModal(props) {
                             <Icon
                                 name={isRTL ? 'arrow-right' : 'arrow-left'}
                                 type='font-awesome'
-                                color='#517fa4'
+                                color={colors.BLUE}
                                 size={25}
                             />
                         </TouchableOpacity>
@@ -264,32 +273,112 @@ export default function TaxiModal(props) {
                                 <Text style={[styles.offerText, { paddingTop: 2, paddingBottom: 5 }]}>{t('payment_mode')}</Text>
                             </View>
                             <View style={{ width: width, paddingBottom: 5, justifyContent: 'center', alignItems: 'center', borderBottomColor: colors.BOX_BG, }}>
-                                <RadioForm
+                                {/* <RadioForm
                                     radio_props={radioProps}
                                     initial={payment_mode}
                                     animation={false}
                                     formHorizontal={true}
                                     labelHorizontal={true}
-                                    buttonColor={colors.BLACK}
-                                    selectedButtonColor={colors.BLACK}
+                                    buttonColor={colors.BLUE}
+                                    selectedButtonColor={colors.GREEN_DOT}
                                     buttonSize={15}
                                     buttonOuterSize={25}
                                     style={styles.radioContainerStyle}
                                     labelStyle={styles.radioText}
                                     radioStyle={{ flexDirection: isRTL ? 'row-reverse' : 'row', margin: 10, colors: 'black' }}
                                     onPress={(value) => { setPaymentMode(value); }}
-                                />
+                                /> */}
+                                {radioProps.length > 0 ? (
+                  <View style={{ marginLeft: 15, marginRight: 15,marginTop:-20 }}>
+                    <CheckBox
+                      onPress={() => setCheckPayment(!checkPayment)}
+                      title={
+                        "Please Agree to Pay the Driver Directly before or after your Trip"
+                      }
+                      containerStyle={{
+                        padding: 0,
+                        alignSelf: "flex-end",
+                        height: height >= 600 ? 45 : 45,
+                      }}
+                      checkedColor={colors.BLUE}
+                      uncheckedColor={colors.BLUE}
+                      checked={checkPayment}
+                      checkedIcon={
+                        <Icon
+                          name="checkbox-sharp"
+                          type="ionicon"
+                          color={colors.GREEN_DOT}
+                          size={height >= 600 ? 30 : 30}
+                        />
+                      }
+                      uncheckedIcon={
+                        <Icon
+                          name="square-outline"
+                          type="ionicon"
+                          color={colors.BLUE}
+                          size={height >= 600 ? 30 : 30}
+                        />
+                      }
+                    />
+                  </View>
+                ) : (
+                  <RadioForm
+                    radio_props={radioProps}
+                    initial='cash'
+                    animation={false}
+                    formHorizontal={true}
+                    labelHorizontal={true}
+                    buttonColor={colors.RADIO_BUTTON}
+                    labelColor={colors.RADIO_BUTTON}
+                    labelStyle={
+                      isRTL ? { marginRight: 10 } : { marginRight: 10 }
+                    }
+                    selectedButtonColor={colors.BLUE}
+                    selectedLabelColor={colors.GREEN_DOT}
+                    onPress={(value) => {
+                      setPaymentMode(value);
+                    }}
+                  />
+                )}
                             </View>
                             <View style={styles.flexView}>
-                                <Button
-                                    title={t('confirm')}
-                                    loading={bookModelLoading}
-                                    loadingProps={{ size: "large", color: colors.BUTTON_LOADING }}
-                                    titleStyle={{ color: colors.HEADER, fontWeight: 'bold' }}
-                                    onPress={bookNow}
-                                    buttonStyle={{ height: '100%', backgroundColor: colors.BOX_BG, borderRadius: 25, }}
-                                    containerStyle={styles.buttonStyle}
-                                />
+                            {checkPayment == true ? (
+                  <Button
+                    title={t("confirm")}
+                    loading={bookModelLoading}
+                    loadingProps={{ size: "large", color: colors.BLUE }}
+                    titleStyle={{
+                      color: colors.WHITE,
+                      fontWeight: "bold",
+                      fontSize: 22,
+                    }}
+                    onPress={bookNow}
+                    buttonStyle={{
+                      height: "100%",
+                      backgroundColor: colors.BLUE,
+                      borderRadius: 25,
+                    }}
+                    containerStyle={styles.buttonStyle}
+                  />
+                ) : (
+                  <Button
+                    title={t("confirm")}
+                    loading={bookModelLoading}
+                    loadingProps={{ size: "large", color: colors.BLUE }}
+                    titleStyle={{
+                      color: colors.WHITE,
+                      fontWeight: "bold",
+                      fontSize: 22,
+                    }}
+                    onPress={notbookNow}
+                    buttonStyle={{
+                      height: "100%",
+                      backgroundColor: colors.BLUE,
+                      borderRadius: 25,
+                    }}
+                    containerStyle={styles.buttonStyle}
+                  />
+                )}
                             </View>
                         </View>
                     </ScrollView>
@@ -349,8 +438,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 8
     },
-    offerContainer: { height: 30, backgroundColor: colors.BOX_BG, width: width, justifyContent: 'center', borderBottomColor: colors.BOX_BG, borderBottomWidth: Platform.OS == 'ios' ? 1 : 0 },
-    offerText: { alignSelf: 'center', color: colors.MAP_TEXT, fontSize: 12, fontFamily: 'Roboto-Regular' },
+    offerContainer: { height: 30, backgroundColor: colors.BLUE, width: width, justifyContent: 'center', borderBottomColor: colors.BOX_BG, borderBottomWidth: Platform.OS == 'ios' ? 1 : 0 },
+    offerText: { alignSelf: 'center', color: colors.WHITE, fontSize: 12, fontFamily: 'Roboto-Regular' },
     priceDetailsContainer: { backgroundColor: colors.WHITE, flexDirection: 'row', position: 'relative', zIndex: 1, },
     priceDetailsLeft: { flex: 19, height: 90 },
     priceDetailsMiddle: { flex: 2, height: 50, width: 1, alignItems: 'center' },
