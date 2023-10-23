@@ -34,7 +34,8 @@ var { width } = Dimensions.get('window');
 import PhoneInput from "./lib/index";
 import ClientIds from '../../config/ClientIds';
 GoogleSignin.configure(ClientIds);
-
+const yr = new Date();
+const now = yr.getFullYear();
 export default function LoginScreen(props) {
     const {
         clearLoginError,
@@ -404,8 +405,7 @@ export default function LoginScreen(props) {
             flexDirection: "column",
             justifyContent: "space-between",
             marginTop: "-85%",
-          }}
-        >
+          }}>
           {loginType == "mobile" ? (
             <View style={{ marginBottom: 10 }}>
               <Text
@@ -1001,7 +1001,16 @@ export default function LoginScreen(props) {
                 </TouchableOpacity>
             </View> */}
             </ScrollView>
-     
+            <View style={styles.footer}>
+        <Text style={{ marginHorizontal: 18, fontWeight: "bold" }}>
+          &copy;
+          <Text style={{ fontWeight: "bold" }}>Point To Point Express </Text>
+          {now}
+        </Text>
+        <TouchableOpacity style={{ marginHorizontal: 18 }} onPress={openTerms}>
+          <Text style={styles.actionText}>{t("terms")}</Text>
+        </TouchableOpacity>
+      </View>
         </View>
 
     );
@@ -1094,7 +1103,7 @@ const styles = StyleSheet.create({
         marginTop: 15,
         marginLeft: 35,
         marginRight: 35,
-        backgroundColor: colors.HEADER,
+        backgroundColor: colors.GREEN_DOT,
         borderRadius:10
     },
     linkBar: {

@@ -16,6 +16,7 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { CheckBox } from "@rneui/themed";
 import { Icon, Button } from 'react-native-elements';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { colors } from '../common/theme';
 import * as Location from 'expo-location';
 var { height, width } = Dimensions.get('window');
@@ -2083,7 +2084,7 @@ export default function MapScreen(props) {
                 auth={auth}
                 bookModelLoading={bookModelLoading}
             />
-              <DatePicker
+              {/* <DatePicker
         modal
         title={("Select Date")}
         confirmText={t('confirm')}
@@ -2093,6 +2094,15 @@ export default function MapScreen(props) {
         onConfirm={handleDateConfirm}
         onCancel={hideDatePicker}
         hideText={true}
+      /> */}
+
+<DateTimePickerModal
+        date={pickerConfig.selectedDateTime}
+        minimumDate={new Date()}
+        isVisible={pickerConfig.dateModalOpen}
+        mode={pickerConfig.dateMode}
+        onConfirm={handleDateConfirm}
+        onCancel={hideDatePicker}
       />
         </View>
     );

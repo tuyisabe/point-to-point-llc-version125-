@@ -19,11 +19,11 @@ export default {
     version: AppConfig.ios_app_version,
     orientation: "portrait",
     icon: "./assets/images/logo1024x1024.png",
-    splash: {
-        "image": "./assets/images/splash.png",
-        "resizeMode":'cover',
-        "backgroundColor": "#ffffff"
-    },
+    // splash: {
+    //     "image": "./assets/images/splash.png",
+    //     "resizeMode":'cover',
+    //     "backgroundColor": "#ffffff"
+    // },
     updates: {
         "fallbackToCacheTimeout": 0,
         "url": "https://u.expo.dev/" + AppConfig.expo_project_id,
