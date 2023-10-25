@@ -770,7 +770,6 @@ export default function MapScreen(props) {
         }
     }
 
-
     const onPressBookLater = () => {
         setCheckType(false);
         if (parseFloat(profile.walletBalance) >= 0) {
@@ -782,8 +781,13 @@ export default function MapScreen(props) {
                   if(auth.profile.approved){
                     if (tripdata.pickup && tripdata.drop && tripdata.drop.add) {
                         if (tripdata.carType) {
-                            setInitDate(new Date());
-                            setDatePickerOpen(true);
+                          setPickerConfig({
+                            dateMode: "date",
+                            dateModalOpen: true,
+                            selectedDateTime: pickerConfig.selectedDateTime,
+                          });
+                            // setInitDate(new Date());
+                            // setDatePickerOpen(true);
                         } else {
                             Alert.alert(t('alert'), t('car_type_blank_error'))
                         }
@@ -816,60 +820,133 @@ export default function MapScreen(props) {
     }
 
     const hideDatePicker = () => {
-        setDatePickerOpen(false);
+        //setDatePickerOpen(false);
+        setPickerConfig({
+          dateModalOpen: false,
+          selectedDateTime: pickerConfig.selectedDateTime,
+          dateMode: "date",
+        });
       };
-
       const handleDateConfirm = (date) => {
-        setInitDate(date);
-        setDatePickerOpen(false);
-            setBookLaterLoading(true);
-            setTimeout(async () => {
-                let date1;
-                try{
-                    let res =  await fetch(`https://${config.projectId}.web.app/getservertime`, { method: 'GET', headers: {'Content-Type': 'application/json'}});
-                    const json = await res.json();
-                    if(json.time){
-                        date1 = json.time;
-                    } else{
-                        date1 = new Date().getTime();
-                    }
-                }catch (err){
-                    date1 = new Date().getTime();
-                }
-                
-                const date2 = new Date(date);
-                const diffTime = date2 - date1;
-                const diffMins =  diffTime / (1000 * 60);
-
-                if (diffMins < 15) {
-                    setBookLaterLoading(false);
-                    Alert.alert(
-                        t('alert'),
-                        t('past_booking_error'),
-                        [
-                            { text: t('ok'), onPress: () => { } }
-                        ],
-                        { cancelable: true }
-                    );
+        if (pickerConfig.dateMode === "date") {
+          setPickerConfig({
+            dateModalOpen: false,
+            selectedDateTime: date,
+            dateMode: pickerConfig.dateMode,
+          });
+          setTimeout(() => {
+            setPickerConfig({
+              dateModalOpen: true,
+              selectedDateTime: date,
+              dateMode: "time",
+            });
+          }, 1000);
+        } else {
+          setPickerConfig({
+            dateModalOpen: false,
+            selectedDateTime: date,
+            dateMode: "date",
+          });
+          setBookLaterLoading(true);
+          setTimeout(async () => {
+            let date1;
+            try {
+              let res = await fetch(
+                `https://${config.projectId}.web.app/getservertime`,
+                { method: "GET", headers: { "Content-Type": "application/json" } }
+              );
+              const json = await res.json();
+              if (json.time) {
+                date1 = json.time;
+              } else {
+                date1 = new Date().getTime();
+              }
+            } catch (err) {
+              date1 = new Date().getTime();
+            }
+    
+            const date2 = new Date(date);
+            const diffTime = date2 - date1;
+            const diffMins = diffTime / (1000 * 60);
+    
+            if (diffMins < 15) {
+              setBookLaterLoading(false);
+              Alert.alert(
+                t("alert"),
+                t("past_booking_error"),
+                [{ text: t("ok"), onPress: () => {} }],
+                { cancelable: true }
+              );
+            } else {
+              setBookingDate(date);
+              setBookingType(true);
+              if (appConsts.hasOptions) {
+                setOptionModalStatus(true);
+                setBookLaterLoading(false);
+              } else {
+                let result = await prepareEstimateObject(tripdata, instructionData);
+                if (result.error) {
+                  setBookLoading(false);
+                  Alert.alert(t("alert"), result.msg);
                 } else {
-                    setBookingDate(date);
-                    setBookingType(true);
-                    if (appConsts.hasOptions) {
-                        setOptionModalStatus(true);
-                        setBookLaterLoading(false);
-                    } else {
-                        let result = await prepareEstimateObject(tripdata, instructionData);
-                        if (result.error) {
-                            setBookLoading(false);
-                            Alert.alert(t('alert'), result.msg);
-                        } else {
-                            dispatch(getEstimate((await result).estimateObject));
-                        }
-                    }
+                  dispatch(getEstimate((await result).estimateObject));
                 }
-            }, 1000);
+              }
+            }
+          }, 1000);
+        }
+      };
+    //   const handleDateConfirm = (date) => {
+    //     setInitDate(date);
+    //     setDatePickerOpen(false);
+    //         setBookLaterLoading(true);
+    //         setTimeout(async () => {
+    //             let date1;
+    //             try{
+    //                 let res =  await fetch(`https://${config.projectId}.web.app/getservertime`, { method: 'GET', headers: {'Content-Type': 'application/json'}});
+    //                 const json = await res.json();
+    //                 if(json.time){
+    //                     date1 = json.time;
+    //                 } else{
+    //                     date1 = new Date().getTime();
+    //                 }
+    //             }catch (err){
+    //                 date1 = new Date().getTime();
+    //             }
+                
+    //             const date2 = new Date(date);
+    //             const diffTime = date2 - date1;
+    //             const diffMins =  diffTime / (1000 * 60);
+
+    //             if (diffMins < 15) {
+    //                 setBookLaterLoading(false);
+    //                 Alert.alert(
+    //                     t('alert'),
+    //                     t('past_booking_error'),
+    //                     [
+    //                         { text: t('ok'), onPress: () => { } }
+    //                     ],
+    //                     { cancelable: true }
+    //                 );
+    //             } else {
+    //                 setBookingDate(date);
+    //                 setBookingType(true);
+    //                 if (appConsts.hasOptions) {
+    //                     setOptionModalStatus(true);
+    //                     setBookLaterLoading(false);
+    //                 } else {
+    //                     let result = await prepareEstimateObject(tripdata, instructionData);
+    //                     if (result.error) {
+    //                         setBookLoading(false);
+    //                         Alert.alert(t('alert'), result.msg);
+    //                     } else {
+    //                         dispatch(getEstimate((await result).estimateObject));
+    //                     }
+    //                 }
+    //             }
+    //         }, 1000);
         
-    };
+    // };
 
 
     const handleGetEstimate = async () => {
@@ -1097,7 +1174,7 @@ export default function MapScreen(props) {
     const  onTermLink  = async () => {
         Linking.openURL(settings.CompanyTermCondition).catch(err => console.error("Couldn't load page", err));
    }
-//console.log(tripdata);
+ // console.log(tripdata);
     return (
         <View style={styles.container}>
             <StatusBar hidden={true} />
@@ -1875,34 +1952,6 @@ export default function MapScreen(props) {
                 ]}
               />
             )}
-
-            {/* <Button
-              title={t("book_now_button")}
-              loading={bookLoading}
-              loadingProps={{ size: "large", color: colors.BLUE }}
-              type="outline"
-              titleStyle={{
-                color: colors.BLUE,
-                fontFamily: "Uber Move",
-                fontStyle: "normal",
-                fontWeight: "700",
-                lineHeight: 24,
-                fontSize: 18,
-              }}
-              onPress={onPressBook}
-              buttonStyle={[
-                styles.buttonStyle,
-                {
-                  width: bookLoading ? width - 49 : width / 2.3,
-                  marginLeft: bookLaterLoading ? 22 : 0,
-                },
-              ]}
-              containerStyle={[
-                {
-                  height: 50,
-                },
-              ]}
-            /> */}
           </View>
         </View>
       ) : (

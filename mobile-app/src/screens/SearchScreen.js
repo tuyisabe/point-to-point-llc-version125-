@@ -115,6 +115,7 @@ export default function SearchScreen(props) {
   const [fromairportSelect, setFromairportSelect] = useState(fromairportSelected);
   const [toairportSelect, setToairportSelect] = useState(toairportSelected);
   const [hideDrop, setHideDrop] = useState(false);
+  const [hidePic, setHidePic] = useState(false);
   const [add, setAdd] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const saveName = [
@@ -468,8 +469,6 @@ export default function SearchScreen(props) {
       }
     }
   };
-
-
   const okClicked = () => {
     let waypoints = [...selLocations];
     waypoints.splice(selLocations.length - 1, 1);
@@ -634,6 +633,8 @@ export default function SearchScreen(props) {
         </View>
 
 {fromairportSelect ? (
+  <>
+  {hidePic ? null : (
           <Dropdown
             style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
             placeholderStyle={styles.placeholderStyle}
@@ -667,7 +668,8 @@ export default function SearchScreen(props) {
                 ]}
               />
             )}
-          />
+          />)}
+          </>
         ) : (
           <View
             style={[
@@ -877,7 +879,7 @@ export default function SearchScreen(props) {
                     ]}
                     placeholderTextColor="#000"
                     onChangeText={(text) => {
-                      searchLocation(text), changedrop();
+                      searchLocation(text), changedrop(),setHidePic(true);
                     }}                    
                    // value={searchKeywordDrop}
                   />

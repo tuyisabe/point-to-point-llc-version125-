@@ -41,7 +41,7 @@ export default function TaxiModal(props) {
             animated: true,
         });
     };
-console.log(checkPayment);
+//console.log(checkPayment);
     return (
         <View>
             <StatusBar

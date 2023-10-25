@@ -33,6 +33,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 var { width } = Dimensions.get('window');
 import PhoneInput from "./lib/index";
 import ClientIds from '../../config/ClientIds';
+import { height } from "react-native-size-scaling";
 GoogleSignin.configure(ClientIds);
 const yr = new Date();
 const now = yr.getFullYear();
@@ -349,7 +350,7 @@ export default function LoginScreen(props) {
         hideSubscription.remove();
       };
     }, []);
-  console.log(formattedValue);
+  console.log(height);
     return (
   
         <View style={styles.container}>
@@ -404,7 +405,7 @@ export default function LoginScreen(props) {
             alignSelf: "center",
             flexDirection: "column",
             justifyContent: "space-between",
-            marginTop: "-85%",
+            marginTop:height>750?-height+430: -height+405,
           }}>
           {loginType == "mobile" ? (
             <View style={{ marginBottom: 10 }}>
