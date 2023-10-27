@@ -13,7 +13,7 @@ import {
   AuthLoadingScreen,
 } from './src/screens';
 import * as Notifications from 'expo-notifications';
-import * as SplashScreen from 'expo-splash-screen';
+// import * as SplashScreen from 'expo-splash-screen';
 
 const LOCATION_TASK_NAME = 'background-location-task';
 
@@ -447,10 +447,10 @@ export default function AppCommon({ children }) {
     return <AuthLoadingScreen />;
   }
 
-  const hideSplash = async () => {
-    await SplashScreen.hideAsync();
-  };
-  hideSplash();
+  // const hideSplash = async () => {
+  //   await SplashScreen.hideAsync();
+  // };
+  // hideSplash();
 
   return children;
 }

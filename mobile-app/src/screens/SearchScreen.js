@@ -1023,9 +1023,9 @@ export default function SearchScreen(props) {
             </View>
             : null }
             
-            <View style={[styles.addressStyle2,{borderWidth: 1, borderRadius: 5, marginTop: ((searchKeyword2 && isShowingResults2) || address || addressName) ? 0 : 10}]}>
-              <View style={[styles.autocompleteMain, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-                <FontAwesome name="search" size={20} color={colors.BLACK} style={{marginHorizontal: 5}} />
+            <View style={[styles.addressStyle2,{ borderRadius: 5, marginTop: ((searchKeyword2 && isShowingResults2) || address || addressName) ? 0 : 10}]}>
+              <View style={[styles.autocompleteMain, { flexDirection: isRTL ? 'row-reverse' : 'row',marginTop:0,width:width-15,marginLeft:0 }]}>
+                <FontAwesome name="search" size={20} color={colors.BLUE} style={{marginHorizontal: 5,marginLeft:10}} />
                 <TextInput
                   placeholder={t('search_for_an_address')}
                   returnKeyType="search"
@@ -1449,7 +1449,7 @@ const styles = StyleSheet.create({
   },
   categoryLabel:{
     fontFamily: "Roboto-Regular",
-    fontSize: 14,
+    fontSize: 16,
   },
   multiAddressStyle: {
     borderBottomColor: colors.BLACK,

@@ -21,9 +21,6 @@ import AppCommon from './AppCommon';
 import { FirebaseConfig } from './config/FirebaseConfig';
 import { colors } from './src/common/theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SplashScreen from 'expo-splash-screen';
-
-SplashScreen.preventAutoHideAsync();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -89,7 +86,7 @@ export default function App() {
     return <View style={styles.container}>
       <ImageBackground
         source={require('./assets/images/intro.gif')}
-        resizeMode="stretch"
+        resizeMode="cover"
         style={styles.imagebg}
       >
         <ActivityIndicator style={{ paddingBottom: 100 }} color={colors.INDICATOR_BLUE} size='large' />

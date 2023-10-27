@@ -651,50 +651,117 @@ export default function MapScreen(props) {
     }
 
     const tapAddress = (selection) => {
-        if (selection === tripdata.selected) {
-            let savedAddresses = [];
-            let allAddresses = profile.savedAddresses;
-            for (let key in allAddresses) {
-                savedAddresses.push(allAddresses[key]);
-            }
-            if (selection == 'drop') {
-                props.navigation.navigate('Search', { 
-                    locationType: "drop", 
-                    addParam: savedAddresses,
-                    toairportSelected: toairportSelected ? true : false,
-                    fromairportSelected: fromairportSelected ? true : false, 
-            });
-            
-            } else {
-                props.navigation.navigate('Search', { 
-                    locationType: "pickup", 
-                    addParam: savedAddresses,
-                    toairportSelected: toairportSelected ? true : false,
-                    fromairportSelected: fromairportSelected ? true : false, 
-            });
-            }
-        } else {
-            setDragging(0)
-            if (selection == 'drop' && tripdata.selected && tripdata.selected == 'pickup' && mapRef.current) {
-                mapRef.current.animateToRegion({
-                    latitude: tripdata.drop.lat,
-                    longitude: tripdata.drop.lng,
-                    latitudeDelta: latitudeDelta,
-                    longitudeDelta: longitudeDelta
-                });
-            }
-            if (selection == 'pickup' && tripdata.selected && tripdata.selected == 'drop' && mapRef.current) {
-                mapRef.current.animateToRegion({
-                    latitude: tripdata.pickup.lat,
-                    longitude: tripdata.pickup.lng,
-                    latitudeDelta: latitudeDelta,
-                    longitudeDelta: longitudeDelta
-                });
-            }
-            dispatch(updatSelPointType(selection));
+      if (selection === tripdata.selected) {
+        let savedAddresses = [];
+        let allAddresses = profile.savedAddresses;
+        for (let key in allAddresses) {
+          savedAddresses.push(allAddresses[key]);
         }
-
+        if (selection == "drop") {
+          props.navigation.navigate("Search", {
+            locationType: "drop",
+            addParam: savedAddresses,
+            toairportSelected: toairportSelected ? true : false,
+            fromairportSelected: fromairportSelected ? true : false,
+          });
+        } else {
+          props.navigation.navigate("Search", {
+            locationType: "pickup",
+            addParam: savedAddresses,
+            toairportSelected: toairportSelected ? true : false,
+            fromairportSelected: fromairportSelected ? true : false,
+          });
+        }
+      } else {
+        let savedAddresses = [];
+        let allAddresses = profile.savedAddresses;
+        setDragging(0);
+        if (
+          selection == "drop" &&
+          tripdata.selected &&
+          tripdata.selected == "pickup"
+        ) {
+          mapRef.current.animateToRegion({
+            latitude: tripdata.drop.lat,
+            longitude: tripdata.drop.lng,
+            latitudeDelta: latitudeDelta,
+            longitudeDelta: longitudeDelta,
+          });
+          props.navigation.navigate("Search", {
+            locationType: "drop",
+            addParam: savedAddresses,
+            toairportSelected: toairportSelected ? true : false,
+            fromairportSelected: fromairportSelected ? true : false,
+          });
+        }
+        if (
+          selection == "pickup" &&
+          tripdata.selected &&
+          tripdata.selected == "drop"
+        ) {
+          mapRef.current.animateToRegion({
+            latitude: tripdata.pickup.lat,
+            longitude: tripdata.pickup.lng,
+            latitudeDelta: latitudeDelta,
+            longitudeDelta: longitudeDelta,
+          });
+  
+          props.navigation.navigate("Search", {
+            locationType: "pickup",
+            addParam: savedAddresses,
+            toairportSelected: toairportSelected ? true : false,
+            fromairportSelected: fromairportSelected ? true : false,
+          });
+        }
+        dispatch(updatSelPointType(selection));
+      }
     };
+
+    // const tapAddress = (selection) => {
+    //     if (selection === tripdata.selected) {
+    //         let savedAddresses = [];
+    //         let allAddresses = profile.savedAddresses;
+    //         for (let key in allAddresses) {
+    //             savedAddresses.push(allAddresses[key]);
+    //         }
+    //         if (selection == 'drop') {
+    //             props.navigation.navigate('Search', { 
+    //                 locationType: "drop", 
+    //                 addParam: savedAddresses,
+    //                 toairportSelected: toairportSelected ? true : false,
+    //                 fromairportSelected: fromairportSelected ? true : false, 
+    //         });
+            
+    //         } else {
+    //             props.navigation.navigate('Search', { 
+    //                 locationType: "pickup", 
+    //                 addParam: savedAddresses,
+    //                 toairportSelected: toairportSelected ? true : false,
+    //                 fromairportSelected: fromairportSelected ? true : false, 
+    //         });
+    //         }
+    //     } else {
+    //         setDragging(0)
+    //         if (selection == 'drop' && tripdata.selected && tripdata.selected == 'pickup' && mapRef.current) {
+    //             mapRef.current.animateToRegion({
+    //                 latitude: tripdata.drop.lat,
+    //                 longitude: tripdata.drop.lng,
+    //                 latitudeDelta: latitudeDelta,
+    //                 longitudeDelta: longitudeDelta
+    //             });
+    //         }
+    //         if (selection == 'pickup' && tripdata.selected && tripdata.selected == 'drop' && mapRef.current) {
+    //             mapRef.current.animateToRegion({
+    //                 latitude: tripdata.pickup.lat,
+    //                 longitude: tripdata.pickup.lng,
+    //                 latitudeDelta: latitudeDelta,
+    //                 longitudeDelta: longitudeDelta
+    //             });
+    //         }
+    //         dispatch(updatSelPointType(selection));
+    //     }
+
+    // };
 
     const onPressBook = async () => {
         if (parseFloat(profile.walletBalance) >= 0) {
@@ -896,59 +963,6 @@ export default function MapScreen(props) {
           }, 1000);
         }
       };
-    //   const handleDateConfirm = (date) => {
-    //     setInitDate(date);
-    //     setDatePickerOpen(false);
-    //         setBookLaterLoading(true);
-    //         setTimeout(async () => {
-    //             let date1;
-    //             try{
-    //                 let res =  await fetch(`https://${config.projectId}.web.app/getservertime`, { method: 'GET', headers: {'Content-Type': 'application/json'}});
-    //                 const json = await res.json();
-    //                 if(json.time){
-    //                     date1 = json.time;
-    //                 } else{
-    //                     date1 = new Date().getTime();
-    //                 }
-    //             }catch (err){
-    //                 date1 = new Date().getTime();
-    //             }
-                
-    //             const date2 = new Date(date);
-    //             const diffTime = date2 - date1;
-    //             const diffMins =  diffTime / (1000 * 60);
-
-    //             if (diffMins < 15) {
-    //                 setBookLaterLoading(false);
-    //                 Alert.alert(
-    //                     t('alert'),
-    //                     t('past_booking_error'),
-    //                     [
-    //                         { text: t('ok'), onPress: () => { } }
-    //                     ],
-    //                     { cancelable: true }
-    //                 );
-    //             } else {
-    //                 setBookingDate(date);
-    //                 setBookingType(true);
-    //                 if (appConsts.hasOptions) {
-    //                     setOptionModalStatus(true);
-    //                     setBookLaterLoading(false);
-    //                 } else {
-    //                     let result = await prepareEstimateObject(tripdata, instructionData);
-    //                     if (result.error) {
-    //                         setBookLoading(false);
-    //                         Alert.alert(t('alert'), result.msg);
-    //                     } else {
-    //                         dispatch(getEstimate((await result).estimateObject));
-    //                     }
-    //                 }
-    //             }
-    //         }, 1000);
-        
-    // };
-
-
     const handleGetEstimate = async () => {
         if (checkType) {
             setBookLoading(true);
@@ -1174,7 +1188,7 @@ export default function MapScreen(props) {
     const  onTermLink  = async () => {
         Linking.openURL(settings.CompanyTermCondition).catch(err => console.error("Couldn't load page", err));
    }
- // console.log(tripdata);
+console.log(tripdata);
     return (
         <View style={styles.container}>
             <StatusBar hidden={true} />
@@ -1188,9 +1202,9 @@ export default function MapScreen(props) {
                         showsMyLocationButton={false}
                         style={styles.mapViewStyle}
                         initialRegion={region}
-                        onRegionChangeComplete={onRegionChangeComplete}
+                        //onRegionChangeComplete={onRegionChangeComplete}
                         onPanDrag={() => setDragging(30)}
-                        minZoomLevel={3}
+                        minZoomLevel={13}
                     >
                         {freeCars ? freeCars.map((item, index) => {
                             return (
@@ -2231,7 +2245,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent'
     },
     mapFloatingPin: {
-        height: 40
+        height: 50
     },
     buttonBar: {
         height: 60,

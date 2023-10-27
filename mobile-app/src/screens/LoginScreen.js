@@ -1167,6 +1167,7 @@ const styles = StyleSheet.create({
         height: 20,
         flexDirection: "row",
         marginTop: 15,
+        marginBottom: 15,
         alignSelf: 'center'
     },
     lineLeft: {
@@ -1210,7 +1211,7 @@ const styles = StyleSheet.create({
         height: 40
     },
     footer: {
-        marginTop: Platform.OS === 'ios' ? 20: 12,
+        marginBottom: Platform.OS === 'ios' ? 15: 12,
         flexDirection:'row',
         justifyContent: 'space-evenly',
     },
