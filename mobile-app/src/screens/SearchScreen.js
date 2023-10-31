@@ -561,34 +561,35 @@ export default function SearchScreen(props) {
             justifyContent: "space-between",
             alignItems: "center",
             marginTop: 10,
-            marginLeft: 20,
+            marginLeft: 10,
           }}
         >
           <Button
             title={"To Airport"}
-            titleStyle={{ color: toairportSelect ? colors.WHITE : colors.BLUE }}
+            titleStyle={{ color: toairportSelect ? colors.WHITE : colors.BLUE,fontSize:18 }}
             onPress={() => {
               setToairportSelect(true), setFromairportSelect(false);
             }}
             icon={{
               name: "airplane-takeoff",
               type: "material-community",
-              size: 26,
+              size: 30,
               color: toairportSelect ? colors.WHITE : colors.BLUE,
             }}
             buttonStyle={[
               {
                 backgroundColor: toairportSelect ? colors.BLUE : colors.WHITE,
                 width: 150,
-                borderWidth: 1,
+                borderWidth: 2,
                 borderColor: colors.BLUE,
+                elevation:20
               },
             ]}
           />
           <Button
             title={"From Airport"}
             titleStyle={{
-              color: fromairportSelect ? colors.WHITE : colors.BLUE,
+              color: fromairportSelect ? colors.WHITE : colors.BLUE,fontSize:18,
             }}
             onPress={() => {
               setFromairportSelect(true), setToairportSelect(false);
@@ -596,15 +597,17 @@ export default function SearchScreen(props) {
             icon={{
               name: "car",
               type: "material-community",
-              size: 26,
+              size: 30,
               color: fromairportSelect ? colors.WHITE : colors.BLUE,
             }}
             buttonStyle={[
               {
                 backgroundColor: fromairportSelect ? colors.BLUE : colors.WHITE,
                 width: 150,
-                borderWidth: 1,
+                borderWidth: 2,
                 borderColor: colors.BLUE,
+                elevation:20,
+                
               },
             ]}
           />
@@ -614,7 +617,7 @@ export default function SearchScreen(props) {
             style={{
               color: colors.BLUE,
               fontWeight: "bold",
-              fontSize: 20,
+              fontSize: 24,
               alignSelf: "center",
               marginTop:
                 Platform.OS == "android"
@@ -646,7 +649,7 @@ export default function SearchScreen(props) {
             maxHeight={300}
             labelField="add"
             valueField="add"
-            placeholder={!isFocus ? "Select airport" : "..."}
+            placeholder={!isFocus ? "Select an airport" : "..."}
             searchPlaceholder="Search..."
             value={add}
             onFocus={() => {
@@ -661,9 +664,9 @@ export default function SearchScreen(props) {
                 name="airplane-takeoff"
                 type="material-community"
                 color={colors.BLUE}
-                size={25}
+                size={35}
                 style={[
-                  { marginEnd: 15 },
+                  { marginEnd: 15},
                   isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
                 ]}
               />
@@ -739,7 +742,7 @@ export default function SearchScreen(props) {
                   }}
                 >
                   <TextInput
-                    placeholder={"Enter pickup Location"}
+                    placeholder={"Enter pickup Address"}
                     returnKeyType="search"
                     style={[
                       styles.searchBox,
@@ -777,7 +780,7 @@ export default function SearchScreen(props) {
                 maxHeight={300}
                 labelField="add"
                 valueField="add"
-                placeholder={!isFocus ? "Select airport" : "..."}
+                placeholder={!isFocus ? "Select an airport" : "..."}
                 searchPlaceholder="Search..."
                 value={add}
                 onFocus={() => {
@@ -792,7 +795,7 @@ export default function SearchScreen(props) {
                     name="airplane-takeoff"
                     type="material-community"
                     color={colors.BLUE}
-                    size={25}
+                    size={35}
                     style={[
                       { marginEnd: 15 },
                       isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
@@ -813,7 +816,7 @@ export default function SearchScreen(props) {
               <Icon
                 name={toairportSelect ? "airplane-takeoff" : "magnify"}
                 type="material-community"
-                color={colors.RED}
+                color={colors.BLUE}
                 size={35}
                 style={[isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 }]}
               />
@@ -947,7 +950,7 @@ export default function SearchScreen(props) {
         <View style={{height: 45, justifyContent: 'center' }}>
           <Text style={{ textAlign: isRTL ? "right" : "left", fontSize: 20}}>{t('saved_address')}</Text>
         </View>
-        <MaterialIcons name={isRTL ? "keyboard-arrow-left" : "keyboard-arrow-right"} size={34} color= {colors.SECONDARY} />
+        <MaterialIcons name={isRTL ? "keyboard-arrow-left" : "keyboard-arrow-right"} size={34} color= {colors.BLUE} />
       </TouchableOpacity>
       :null }
 
@@ -1217,7 +1220,7 @@ const styles = StyleSheet.create({
   searchBox: {
     width: "90%",
     height: 50,
-    fontSize: 18,
+    fontSize: 20,
     borderColor: "#ccc",
     color: "#000",
     backgroundColor: colors.WHITE,
@@ -1471,14 +1474,14 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     height: 70,
-    borderColor: "gray",
-    borderWidth: 0.5,
     borderRadius: 8,
     paddingHorizontal: 8,
     marginTop: 20,
     marginBottom: 5,
     width: width - 30,
     marginLeft: 5,
+    elevation:20,
+    backgroundColor:colors.WHITE
   },icon: {
     marginRight: 5,
   },
@@ -1489,20 +1492,21 @@ const styles = StyleSheet.create({
     top: 8,
     zIndex: 999,
     paddingHorizontal: 8,
-    fontSize: 14,
+    fontSize: 20,
   },
   placeholderStyle: {
-    fontSize: 16,
+    fontSize: 21,
   },
   selectedTextStyle: {
-    fontSize: 16,
+    fontSize: 20,
   },
   iconStyle: {
-    width: 20,
-    height: 20,
+    width: 0,
+    height: 0,
+   Color:colors.BLUE
   },
   inputSearchStyle: {
     height: 40,
-    fontSize: 16,
+    fontSize: 20,
   },
 })

@@ -838,53 +838,117 @@ export default function MapScreen(props) {
     }
 
     const onPressBookLater = () => {
-        setCheckType(false);
-        if (parseFloat(profile.walletBalance) >= 0) {
-            if (!(profile.mobile && profile.mobile.length > 6)) {
-                Alert.alert(t('alert'), t('mobile_need_update'));
-                props.navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: 'Profile', params: { fromPage: 'Map'} }] }));
-            } else {
-                if ((settings && settings.imageIdApproval && auth.profile.verifyId && auth.profile.verifyIdImage) || (settings && !settings.imageIdApproval)) {
-                  if(auth.profile.approved){
-                    if (tripdata.pickup && tripdata.drop && tripdata.drop.add) {
-                        if (tripdata.carType) {
-                          setPickerConfig({
-                            dateMode: "date",
-                            dateModalOpen: true,
-                            selectedDateTime: pickerConfig.selectedDateTime,
-                          });
-                            // setInitDate(new Date());
-                            // setDatePickerOpen(true);
-                        } else {
-                            Alert.alert(t('alert'), t('car_type_blank_error'))
-                        }
-                    } else {
-                        Alert.alert(t('alert'), t('drop_location_blank_error'))
-                    }
-                  }else{
-                    Alert.alert(t('alert'), t('admin_contact'))
-                  }
-                } else {
-                    Alert.alert(
-                        t('alert'),
-                        t('verifyid_error'),
-                        [
-                            { text: t('cancel'), onPress: () => { }, style: 'cancel' },
-                            { text: t('ok'), onPress: () =>   
-                                props.navigation.dispatch(CommonActions.reset({index: 0, routes:[{ name: 'editUser', params: { fromPage: 'Map'} }]})) 
-                            }
-                        ],
-                        { cancelable: false }
-                    );
-                }
-            }
+      setCheckType(false);
+      if (parseFloat(profile.walletBalance) >= 0) {
+        if (!(profile.mobile && profile.mobile.length > 6)) {
+          Alert.alert(t("alert"), t("mobile_need_update"));
+          props.navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: "Profile", params: { fromPage: "Map" } }],
+            })
+          );
         } else {
+          if (
+            (settings &&
+              settings.imageIdApproval &&
+              auth.profile.verifyId &&
+              auth.profile.verifyIdImage) ||
+            (settings && !settings.imageIdApproval)
+          ) {
+            if (auth.profile.approved) {
+              if (tripdata.pickup && tripdata.drop && tripdata.drop.add) {
+                if (tripdata.carType) {
+                  setPickerConfig({
+                    dateMode: "date",
+                    dateModalOpen: true,
+                    selectedDateTime: pickerConfig.selectedDateTime,
+                  });
+                } else {
+                  Alert.alert(t("alert"), t("car_type_blank_error"));
+                }
+              } else {
+                Alert.alert(t("alert"), t("drop_location_blank_error"));
+              }
+            } else {
+              Alert.alert(t("alert"), t("admin_contact"));
+            }
+          } else {
             Alert.alert(
-                t('alert'),
-                t('wallet_balance_low')
+              t("alert"),
+              t("verifyid_error"),
+              [
+                { text: t("cancel"), onPress: () => {}, style: "cancel" },
+                {
+                  text: t("ok"),
+                  onPress: () =>
+                    props.navigation.dispatch(
+                      CommonActions.reset({
+                        index: 0,
+                        routes: [
+                          { name: "editUser", params: { fromPage: "Map" } },
+                        ],
+                      })
+                    ),
+                },
+              ],
+              { cancelable: false }
             );
+          }
         }
-    }
+      } else {
+        Alert.alert(t("alert"), t("wallet_balance_low"));
+      }
+    };
+
+    // const onPressBookLater = () => {
+    //     setCheckType(false);
+    //     if (parseFloat(profile.walletBalance) >= 0) {
+    //         if (!(profile.mobile && profile.mobile.length > 6)) {
+    //             Alert.alert(t('alert'), t('mobile_need_update'));
+    //             props.navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: 'Profile', params: { fromPage: 'Map'} }] }));
+    //         } else {
+    //             if ((settings && settings.imageIdApproval && auth.profile.verifyId && auth.profile.verifyIdImage) || (settings && !settings.imageIdApproval)) {
+    //               if(auth.profile.approved){
+    //                 if (tripdata.pickup && tripdata.drop && tripdata.drop.add) {
+    //                     if (tripdata.carType) {
+    //                       setPickerConfig({
+    //                         dateMode: "date",
+    //                         dateModalOpen: true,
+    //                         selectedDateTime: pickerConfig.selectedDateTime,
+    //                       });
+    //                         // setInitDate(new Date());
+    //                         // setDatePickerOpen(true);
+    //                     } else {
+    //                         Alert.alert(t('alert'), t('car_type_blank_error'))
+    //                     }
+    //                 } else {
+    //                     Alert.alert(t('alert'), t('drop_location_blank_error'))
+    //                 }
+    //               }else{
+    //                 Alert.alert(t('alert'), t('admin_contact'))
+    //               }
+    //             } else {
+    //                 Alert.alert(
+    //                     t('alert'),
+    //                     t('verifyid_error'),
+    //                     [
+    //                         { text: t('cancel'), onPress: () => { }, style: 'cancel' },
+    //                         { text: t('ok'), onPress: () =>   
+    //                             props.navigation.dispatch(CommonActions.reset({index: 0, routes:[{ name: 'editUser', params: { fromPage: 'Map'} }]})) 
+    //                         }
+    //                     ],
+    //                     { cancelable: false }
+    //                 );
+    //             }
+    //         }
+    //     } else {
+    //         Alert.alert(
+    //             t('alert'),
+    //             t('wallet_balance_low')
+    //         );
+    //     }
+    // }
 
     const hideDatePicker = () => {
         //setDatePickerOpen(false);
@@ -1188,7 +1252,7 @@ export default function MapScreen(props) {
     const  onTermLink  = async () => {
         Linking.openURL(settings.CompanyTermCondition).catch(err => console.error("Couldn't load page", err));
    }
-console.log(tripdata);
+  //console.log(tripdata);
     return (
         <View style={styles.container}>
             <StatusBar hidden={true} />
@@ -1466,7 +1530,7 @@ console.log(tripdata);
                         >
                           {fromairportSelected
                             ? "Choose Airport Pickup"
-                            : "Pickup Address"}
+                            : "Enter Pickup Address"}
                         </Text>
       
                         {(fromairportSelected&&
