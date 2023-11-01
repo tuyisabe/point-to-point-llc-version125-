@@ -119,7 +119,7 @@ export default function AppContainer() {
                         borderBottomColor: '#C2D5A8',
                         borderBottomWidth: 2,
                       },
-                    tabBarStyle: { height: hasNotch ? 80:55,transform:isRTL? [{scaleX: -1}] :[{scaleX: 1}]},
+                    tabBarStyle: { height: hasNotch ? 80:55,transform:isRTL? [{scaleX: -1}] :[{scaleX: 1}],paddingBottom:10},
                     tabBarLabelStyle:{ fontSize: 14,transform:isRTL? [{scaleX: -1}] :[{scaleX: 1}]},
                 })}
             >

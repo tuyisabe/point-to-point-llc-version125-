@@ -1252,7 +1252,7 @@ export default function MapScreen(props) {
     const  onTermLink  = async () => {
         Linking.openURL(settings.CompanyTermCondition).catch(err => console.error("Couldn't load page", err));
    }
-  //console.log(tripdata);
+  console.log(tripdata);
     return (
         <View style={styles.container}>
             <StatusBar hidden={true} />
@@ -1328,34 +1328,11 @@ export default function MapScreen(props) {
                     </View>
                     : null}
             </View>
-            {/* <View style={[styles.buttonBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-                {bookLoading ?
-                    null :
-                    <Button
-                        title={t('book_later_button')}
-                        loading={bookLaterLoading}
-                        loadingProps={{ size: "large", color: colors.WHITE }}
-                        titleStyle={styles.buttonTitleStyle}
-                        onPress={onPressBookLater}
-                        buttonStyle={[styles.buttonStyle, { backgroundColor: colors.BUTTON_BACKGROUND, width: bookLaterLoading ? width : width / 2 }]}
-                        containerStyle={[styles.buttonContainer, { width: bookLaterLoading ? width : width / 2 }]}
-                    />
-                }
-                <Button
-                    title={t('book_now_button')}
-                    loading={bookLoading}
-                    loadingProps={{ size: "large", color: colors.WHITE }}
-                    titleStyle={styles.buttonTitleStyle}
-                    onPress={onPressBook}
-                    buttonStyle={[styles.buttonStyle, { backgroundColor: MAIN_COLOR, width: bookLoading ? width : width / 2 }]}
-                    containerStyle={[styles.buttonContainer, { width: bookLoading ? width : width / 2 }]}
-                />
-            </View> */}
             <View style={styles.menuIcon}>
                 <ImageBackground source={require('../../assets/images/white-grad6.png')} style={{ height: '100%', width: '100%' }}>
                 <View
             style={{
-              width: width - 40,
+              width: width - 20,
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
@@ -1368,13 +1345,13 @@ export default function MapScreen(props) {
                   : hasNotch
                   ? 38
                   : 30,
-              marginLeft: 20,
+              marginLeft: 10,
             }}
           >
             <Button
               title={"To Airport"}
               titleStyle={{
-                color: toairportSelected ? colors.WHITE : colors.BLUE,
+                color: toairportSelected ? colors.WHITE : colors.BLUE,fontSize:20
               }}
               onPress={() => {
                 setToairportSelected(true), setFromairportSelected(false);
@@ -1382,7 +1359,7 @@ export default function MapScreen(props) {
               icon={{
                 name: "airplane-takeoff",
                 type: "material-community",
-                size: 26,
+                size: 30,
                 color: toairportSelected ? colors.WHITE : colors.BLUE,
               }}
               buttonStyle={[
@@ -1390,8 +1367,8 @@ export default function MapScreen(props) {
                   backgroundColor: toairportSelected
                     ? colors.BLUE
                     : colors.WHITE,
-                  width: 150,
-                  borderWidth: 1,
+                  width: 180,
+                  borderWidth: 2,
                   borderColor: colors.BLUE,
                 },
               ]}
@@ -1399,7 +1376,7 @@ export default function MapScreen(props) {
             <Button
               title={"From Airport"}
               titleStyle={{
-                color: fromairportSelected ? colors.WHITE : colors.BLUE,
+                color: fromairportSelected ? colors.WHITE : colors.BLUE,fontSize:20
               }}
               onPress={() => {
                 setFromairportSelected(true), setToairportSelected(false);
@@ -1407,7 +1384,7 @@ export default function MapScreen(props) {
               icon={{
                 name: "car",
                 type: "material-community",
-                size: 26,
+                size: 30,
                 color: fromairportSelected ? colors.WHITE : colors.BLUE,
               }}
               buttonStyle={[
@@ -1415,14 +1392,14 @@ export default function MapScreen(props) {
                   backgroundColor: fromairportSelected
                     ? colors.BLUE
                     : colors.WHITE,
-                  width: 150,
-                  borderWidth: 1,
+                  width: 180,
+                  borderWidth: 2,
                   borderColor: colors.BLUE,
                 },
               ]}
             />
           </View>
-                    <Text style={{ color: colors.BLUE, fontWeight: 'bold', fontSize: 22,textAlign:'center', marginTop: Platform.OS == 'android' ? (__DEV__ ? 10 : 10) : (hasNotch ? 10 : 10) }}>            
+                    <Text style={{ color: colors.BLUE, fontWeight: 'bold', fontSize: 24,textAlign:'center', marginTop: Platform.OS == 'android' ? (__DEV__ ? 10 : 10) : (hasNotch ? 10 : 10) }}>            
                     {toairportSelected
               ? "To Salt Lake City Airport"
               : "From Salt Lake City Airport"}</Text>
@@ -1535,7 +1512,9 @@ export default function MapScreen(props) {
       
                         {(fromairportSelected&&
                         tripdata.pickup &&
-                        tripdata.pickup.source == "gps") ? (
+                        tripdata.pickup.source == "gps" ||fromairportSelected&&
+                        tripdata.pickup &&
+                        tripdata.pickup.source == "init") ? (
                           <Text
                             style={[
                               styles.textStyle,
@@ -1615,7 +1594,7 @@ export default function MapScreen(props) {
                         </Text>
                         {toairportSelected &&
                         tripdata.drop &&
-                        tripdata.drop.source == "init" ? (
+                        tripdata.drop.source == "init"? (
                           <Text
                             style={[
                               styles.textStyle,

@@ -35,24 +35,19 @@ const datas = [
     lng: 30.135014,
   },
   {
-    add: "Atlantic Aviation SLC",
-    lat: 40.77795,
-    lng: 111.95812,
+    add: "Atlantic Aviation (SLC)",
+    lat: 40.780239105225,
+    lng: -111.95767974854,
   },
   {
-    add: "Salt Lake City International Airport (SLC)",
-    lat: 40.78739,
-    lng: 111.98538,
+    add: "Salt Lake City Intl Airport (SLC)",
+    lat: 40.7899404,
+    lng: -111.9790706,
   },
   {
-    add: "Signature Flight Support SLC",
-    lat: 40.77584,
-    lng: 111.95785,
-  },
-  {
-    add: "TAC Air SLC",
-    lat: 40.77584,
-    lng: 111.95785,
+    add: "Signature Aviation (SLC)",
+    lat: 40.78839,
+    lng: -111.97777,
   },
 ];
 const appcat = "taxi";
@@ -361,104 +356,6 @@ export default function SearchScreen(props) {
       }
     }
   };
-
-  // const updateLocation = (data) => {
-  //   setModalVisible(false);
-  //   setLoading(true);
-  //   setSearchKeyword(checkSearchPhrase(data.description));
-  //   setIsShowingResults(false);
-  //   if (data.place_id) {
-  //     fetchCoordsfromPlace(data.place_id).then((res) => {
-  //       if (res && res.lat) {
-  //         if (locationType == 'pickup') {
-  //           dispatch(updateTripPickup({
-  //             lat: res.lat,
-  //             lng: res.lng,
-  //             add: data.description,
-  //             source: 'search'
-  //           }));
-  //           if (appConsts.hasMultiDrop) {
-  //             props.navigation.dispatch(StackActions.pop(1));
-  //           }
-  //         } else {
-  //           if (appConsts.hasMultiDrop) {
-  //             let arr = selLocations;
-  //             arr.push({
-  //               lat: res.lat,
-  //               lng: res.lng,
-  //               add: data.description,
-  //               source: 'search'
-  //             });
-  //             Keyboard.dismiss();
-  //             setSelLocations(arr);
-  //           } else {
-  //             dispatch(updateTripDrop({
-  //               lat: res.lat,
-  //               lng: res.lng,
-  //               add: data.description,
-  //               source: 'search'
-  //             }));
-  //           }
-  //         }
-  //         setLoading(false);
-  //         if (!appConsts.hasMultiDrop) {
-  //           props.navigation.dispatch(StackActions.pop(1));
-  //         }
-  //       } else {
-  //         Alert.alert(t('alert'), t('place_to_coords_error'));
-  //       }
-  //     });
-  //   } else {
-  //     if (data.description) {
-  //       if (locationType == 'pickup') {
-  //         dispatch(updateTripPickup({
-  //           lat: data.lat,
-  //           lng: data.lng,
-  //           add: data.description,
-  //           source: 'search'
-  //         }));
-  //         if (appConsts.hasMultiDrop) {
-  //           props.navigation.dispatch(StackActions.pop(1));
-  //         }
-  //       } else {
-  //         if (appConsts.hasMultiDrop) {
-  //           let arr = [...selLocations];
-  //           let notFound = true;
-  //           for (let i = 0; i < arr.length; i++) {
-  //             if (arr[i].add == data.description) {
-  //               notFound = false;
-  //               break;
-  //             }
-  //           }
-  //           if (notFound) {
-  //             let entry = {
-  //               lat: data.lat,
-  //               lng: data.lng,
-  //               add: data.description,
-  //               source: 'search'
-  //             };
-  //             arr.push(entry);
-  //           }
-  //           Keyboard.dismiss();
-  //           setSelLocations(arr);
-  //         } else {
-  //           dispatch(updateTripDrop({
-  //             lat: data.lat,
-  //             lng: data.lng,
-  //             add: data.description,
-  //             source: 'search'
-  //           }));
-  //         }
-
-  //       }
-  //       setLoading(false);
-  //       if (!appConsts.hasMultiDrop) {
-  //         props.navigation.dispatch(StackActions.pop(1));
-  //       }
-  //     }
-  //   }
-  // }
-
   const searchSaveLocation = async (text) => {
     setSearchKeyword2(text);
     if (text.length > (settings.AllowCriticalEditsAdmin ? 3 : 5)) {
@@ -555,18 +452,18 @@ export default function SearchScreen(props) {
 
       <View
           style={{
-            width: width - 40,
+            width: width - 20,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
             marginTop: 10,
-            marginLeft: 10,
+            marginLeft: 6,
           }}
         >
           <Button
             title={"To Airport"}
-            titleStyle={{ color: toairportSelect ? colors.WHITE : colors.BLUE,fontSize:18 }}
+            titleStyle={{ color: toairportSelect ? colors.WHITE : colors.BLUE,fontSize:20 }}
             onPress={() => {
               setToairportSelect(true), setFromairportSelect(false);
             }}
@@ -579,7 +476,7 @@ export default function SearchScreen(props) {
             buttonStyle={[
               {
                 backgroundColor: toairportSelect ? colors.BLUE : colors.WHITE,
-                width: 150,
+                width: 180,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
                 elevation:20
@@ -589,7 +486,7 @@ export default function SearchScreen(props) {
           <Button
             title={"From Airport"}
             titleStyle={{
-              color: fromairportSelect ? colors.WHITE : colors.BLUE,fontSize:18,
+              color: fromairportSelect ? colors.WHITE : colors.BLUE,fontSize:20,
             }}
             onPress={() => {
               setFromairportSelect(true), setToairportSelect(false);
@@ -603,7 +500,7 @@ export default function SearchScreen(props) {
             buttonStyle={[
               {
                 backgroundColor: fromairportSelect ? colors.BLUE : colors.WHITE,
-                width: 150,
+                width: 180,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
                 elevation:20,
@@ -659,6 +556,18 @@ export default function SearchScreen(props) {
             onChange={(text) => {
               updateSelectLocation(text), changepickup();
             }}
+            renderRightIcon={() => (
+              <Icon
+                name="chevron-down"
+                type="material-community"
+                color={colors.BLUE}
+                size={35}
+                style={[
+                  { marginEnd: 15 },
+                  isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
+                ]}
+              />
+      )}
             renderLeftIcon={() => (
               <Icon
                 name="airplane-takeoff"
@@ -790,6 +699,18 @@ export default function SearchScreen(props) {
                 onChange={(text) => {
                   updateSelectLocation(text), changedrop();
                 }}
+                renderRightIcon={() => (
+                    <Icon
+                      name="chevron-down"
+                      type="material-community"
+                      color={colors.BLUE}
+                      size={35}
+                      style={[
+                        { marginEnd: 15 },
+                        isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
+                      ]}
+                    />
+            )}
                 renderLeftIcon={() => (
                   <Icon
                     name="airplane-takeoff"
@@ -891,60 +812,7 @@ export default function SearchScreen(props) {
             )}
           </View>
         )}
-      {/* <View style={[styles.addressBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-        <View style={[styles.contentStyle]}>
-          {locationType == 'drop' ?
-            <View style={[styles.addressBox, {flexDirection:isRTL? 'row-reverse':'row'}]}>
-              <View style={styles.hbox1} />
-              <View style={[styles.addressStyle1, {flexDirection:isRTL? 'row-reverse':'row'}]}>
-                <Text numberOfLines={1} style={[styles.textStyle, { textAlign: isRTL ? "right" : "left", fontSize: 14 }]}>{tripdata.pickup && tripdata.pickup.add ? tripdata.pickup.add : t('map_screen_where_input_text')}</Text>
-              </View>
-            </View>
-          : null }
-
-          {appConsts.hasMultiDrop && selLocations.length > 0 ?
-            <FlatList
-              data={selLocations}
-              renderItem={({ item, index }) => {
-                return (
-                <View key={"key" + index} style={[styles.addressBox, {flexDirection:isRTL? 'row-reverse':'row', marginBottom: 1, width: width-12}]}>
-                  <View style={styles.multiAddressChar}>
-                    <Text style={{fontWeight: 'bold', fontSize: 14, color: colors.BLACK }}>{String.fromCharCode(65+index)}</Text> 
-                  </View>
-                  <View style={[styles.multiAddressStyle, {flexDirection:isRTL? 'row-reverse':'row'}]}>
-                    <Text numberOfLines={1} style={[styles.textStyle, {textAlign: isRTL ? "right" : "left", width: width-80 }]}>{item.add}</Text>
-                  </View>
-                  <TouchableOpacity style={styles.dropremove} onPress={() => removeItem(index)}>
-                    <Entypo name="cross" size={24} color= {colors.SECONDARY} style={{borderLeftWidth: 1, borderLeftColor: colors.SECONDARY}}/>
-                  </TouchableOpacity>
-                </View>
-                );
-              }}
-              keyExtractor={(item) => item.add}
-              style={styles.multiLocation}
-            />
-          : null}
     
-          <View style={styles.addressStyle2}>
-            <View style={[styles.autocompleteMain, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-              {locationType == 'pickup' ?
-                <View style={styles.hbox1} />
-              :
-                <View style={styles.hbox3} />
-              }
-              <TextInput
-                placeholder={t('search_for_an_address')}
-                returnKeyType="search"
-                style={[styles.searchBox, isRTL ? { textAlign: 'right' } : { textAlign: 'left' }]}
-                placeholderTextColor= {colors.BLACK}
-                onChangeText={(text) => searchLocation(text)}
-                value={searchKeyword}
-              />
-            </View>
-          </View>
-        </View>
-      </View> */}
-
       {!searchKeyword ?
       <TouchableOpacity onPress={() => setModalVisible(true)} style={[styles.saveBox,{flexDirection:isRTL? 'row-reverse':'row'}]}>
         <View style={{height: 45, justifyContent: 'center' }}>
@@ -1110,7 +978,6 @@ export default function SearchScreen(props) {
             </View>
             : null }
           </View>
-
           {searchKeyword2 && isShowingResults2 && !address?
             <FlatList
               keyboardShouldPersistTaps='always'
