@@ -421,6 +421,17 @@ export default function MapScreen(props) {
         }
     }
 
+    const removePickupItem = (index) => {
+      let arr = [...selLocationsPickup];
+      arr.splice(index, 1);
+      setSelLocationsPickup(arr);
+    };
+  
+    const removeDropItem = (index) => {
+      let arr1 = [...selLocationsDrop];
+      arr1.splice(index, 1);
+      setSelLocationsDrop(arr1);
+    };
     const resetActiveCar = () => {
         let carWiseArr = [];
         const sorted = allCarTypes.sort((a, b) => a.pos - b.pos);
@@ -716,53 +727,6 @@ export default function MapScreen(props) {
         dispatch(updatSelPointType(selection));
       }
     };
-
-    // const tapAddress = (selection) => {
-    //     if (selection === tripdata.selected) {
-    //         let savedAddresses = [];
-    //         let allAddresses = profile.savedAddresses;
-    //         for (let key in allAddresses) {
-    //             savedAddresses.push(allAddresses[key]);
-    //         }
-    //         if (selection == 'drop') {
-    //             props.navigation.navigate('Search', { 
-    //                 locationType: "drop", 
-    //                 addParam: savedAddresses,
-    //                 toairportSelected: toairportSelected ? true : false,
-    //                 fromairportSelected: fromairportSelected ? true : false, 
-    //         });
-            
-    //         } else {
-    //             props.navigation.navigate('Search', { 
-    //                 locationType: "pickup", 
-    //                 addParam: savedAddresses,
-    //                 toairportSelected: toairportSelected ? true : false,
-    //                 fromairportSelected: fromairportSelected ? true : false, 
-    //         });
-    //         }
-    //     } else {
-    //         setDragging(0)
-    //         if (selection == 'drop' && tripdata.selected && tripdata.selected == 'pickup' && mapRef.current) {
-    //             mapRef.current.animateToRegion({
-    //                 latitude: tripdata.drop.lat,
-    //                 longitude: tripdata.drop.lng,
-    //                 latitudeDelta: latitudeDelta,
-    //                 longitudeDelta: longitudeDelta
-    //             });
-    //         }
-    //         if (selection == 'pickup' && tripdata.selected && tripdata.selected == 'drop' && mapRef.current) {
-    //             mapRef.current.animateToRegion({
-    //                 latitude: tripdata.pickup.lat,
-    //                 longitude: tripdata.pickup.lng,
-    //                 latitudeDelta: latitudeDelta,
-    //                 longitudeDelta: longitudeDelta
-    //             });
-    //         }
-    //         dispatch(updatSelPointType(selection));
-    //     }
-
-    // };
-
     const onPressBook = async () => {
         if (parseFloat(profile.walletBalance) >= 0) {
             setCheckType(true);
@@ -900,56 +864,6 @@ export default function MapScreen(props) {
         Alert.alert(t("alert"), t("wallet_balance_low"));
       }
     };
-
-    // const onPressBookLater = () => {
-    //     setCheckType(false);
-    //     if (parseFloat(profile.walletBalance) >= 0) {
-    //         if (!(profile.mobile && profile.mobile.length > 6)) {
-    //             Alert.alert(t('alert'), t('mobile_need_update'));
-    //             props.navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: 'Profile', params: { fromPage: 'Map'} }] }));
-    //         } else {
-    //             if ((settings && settings.imageIdApproval && auth.profile.verifyId && auth.profile.verifyIdImage) || (settings && !settings.imageIdApproval)) {
-    //               if(auth.profile.approved){
-    //                 if (tripdata.pickup && tripdata.drop && tripdata.drop.add) {
-    //                     if (tripdata.carType) {
-    //                       setPickerConfig({
-    //                         dateMode: "date",
-    //                         dateModalOpen: true,
-    //                         selectedDateTime: pickerConfig.selectedDateTime,
-    //                       });
-    //                         // setInitDate(new Date());
-    //                         // setDatePickerOpen(true);
-    //                     } else {
-    //                         Alert.alert(t('alert'), t('car_type_blank_error'))
-    //                     }
-    //                 } else {
-    //                     Alert.alert(t('alert'), t('drop_location_blank_error'))
-    //                 }
-    //               }else{
-    //                 Alert.alert(t('alert'), t('admin_contact'))
-    //               }
-    //             } else {
-    //                 Alert.alert(
-    //                     t('alert'),
-    //                     t('verifyid_error'),
-    //                     [
-    //                         { text: t('cancel'), onPress: () => { }, style: 'cancel' },
-    //                         { text: t('ok'), onPress: () =>   
-    //                             props.navigation.dispatch(CommonActions.reset({index: 0, routes:[{ name: 'editUser', params: { fromPage: 'Map'} }]})) 
-    //                         }
-    //                     ],
-    //                     { cancelable: false }
-    //                 );
-    //             }
-    //         }
-    //     } else {
-    //         Alert.alert(
-    //             t('alert'),
-    //             t('wallet_balance_low')
-    //         );
-    //     }
-    // }
-
     const hideDatePicker = () => {
         //setDatePickerOpen(false);
         setPickerConfig({
@@ -1354,7 +1268,7 @@ export default function MapScreen(props) {
                 color: toairportSelected ? colors.WHITE : colors.BLUE,fontSize:20
               }}
               onPress={() => {
-                setToairportSelected(true), setFromairportSelected(false);
+                setToairportSelected(true), setFromairportSelected(false),locateUser();
               }}
               icon={{
                 name: "airplane-takeoff",
@@ -1379,7 +1293,7 @@ export default function MapScreen(props) {
                 color: fromairportSelected ? colors.WHITE : colors.BLUE,fontSize:20
               }}
               onPress={() => {
-                setFromairportSelected(true), setToairportSelected(false);
+                setFromairportSelected(true), setToairportSelected(false),locateUser();
               }}
               icon={{
                 name: "car",
@@ -1594,7 +1508,9 @@ export default function MapScreen(props) {
                         </Text>
                         {toairportSelected &&
                         tripdata.drop &&
-                        tripdata.drop.source == "init"? (
+                        tripdata.drop.source == "init" || toairportSelected &&
+                        tripdata.drop &&
+                        tripdata.drop.source == "gps"? (
                           <Text
                             style={[
                               styles.textStyle,
@@ -1617,7 +1533,7 @@ export default function MapScreen(props) {
                               { textAlign: isRTL ? "right" : "left" },
                             ]}
                           >
-                            {tripdata.drop && tripdata.drop.add
+                            {tripdata.drop && tripdata.drop.add && tripdata.pickup.source != "gps"
                               ? tripdata.drop.add
                               : "Where are you going ?"}
                           </Text>

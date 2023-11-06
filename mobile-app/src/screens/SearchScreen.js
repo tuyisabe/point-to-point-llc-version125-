@@ -465,7 +465,7 @@ export default function SearchScreen(props) {
             title={"To Airport"}
             titleStyle={{ color: toairportSelect ? colors.WHITE : colors.BLUE,fontSize:20 }}
             onPress={() => {
-              setToairportSelect(true), setFromairportSelect(false);
+              setToairportSelect(true), setFromairportSelect(false),removePickupItem(selLocationsPickup[0]),removeDropItem(selLocationsDrop[0]);
             }}
             icon={{
               name: "airplane-takeoff",
@@ -489,7 +489,7 @@ export default function SearchScreen(props) {
               color: fromairportSelect ? colors.WHITE : colors.BLUE,fontSize:20,
             }}
             onPress={() => {
-              setFromairportSelect(true), setToairportSelect(false);
+              setFromairportSelect(true), setToairportSelect(false),removePickupItem(selLocationsPickup[0]),removeDropItem(selLocationsDrop[0]);
             }}
             icon={{
               name: "car",
