@@ -1259,7 +1259,7 @@ export default function MapScreen(props) {
                   : hasNotch
                   ? 38
                   : 30,
-              marginLeft: 10,
+              marginLeft: 15,
             }}
           >
             <Button

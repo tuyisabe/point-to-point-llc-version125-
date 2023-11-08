@@ -445,20 +445,20 @@ export default function SearchScreen(props) {
     arr1.splice(index, 1);
     setSelLocationsDrop(arr1);
   };
-
+console.log(selLocationsPickup[0].add);
   return (
     <View style={{flex:1}}>
       <View style={{flex: 1,backgroundColor: colors.TRANSPARENT, height:'100%', width: '100%', alignContent: 'center', alignItems:'center' }}>
 
       <View
           style={{
-            width: width - 30,
+            width: width - 20,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
             marginTop: 10,
-            marginLeft: 5,
+            marginLeft: 6,
           }}
         >
           <Button
@@ -476,7 +476,7 @@ export default function SearchScreen(props) {
             buttonStyle={[
               {
                 backgroundColor: toairportSelect ? colors.BLUE : colors.WHITE,
-                width: 170,
+                width: 180,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
                 elevation:20
@@ -500,7 +500,7 @@ export default function SearchScreen(props) {
             buttonStyle={[
               {
                 backgroundColor: fromairportSelect ? colors.BLUE : colors.WHITE,
-                width: 170,
+                width: 180,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
                 elevation:20,
@@ -792,23 +792,6 @@ export default function SearchScreen(props) {
                     height: 70,
                   }}
                 >
-                  {selLocationsDrop && selLocationsDrop.length < 1 && selLocationsPickup && selLocationsPickup.length > 0?
-                               <Text
-                               style={{
-                                 paddingLeft: 10,
-                                 width: width - 100,
-                                 color: colors.BLACK,
-                                 fontFamily: "Uber Move",
-                                 fontStyle: "normal",
-                                 fontWeight: "500",
-                                 lineHeight: 24,
-                                 fontSize: 20,
-                               }}
-                               numberOfLines={1}
-                             >
-                               {selLocationsPickup[0].add}
-                             </Text>:
-                  
                   <TextInput
                     placeholder={"Enter Drop Off Address"}
                     returnKeyType="search1"
@@ -823,7 +806,7 @@ export default function SearchScreen(props) {
                       searchLocation(text), changedrop(),setHidePic(true);
                     }}                    
                    // value={searchKeywordDrop}
-                  />}
+                  />
                 </View>
               </>
             )}
