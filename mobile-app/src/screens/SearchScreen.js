@@ -445,20 +445,20 @@ export default function SearchScreen(props) {
     arr1.splice(index, 1);
     setSelLocationsDrop(arr1);
   };
-console.log(selLocationsPickup[0].add);
+//console.log(selLocationsPickup[0].add);
   return (
     <View style={{flex:1}}>
       <View style={{flex: 1,backgroundColor: colors.TRANSPARENT, height:'100%', width: '100%', alignContent: 'center', alignItems:'center' }}>
 
       <View
           style={{
-            width: width - 20,
+            width: width - 40,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
             marginTop: 10,
-            marginLeft: 6,
+            //marginLeft: "2%",
           }}
         >
           <Button
@@ -476,7 +476,7 @@ console.log(selLocationsPickup[0].add);
             buttonStyle={[
               {
                 backgroundColor: toairportSelect ? colors.BLUE : colors.WHITE,
-                width: 180,
+                width: 160,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
                 elevation:20
@@ -486,7 +486,7 @@ console.log(selLocationsPickup[0].add);
           <Button
             title={"From Airport"}
             titleStyle={{
-              color: fromairportSelect ? colors.WHITE : colors.BLUE,fontSize:20,
+              color: fromairportSelect ? colors.WHITE : colors.BLUE,fontSize:20,marginRight:7
             }}
             onPress={() => {
               setFromairportSelect(true), setToairportSelect(false);
@@ -500,7 +500,7 @@ console.log(selLocationsPickup[0].add);
             buttonStyle={[
               {
                 backgroundColor: fromairportSelect ? colors.BLUE : colors.WHITE,
-                width: 180,
+                width: 160,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
                 elevation:20,

@@ -1246,7 +1246,7 @@ export default function MapScreen(props) {
                 <ImageBackground source={require('../../assets/images/white-grad6.png')} style={{ height: '100%', width: '100%' }}>
                 <View
             style={{
-              width: width - 30,
+              width: width - 40,
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
@@ -1259,13 +1259,13 @@ export default function MapScreen(props) {
                   : hasNotch
                   ? 38
                   : 30,
-              marginLeft: 15,
+             marginLeft: "5%",
             }}
           >
             <Button
               title={"To Airport"}
               titleStyle={{
-                color: toairportSelected ? colors.WHITE : colors.BLUE,fontSize:20
+                color: toairportSelected ? colors.WHITE : colors.BLUE,fontSize:20,marginRight:4
               }}
               onPress={() => {
                 setToairportSelected(true), setFromairportSelected(false),locateUser();
@@ -1281,7 +1281,7 @@ export default function MapScreen(props) {
                   backgroundColor: toairportSelected
                     ? colors.BLUE
                     : colors.WHITE,
-                  width: 170,
+                  width: 160,
                   borderWidth: 2,
                   borderColor: colors.BLUE,
                 },
@@ -1290,7 +1290,7 @@ export default function MapScreen(props) {
             <Button
               title={"From Airport"}
               titleStyle={{
-                color: fromairportSelected ? colors.WHITE : colors.BLUE,fontSize:20
+                color: fromairportSelected ? colors.WHITE : colors.BLUE,fontSize:20,marginRight:10
               }}
               onPress={() => {
                 setFromairportSelected(true), setToairportSelected(false),locateUser();
@@ -1306,7 +1306,7 @@ export default function MapScreen(props) {
                   backgroundColor: fromairportSelected
                     ? colors.BLUE
                     : colors.WHITE,
-                  width: 170,
+                  width: 160,
                   borderWidth: 2,
                   borderColor: colors.BLUE,
                 },
