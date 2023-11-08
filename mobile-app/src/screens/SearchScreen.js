@@ -452,20 +452,20 @@ export default function SearchScreen(props) {
 
       <View
           style={{
-            width: width - 20,
+            width: width - 30,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
             marginTop: 10,
-            marginLeft: 6,
+            marginLeft: 5,
           }}
         >
           <Button
             title={"To Airport"}
             titleStyle={{ color: toairportSelect ? colors.WHITE : colors.BLUE,fontSize:20 }}
             onPress={() => {
-              setToairportSelect(true), setFromairportSelect(false),removePickupItem(selLocationsPickup[0]),removeDropItem(selLocationsDrop[0]);
+              setToairportSelect(true), setFromairportSelect(false);
             }}
             icon={{
               name: "airplane-takeoff",
@@ -476,7 +476,7 @@ export default function SearchScreen(props) {
             buttonStyle={[
               {
                 backgroundColor: toairportSelect ? colors.BLUE : colors.WHITE,
-                width: 180,
+                width: 170,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
                 elevation:20
@@ -489,7 +489,7 @@ export default function SearchScreen(props) {
               color: fromairportSelect ? colors.WHITE : colors.BLUE,fontSize:20,
             }}
             onPress={() => {
-              setFromairportSelect(true), setToairportSelect(false),removePickupItem(selLocationsPickup[0]),removeDropItem(selLocationsDrop[0]);
+              setFromairportSelect(true), setToairportSelect(false);
             }}
             icon={{
               name: "car",
@@ -500,7 +500,7 @@ export default function SearchScreen(props) {
             buttonStyle={[
               {
                 backgroundColor: fromairportSelect ? colors.BLUE : colors.WHITE,
-                width: 180,
+                width: 170,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
                 elevation:20,
@@ -792,6 +792,23 @@ export default function SearchScreen(props) {
                     height: 70,
                   }}
                 >
+                  {selLocationsDrop && selLocationsDrop.length < 1 && selLocationsPickup && selLocationsPickup.length > 0?
+                               <Text
+                               style={{
+                                 paddingLeft: 10,
+                                 width: width - 100,
+                                 color: colors.BLACK,
+                                 fontFamily: "Uber Move",
+                                 fontStyle: "normal",
+                                 fontWeight: "500",
+                                 lineHeight: 24,
+                                 fontSize: 20,
+                               }}
+                               numberOfLines={1}
+                             >
+                               {selLocationsPickup[0].add}
+                             </Text>:
+                  
                   <TextInput
                     placeholder={"Enter Drop Off Address"}
                     returnKeyType="search1"
@@ -806,7 +823,7 @@ export default function SearchScreen(props) {
                       searchLocation(text), changedrop(),setHidePic(true);
                     }}                    
                    // value={searchKeywordDrop}
-                  />
+                  />}
                 </View>
               </>
             )}

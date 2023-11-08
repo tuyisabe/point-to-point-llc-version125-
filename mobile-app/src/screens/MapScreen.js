@@ -1246,7 +1246,7 @@ export default function MapScreen(props) {
                 <ImageBackground source={require('../../assets/images/white-grad6.png')} style={{ height: '100%', width: '100%' }}>
                 <View
             style={{
-              width: width - 20,
+              width: width - 30,
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
@@ -1281,7 +1281,7 @@ export default function MapScreen(props) {
                   backgroundColor: toairportSelected
                     ? colors.BLUE
                     : colors.WHITE,
-                  width: 180,
+                  width: 170,
                   borderWidth: 2,
                   borderColor: colors.BLUE,
                 },
@@ -1306,7 +1306,7 @@ export default function MapScreen(props) {
                   backgroundColor: fromairportSelected
                     ? colors.BLUE
                     : colors.WHITE,
-                  width: 180,
+                  width: 170,
                   borderWidth: 2,
                   borderColor: colors.BLUE,
                 },
@@ -1504,13 +1504,15 @@ export default function MapScreen(props) {
                         >
                           {toairportSelected
                             ? "Choose Airport Drop off"
-                            : "Drop off Address"}
+                            : "Enter Drop off Address"}
                         </Text>
                         {toairportSelected &&
                         tripdata.drop &&
                         tripdata.drop.source == "init" || toairportSelected &&
                         tripdata.drop &&
-                        tripdata.drop.source == "gps"? (
+                        tripdata.drop.source == "gps" || toairportSelected &&
+                        tripdata.drop &&
+                        tripdata.drop.source == "search1"? (
                           <Text
                             style={[
                               styles.textStyle,
@@ -1533,9 +1535,13 @@ export default function MapScreen(props) {
                               { textAlign: isRTL ? "right" : "left" },
                             ]}
                           >
-                            {tripdata.drop && tripdata.drop.add && tripdata.pickup.source != "gps"
-                              ? tripdata.drop.add
-                              : "Where are you going ?"}
+                            {/* {tripdata.drop && tripdata.drop.add && tripdata.pickup.source != "gps"
+                              ? tripdata.drop.add */}
+                              {fromairportSelected&&tripdata.pickup && tripdata.pickup.add&& tripdata.pickup.source == "gps"
+                              ? tripdata.pickup.add
+                              : null}
+                              {tripdata.drop && tripdata.drop.add && tripdata.pickup.source != "gps"
+                              ? tripdata.drop.add:"Where are you going ?"}
                           </Text>
                         )}
                       </TouchableOpacity>

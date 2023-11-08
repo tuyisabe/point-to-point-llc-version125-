@@ -340,7 +340,7 @@ export default function SettingsScreen(props) {
                         }}
                       >
                         <ActivityIndicator
-                          color={colors.BLACK}
+                          color={colors.BLUE}
                           size="large"
                           style={{
                             marginLeft: isRTL ? 0 : 50,
