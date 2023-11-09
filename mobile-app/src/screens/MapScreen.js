@@ -1538,7 +1538,7 @@ export default function MapScreen(props) {
                             {/* {tripdata.drop && tripdata.drop.add && tripdata.pickup.source != "gps"
                               ? tripdata.drop.add */}
                               {fromairportSelected&&tripdata.pickup && tripdata.pickup.add&& tripdata.pickup.source == "gps"
-                              ? tripdata.pickup.add
+                              ? tripdata.drop.add=tripdata.pickup.add
                               : null}
                               {tripdata.drop && tripdata.drop.add && tripdata.pickup.source != "gps"
                               ? tripdata.drop.add:"Where are you going ?"}
@@ -1550,39 +1550,6 @@ export default function MapScreen(props) {
                 </View>
               </>
             }
-
-            {/* {settings && settings.horizontal_view ?
-
-                <View style={styles.fullCarView}>
-                    <ScrollView horizontal={true} style={styles.fullCarScroller} showsHorizontalScrollIndicator={false}>
-                        {allCarTypes.map((prop, key) => {
-                            return (
-                                <View key={key} style={[styles.cabDivStyle, { backgroundColor: prop.active == true ? colors.BOX_BG : colors.WHITE }]}>
-                                    <CarHorizontal
-                                        onPress={() => { selectCarType(prop, key) }}
-                                        carData={prop}
-                                        settings={settings}
-                                        styles={styles}
-                                    />
-                                </View>
-                            );
-                        })}
-                    </ScrollView>
-                </View>
-                :
-                <View style={[styles.carShow, { height: 25 }]}
-                    onTouchStart={e => setTouchY(e.nativeEvent.pageY)}
-                    onTouchEnd={e => {
-                        if ((touchY - e.nativeEvent.pageY > 10) && !isEditing)
-                            setIsEditing(!isEditing);
-                        if ((e.nativeEvent.pageY - touchY > 10) && isEditing)
-                            setIsEditing(!isEditing);
-                    }}
-                >
-                    <View style={[styles.bar, { backgroundColor: MAIN_COLOR }]} ></View>
-                </View>
-            } */}
-
 
       {/* new update choosing car design */}
 
