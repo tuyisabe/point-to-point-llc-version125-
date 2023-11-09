@@ -452,7 +452,7 @@ export default function SearchScreen(props) {
 
       <View
           style={{
-            width: width - 40,
+            width: width - 20,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",

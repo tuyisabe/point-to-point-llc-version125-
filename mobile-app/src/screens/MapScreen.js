@@ -1246,7 +1246,7 @@ export default function MapScreen(props) {
                 <ImageBackground source={require('../../assets/images/white-grad6.png')} style={{ height: '100%', width: '100%' }}>
                 <View
             style={{
-              width: width - 40,
+              width: width - 20,
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-between",
@@ -1259,7 +1259,7 @@ export default function MapScreen(props) {
                   : hasNotch
                   ? 38
                   : 30,
-             marginLeft: "5%",
+             marginLeft: "2%",
             }}
           >
             <Button
@@ -1358,21 +1358,7 @@ export default function MapScreen(props) {
                 :null}
                 </View>
             :
-                // <View style={[styles.addressBar, { flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
-                //     <View style={styles.ballandsquare}>
-                //         <View style={styles.hbox1} /><View style={styles.hbox2} /><View style={styles.hbox3} />
-                //     </View>
-                //     <View style={[styles.contentStyle, isRTL ? { paddingRight: 10 } : { paddingLeft: 10 }]}>
-                //         <TouchableOpacity onPress={() => tapAddress('pickup')} style={styles.addressStyle1}>
-                //             <Text numberOfLines={1} style={[styles.textStyle, tripdata.selected == 'pickup' ? { fontSize: 18 } : { fontSize: 14 }, { textAlign: isRTL ? "right" : "left" }]}>{tripdata.pickup && tripdata.pickup.add ? tripdata.pickup.add : t('map_screen_where_input_text')}</Text>
-                //         </TouchableOpacity>
-                //         <TouchableOpacity onPress={() => tapAddress('drop')} style={styles.addressStyle2}>
-                //             <Text numberOfLines={1} style={[styles.textStyle, tripdata.selected == 'drop' ? { fontSize: 18 } : { fontSize: 14 }, { textAlign: isRTL ? "right" : "left" }]}>{tripdata.drop && tripdata.drop.add ? tripdata.drop.add : t('map_screen_drop_input_text')}</Text>
-                //         </TouchableOpacity>
-                //     </View>
-                // </View>
-
-                <>
+            <>
                 <View
                   style={[
                     styles.addressBar,
