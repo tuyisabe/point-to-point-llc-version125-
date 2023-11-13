@@ -1496,9 +1496,7 @@ export default function MapScreen(props) {
                         tripdata.drop &&
                         tripdata.drop.source == "init" || toairportSelected &&
                         tripdata.drop &&
-                        tripdata.drop.source == "gps" || toairportSelected &&
-                        tripdata.drop &&
-                        tripdata.drop.source == "search1"? (
+                        tripdata.drop.source == "gps"? (
                           <Text
                             style={[
                               styles.textStyle,
@@ -1523,11 +1521,21 @@ export default function MapScreen(props) {
                           >
                             {/* {tripdata.drop && tripdata.drop.add && tripdata.pickup.source != "gps"
                               ? tripdata.drop.add */}
-                              {fromairportSelected&&tripdata.pickup && tripdata.pickup.add&& tripdata.pickup.source == "gps"
+                              {fromairportSelected&&tripdata.pickup && tripdata.pickup.add && tripdata.pickup.source == "gps" || fromairportSelected&&tripdata.pickup && tripdata.pickup.add && tripdata.pickup.source == "init"
                               ? tripdata.drop.add=tripdata.pickup.add
                               : null}
-                              {tripdata.drop && tripdata.drop.add && tripdata.pickup.source != "gps"
-                              ? tripdata.drop.add:"Where are you going ?"}
+                              {tripdata.drop && tripdata.drop.add&& tripdata.drop.add!=tripdata.pickup.add
+                              ? tripdata.drop.add:                          <Text
+                              style={[
+                                styles.textStyle,
+                                tripdata.selected == "pickup"
+                                  ? { fontSize: 18 }
+                                  : { fontSize: 16 },
+                                { textAlign: isRTL ? "right" : "left" },
+                              ]}
+                            >
+                              Select Airport Here ...
+                            </Text>}
                           </Text>
                         )}
                       </TouchableOpacity>
