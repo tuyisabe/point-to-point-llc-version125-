@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Icon } from 'react-native-elements';
+import React, { useState, useEffect } from "react";
+import { Icon } from "react-native-elements";
 import { Dropdown } from "react-native-element-dropdown";
-import { colors } from '../common/theme';
+import { colors } from "../common/theme";
 import {
   View,
   Text,
@@ -16,18 +16,24 @@ import {
   Image,
   Modal,
   ScrollView,
-  Platform
-} from 'react-native';
-import i18n from 'i18n-js';
-import { api } from 'common';
-import { useSelector, useDispatch } from 'react-redux';
-import Footer from '../components/Footer'
-import { checkSearchPhrase, appConsts } from '../common/sharedFunctions';
-import { MAIN_COLOR } from '../common/sharedFunctions';
-var { width,height } = Dimensions.get('window');
-import {  StackActions } from '@react-navigation/native';
-import { Entypo, MaterialIcons, AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Button } from 'react-native-elements';
+  Platform,
+} from "react-native";
+import i18n, { currentLocale } from "i18n-js";
+import { api } from "common";
+import { useSelector, useDispatch } from "react-redux";
+import Footer from "../components/Footer";
+import { checkSearchPhrase, appConsts } from "../common/sharedFunctions";
+import { MAIN_COLOR } from "../common/sharedFunctions";
+var { width, height } = Dimensions.get("window");
+import { StackActions } from "@react-navigation/native";
+import {
+  Entypo,
+  MaterialIcons,
+  AntDesign,
+  FontAwesome,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import { Button } from "react-native-elements";
 const datas = [
   {
     add: "Kigali international airport",
@@ -71,61 +77,75 @@ const hasNotch =
     width === 932);
 export default function SearchScreen(props) {
   const { t } = i18n;
-  const isRTL = i18n.locale.indexOf('he') === 0 || i18n.locale.indexOf('ar') === 0;
+  const isRTL =
+    i18n.locale.indexOf("he") === 0 || i18n.locale.indexOf("ar") === 0;
   const {
     fetchCoordsfromPlace,
     fetchPlacesAutocomplete,
     updateTripPickup,
     updateTripDrop,
-    editAddress
+    editAddress,
   } = api;
   const dispatch = useDispatch();
-  const [searchKeywordPickup, setSearchKeywordPickup] = useState('');
-  const [searchKeywordDrop, setSearchKeywordDrop] = useState('');
+  const [searchKeywordPickup, setSearchKeywordPickup] = useState("");
+  const [searchKeywordDrop, setSearchKeywordDrop] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isShowingResults, setIsShowingResults] = useState(false);
-  const tripdata = useSelector(state => state.tripdata);
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const tripdata = useSelector((state) => state.tripdata);
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [savedAddresses, setSavedAddresses] = useState([]);
   const { locationType, addParam } = props.route.params;
   const [loading, setLoading] = useState();
-  const settingsdata = useSelector(state => state.settingsdata.settings);
+  const settingsdata = useSelector((state) => state.settingsdata.settings);
   const [settings, setSettings] = useState({});
   const [selLocations, setSelLocations] = useState([]);
   const [selLocationsPickup, setSelLocationsPickup] = useState([]);
   const [selLocationsDrop, setSelLocationsDrop] = useState([]);
-  const auth = useSelector(state => state.auth);
+  const auth = useSelector((state) => state.auth);
   const [profile, setProfile] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [isShowingResults2, setIsShowingResults2] = useState(false);
   const [searchResults2, setSearchResults2] = useState([]);
-  const [searchKeyword2, setSearchKeyword2] = useState('');
-  const [addressName,setAddressName] = useState('');
-  const [address,setAddress] = useState('');
+  const [searchKeyword2, setSearchKeyword2] = useState("");
+  const [addressName, setAddressName] = useState("");
+  const [address, setAddress] = useState("");
   const { fromairportSelected } = props.route.params;
   const { toairportSelected } = props.route.params;
-  const addressdata = useSelector(state => state.addressdata);
-  const [saveNameValue, setSaveNameValue] = useState('');
+  const { currentLoc } = props.route.params;
+  const addressdata = useSelector((state) => state.addressdata);
+  const [saveNameValue, setSaveNameValue] = useState("");
   let [locationTypes, setLocationTypes] = useState(locationType);
-  const [fromairportSelect, setFromairportSelect] = useState(fromairportSelected);
+  const [fromairportSelect, setFromairportSelect] =
+    useState(fromairportSelected);
   const [toairportSelect, setToairportSelect] = useState(toairportSelected);
+  const currentLocation = currentLoc;
   const [hideDrop, setHideDrop] = useState(false);
   const [hidePic, setHidePic] = useState(false);
   const [add, setAdd] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const saveName = [
-    {value: t('home'), lable: t('home'), icon: 'home-outline', type: 'material-community'},
-    {value: t('work'), lable: t('work'), icon: 'work-outline', type: 'materialIcons'},
-    {value: t('other'), lable: t('other'), icon: 'location', type: 'entypo'}
+    {
+      value: t("home"),
+      lable: t("home"),
+      icon: "home-outline",
+      type: "material-community",
+    },
+    {
+      value: t("work"),
+      lable: t("work"),
+      icon: "work-outline",
+      type: "materialIcons",
+    },
+    { value: t("other"), lable: t("other"), icon: "location", type: "entypo" },
   ];
 
   useEffect(() => {
     if (addressdata.addresses) {
-        setSavedAddresses(addressdata.addresses);
+      setSavedAddresses(addressdata.addresses);
     } else {
       setSavedAddresses([]);
-    }    
-  },[addressdata, addressdata.addresses]);
+    }
+  }, [addressdata, addressdata.addresses]);
 
   useEffect(() => {
     if (settingsdata) {
@@ -135,9 +155,9 @@ export default function SearchScreen(props) {
 
   useEffect(() => {
     if (auth.profile && auth.profile.uid) {
-        setProfile(auth.profile);
+      setProfile(auth.profile);
     } else {
-        setProfile(null);
+      setProfile(null);
     }
   }, [auth && auth.profile]);
 
@@ -148,8 +168,11 @@ export default function SearchScreen(props) {
   }, [settingsdata]);
 
   useEffect(() => {
-    if (tripdata.drop && locationTypes == 'drop' || tripdata.drop && locationTypes == 'pickup') {
-      let arr = []
+    if (
+      (tripdata.drop && locationTypes == "drop") ||
+      (tripdata.drop && locationTypes == "pickup")
+    ) {
+      let arr = [];
       if (tripdata.drop && tripdata.drop.waypoints) {
         const waypoints = tripdata.drop.waypoints;
         for (let i = 0; i < waypoints.length; i++) {
@@ -161,7 +184,7 @@ export default function SearchScreen(props) {
           lat: tripdata.drop.lat,
           lng: tripdata.drop.lng,
           add: tripdata.drop.add,
-          source: tripdata.drop.source
+          source: tripdata.drop.source,
         });
       }
       setSelLocationsDrop(arr);
@@ -215,7 +238,7 @@ export default function SearchScreen(props) {
       }
     }
   };
-  
+
   const changepickup = () => {
     setLocationTypes("pickup");
   };
@@ -371,69 +394,100 @@ export default function SearchScreen(props) {
     waypoints.splice(selLocations.length - 1, 1);
     let dropObj = {
       ...selLocations[selLocations.length - 1],
-      waypoints: waypoints
-    }
+      waypoints: waypoints,
+    };
     dispatch(updateTripDrop(dropObj));
     props.navigation.dispatch(StackActions.pop(1));
-  }
+  };
 
-  const saveLocation = (item)=>{
+  const reloadLocation = () => {
+    if (
+      (selLocationsDrop && selLocationsDrop.length > 0) ||
+      searchKeywordDrop == []
+    ) {
+      dispatch(
+        updateTripDrop({
+          lat: currentLocation.lat,
+          lng: currentLocation.lng,
+          add: currentLocation.add,
+          source: "search1",
+        })
+      );
+    }
+    if (selLocationsPickup && selLocationsPickup.length > 0) {
+      dispatch(
+        updateTripPickup({
+          lat: currentLocation.lat,
+          lng: currentLocation.lng,
+          add: currentLocation.add,
+          source: "search",
+        })
+      );
+    }
+  };
+  const saveLocation = (item) => {
     setLoading(true);
-    if(item && saveNameValue && ((saveNameValue== t('other') && addressName) || saveNameValue!= t('other'))){
-      let name = saveNameValue== t('other') ? addressName : saveNameValue
+    if (
+      item &&
+      saveNameValue &&
+      ((saveNameValue == t("other") && addressName) ||
+        saveNameValue != t("other"))
+    ) {
+      let name = saveNameValue == t("other") ? addressName : saveNameValue;
       fetchCoordsfromPlace(item.place_id).then((res) => {
         if (res && res.lat) {
           let dropObj = {
             lat: res.lat,
             lng: res.lng,
             description: item.description,
-            name: name.toLowerCase()
-          }
-         dispatch(editAddress(profile.uid, dropObj, 'Add'));
+            name: name.toLowerCase(),
+          };
+          dispatch(editAddress(profile.uid, dropObj, "Add"));
         }
-      })
-      setTimeout(()=>{
-        setAddress('')
-        setAddressName('')
-        setLoading(false)
-        setSearchKeyword2('')
-        setSaveNameValue('')
-      },3000)
-    }else{
-      Alert.alert(
-        t('alert'),
-        t('no_details_error'),
-        [
-          { text: t('ok'), onPress: () => {setLoading(false) } }
-        ]
-      );
+      });
+      setTimeout(() => {
+        setAddress("");
+        setAddressName("");
+        setLoading(false);
+        setSearchKeyword2("");
+        setSaveNameValue("");
+      }, 3000);
+    } else {
+      Alert.alert(t("alert"), t("no_details_error"), [
+        {
+          text: t("ok"),
+          onPress: () => {
+            setLoading(false);
+          },
+        },
+      ]);
     }
-  }
+  };
 
   const removeItem = (index) => {
     let arr = [...selLocations];
     arr.splice(index, 1);
     setSelLocations(arr);
-  }
+  };
 
-  const onPressDelete = (item) =>{
-    dispatch(editAddress(profile.uid, item, 'Delete'));
-  }
+  const onPressDelete = (item) => {
+    dispatch(editAddress(profile.uid, item, "Delete"));
+  };
 
   const closeModel = () => {
-    setSearchKeyword2('')
-    setAddressName('')
-    setAddress('')
-    setModalVisible(!modalVisible)
-    setSaveNameValue('')
-  }
+    setSearchKeyword2("");
+    setAddressName("");
+    setAddress("");
+    setModalVisible(!modalVisible);
+    setSaveNameValue("");
+  };
 
   const cancelAddress = () => {
-    setSearchKeyword2('')
-    setAddressName('')
-    setAddress('')
-    setSaveNameValue('')
-  }
+    setSearchKeyword2("");
+    setAddressName("");
+    setAddress("");
+    setSaveNameValue("");
+  };
   const removePickupItem = (index) => {
     let arr = [...selLocationsPickup];
     arr.splice(index, 1);
@@ -445,12 +499,23 @@ export default function SearchScreen(props) {
     arr1.splice(index, 1);
     setSelLocationsDrop(arr1);
   };
-//console.log(selLocationsPickup[0].add);
-  return (
-    <View style={{flex:1}}>
-      <View style={{flex: 1,backgroundColor: colors.TRANSPARENT, height:'100%', width: '100%', alignContent: 'center', alignItems:'center' }}>
+  console.log("here we are at :", currentLocation);
+  console.log("drop: ", selLocationsDrop);
+  console.log("pick:", selLocationsPickup);
 
+  return (
+    <View style={{ flex: 1 }}>
       <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.TRANSPARENT,
+          height: "100%",
+          width: "100%",
+          alignContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <View
           style={{
             width: width - 20,
             display: "flex",
@@ -463,9 +528,14 @@ export default function SearchScreen(props) {
         >
           <Button
             title={"To Airport"}
-            titleStyle={{ color: toairportSelect ? colors.WHITE : colors.BLUE,fontSize:20 }}
+            titleStyle={{
+              color: toairportSelect ? colors.WHITE : colors.BLUE,
+              fontSize: 20,
+            }}
             onPress={() => {
-              setToairportSelect(true), setFromairportSelect(false);
+              setToairportSelect(true),
+                setFromairportSelect(false),
+                reloadLocation();
             }}
             icon={{
               name: "airplane-takeoff",
@@ -479,17 +549,21 @@ export default function SearchScreen(props) {
                 width: 160,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
-                elevation:20
+                elevation: 20,
               },
             ]}
           />
           <Button
             title={"From Airport"}
             titleStyle={{
-              color: fromairportSelect ? colors.WHITE : colors.BLUE,fontSize:20,marginRight:7
+              color: fromairportSelect ? colors.WHITE : colors.BLUE,
+              fontSize: 20,
+              marginRight: 7,
             }}
             onPress={() => {
-              setFromairportSelect(true), setToairportSelect(false);
+              setFromairportSelect(true),
+                setToairportSelect(false),
+                reloadLocation();
             }}
             icon={{
               name: "car",
@@ -503,8 +577,7 @@ export default function SearchScreen(props) {
                 width: 160,
                 borderWidth: 2,
                 borderColor: colors.BLUE,
-                elevation:20,
-                
+                elevation: 20,
               },
             ]}
           />
@@ -532,55 +605,56 @@ export default function SearchScreen(props) {
           </Text>
         </View>
 
-{fromairportSelect ? (
-  <>
-  {hidePic ? null : (
-          <Dropdown
-            style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            data={datas}
-            returnKeyType="search"
-            maxHeight={300}
-            labelField="add"
-            valueField="add"
-            placeholder={!isFocus ? "Select an airport" : "..."}
-            searchPlaceholder="Search..."
-            value={add}
-            onFocus={() => {
-              setIsFocus(true), changepickup();
-            }}
-            onBlur={() => setIsFocus(false)}
-            onChange={(text) => {
-              updateSelectLocation(text), changepickup();
-            }}
-            renderRightIcon={() => (
-              <Icon
-                name="chevron-down"
-                type="material-community"
-                color={colors.BLUE}
-                size={35}
-                style={[
-                  { marginEnd: 15 },
-                  isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
-                ]}
-              />
-      )}
-            renderLeftIcon={() => (
-              <Icon
-                name="airplane-takeoff"
-                type="material-community"
-                color={colors.BLUE}
-                size={35}
-                style={[
-                  { marginEnd: 15},
-                  isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
-                ]}
+        {fromairportSelect ? (
+          <>
+            {hidePic ? null : (
+              <Dropdown
+                style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={datas}
+                returnKeyType="search"
+                maxHeight={300}
+                labelField="add"
+                valueField="add"
+                placeholder={!isFocus ? "Select an airport" : "..."}
+                searchPlaceholder="Search..."
+                value={add}
+                onFocus={() => {
+                  setIsFocus(true), changepickup();
+                }}
+                onBlur={() => setIsFocus(false)}
+                onChange={(text) => {
+                  updateSelectLocation(text), changepickup();
+                }}
+                renderRightIcon={() => (
+                  <Icon
+                    name="chevron-down"
+                    type="material-community"
+                    color={colors.BLUE}
+                    size={35}
+                    style={[
+                      { marginEnd: 15 },
+                      isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
+                    ]}
+                  />
+                )}
+                renderLeftIcon={() => (
+                  <Icon
+                    name="airplane-takeoff"
+                    type="material-community"
+                    color={colors.BLUE}
+                    size={35}
+                    style={[
+                      { marginEnd: 15 },
+                      isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
+                    ]}
+                  />
+                )}
               />
             )}
-          />)}
           </>
         ) : (
           <View
@@ -621,7 +695,7 @@ export default function SearchScreen(props) {
                     lineHeight: 24,
                     fontSize: 20,
                   }}
-                  numberOfLines={3}
+                  numberOfLines={1}
                 >
                   {selLocationsPickup[0].add}
                 </Text>
@@ -662,12 +736,10 @@ export default function SearchScreen(props) {
                     placeholderTextColor="#000"
                     onChangeText={(text) => {
                       {
-                        searchLocation(text),
-                          changepickup(),
-                          setHideDrop(true);
+                        searchLocation(text), changepickup(), setHideDrop(true);
                       }
                     }}
-                   // value={searchKeywordPickup}
+                    // value={searchKeywordPickup}
                   />
                 </View>
               </>
@@ -700,17 +772,17 @@ export default function SearchScreen(props) {
                   updateSelectLocation(text), changedrop();
                 }}
                 renderRightIcon={() => (
-                    <Icon
-                      name="chevron-down"
-                      type="material-community"
-                      color={colors.BLUE}
-                      size={35}
-                      style={[
-                        { marginEnd: 15 },
-                        isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
-                      ]}
-                    />
-            )}
+                  <Icon
+                    name="chevron-down"
+                    type="material-community"
+                    color={colors.BLUE}
+                    size={35}
+                    style={[
+                      { marginEnd: 15 },
+                      isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
+                    ]}
+                  />
+                )}
                 renderLeftIcon={() => (
                   <Icon
                     name="airplane-takeoff"
@@ -763,7 +835,7 @@ export default function SearchScreen(props) {
                     lineHeight: 24,
                     fontSize: 20,
                   }}
-                  numberOfLines={3}
+                  numberOfLines={1}
                 >
                   {selLocationsDrop[0].add}
                 </Text>
@@ -803,240 +875,450 @@ export default function SearchScreen(props) {
                     ]}
                     placeholderTextColor="#000"
                     onChangeText={(text) => {
-                      searchLocation(text), changedrop(),setHidePic(true);
-                    }}                    
-                   // value={searchKeywordDrop}
+                      searchLocation(text), changedrop(), setHidePic(true);
+                    }}
+                    // value={searchKeywordDrop}
                   />
                 </View>
               </>
             )}
           </View>
         )}
-    
-      {!searchKeyword ?
-      <TouchableOpacity onPress={() => setModalVisible(true)} style={[styles.saveBox,{flexDirection:isRTL? 'row-reverse':'row'}]}>
-        <View style={{height: 45, justifyContent: 'center' }}>
-          <Text style={{ textAlign: isRTL ? "right" : "left", fontSize: 20}}>{t('saved_address')}</Text>
-        </View>
-        <MaterialIcons name={isRTL ? "keyboard-arrow-left" : "keyboard-arrow-right"} size={34} color= {colors.BLUE} />
-      </TouchableOpacity>
-      :null }
 
-      {searchKeyword && isShowingResults ?
-        <FlatList
-          keyboardShouldPersistTaps='always'
-          data={searchResults}
-          renderItem={({ item, index }) => {
-            return (
-              <TouchableOpacity
-                key={item.description}
-                style={styles.resultItem}
-                onPress={() => updateLocation(item)}
-                
-                >
-                                <Icon
-                name={"location-sharp"}
-                type={"ionicon"}
-                size={25}
-                color="#1d74e7"
-              />
-                <Text numberOfLines={1} style={[styles.description,{fontSize: 16, textAlign: isRTL ? "right" : "left", width: width-20}]}>{item.description}</Text>
-              </TouchableOpacity>
-             
-            );
-          }}
-          style={styles.searchResultsContainer}
-        />
-        : null}
-
-        {loading ?
-          <View style={styles.loading}>
-            <ActivityIndicator color={colors.BLUE} size='large' />
-          </View>
-        : null}
-        {selLocations.length > 0 && locationType == 'drop' ?
-          <TouchableOpacity  onPress={okClicked} style={styles.floting}>
-            <Text style={styles.headerTitleStyle}>{t('ok')}</Text>
-          </TouchableOpacity>
-        : null}
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={[styles.centeredView,{marginTop: hasNotch ? 35 : null}]}>
-          <View style={styles.modalView}>
-            <View style={{flexDirection:isRTL? 'row-reverse':'row', alignItems: "center", backgroundColor: MAIN_COLOR}}>
-              <View style={{width: 40, height: 45}}>
-              {((searchKeyword2 && isShowingResults2) || address || addressName) ?
-                  !address ?
-                  <Entypo name="cross" size={35} color= {colors.WHITE} onPress={() => searchSaveLocation()} style={{marginTop: 4}}/>
-                  : null
-                :
-                <MaterialIcons name={isRTL ? "keyboard-arrow-right" : "keyboard-arrow-left"} size={40} color= {colors.WHITE} onPress={() => closeModel()}/>
-              }
-              </View>
-              <View style={styles.savedbox}>
-                <Text style={styles.savesadd}>{t('saved_address')}</Text>
-              </View>
+        {!searchKeyword ? (
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={[
+              styles.saveBox,
+              { flexDirection: isRTL ? "row-reverse" : "row" },
+            ]}
+          >
+            <View style={{ height: 45, justifyContent: "center" }}>
+              <Text
+                style={{ textAlign: isRTL ? "right" : "left", fontSize: 20 }}
+              >
+                {t("saved_address")}
+              </Text>
             </View>
-          </View>
-
-          <View style={{height: 65, alignItems: 'center'}}>
-          {(searchKeyword2 && isShowingResults2) || address || addressName?
-            <View style={{ height: 10, width: width, backgroundColor: MAIN_COLOR}}>
-              <View style={{ height: 10, width: width, backgroundColor: colors.WHITE, borderTopRightRadius: 10, borderTopLeftRadius: 10}}>
-              </View>
-            </View>
-            : null }
-            
-            <View style={[styles.addressStyle2,{ borderRadius: 5, marginTop: ((searchKeyword2 && isShowingResults2) || address || addressName) ? 0 : 10}]}>
-              <View style={[styles.autocompleteMain, { flexDirection: isRTL ? 'row-reverse' : 'row',marginTop:0,width:width-15,marginLeft:0 }]}>
-                <FontAwesome name="search" size={20} color={colors.BLUE} style={{marginHorizontal: 5,marginLeft:10}} />
-                <TextInput
-                  placeholder={t('search_for_an_address')}
-                  returnKeyType="search"
-                  style={[styles.searchBox, isRTL ? { textAlign: 'right' } : { textAlign: 'left', width: width-75}]}
-                  placeholderTextColor={colors.BLACK}
-                  onChangeText={(text) => searchSaveLocation(text)}
-                  value={ address ? address.description : searchKeyword2}
-                />
-                {address ?
-                  <TouchableOpacity style={{ justifyContent: 'center' ,alignItems: 'center', height: 48}} onPress={() => setAddress('')}>
-                    <Entypo name="cross" size={24} color= {colors.SECONDARY} style={{borderLeftWidth: 1, borderLeftColor: colors.SECONDARY}}/>
-                  </TouchableOpacity>
-                : null }
-              </View>
-            </View>
-
-            {address?
-              <View style={[styles.categoryBox, {flexDirection: isRTL? 'row-reverse' : 'row'}]}>
-                {saveName.map((item, index) => (
-                  <TouchableOpacity
-                  key={index}
-                    style={[styles.categoryItem,{backgroundColor: item.value == saveNameValue ? MAIN_COLOR : colors.WHITE, marginHorizontal: 2}]}
-                    onPress={() => {
-                      setSaveNameValue(item.value);
-                    }}
-                  >
-                    <Icon
-                      name={item.icon}
-                      type={item.type}
-                      color={colors.BLACK}
-                      size={22}
-                      containerStyle={{ margin: 1 }}
-                    />
-                    <Text style={styles.categoryLabel}>
-                      {item.lable}
-                    </Text>
-                  </TouchableOpacity>
-                  
-                ))}
-              </View>
-            : null}
-
-            {address && saveNameValue== t('other') ?
-              <View style={{width:width - 15, marginTop: 10}}>
-                <TextInput
-                  style={{borderBottomColor: colors.SECONDARY, borderBottomWidth: 1, height: 40}}
-                  placeholder={t('name')}
-                  placeholderTextColor={colors.SECONDARY}
-                  value={addressName ? addressName : ''}
-                  keyboardType={'email-address'}
-                  onChangeText={(text) => { setAddressName( text ) }}
-                  secureTextEntry={false}
-                  blurOnSubmit={true}
-                  errorStyle={styles.errorMessageStyle}
-                  inputContainerStyle={[styles.inputContainerStyle, {height: 50}]}
-                  autoCapitalize='none'
-                />    
-              </View>
-            :null}
-
-            {address ? 
-            <View style={{flexDirection: isRTL?'row-reverse' : 'row', width: width, justifyContent :'space-evenly'}}>
-              {loading ? null :
-                <Button
-                  onPress={() => cancelAddress()}
-                  title={t('cancel')}
-                  loading={false}
-                  titleStyle={[styles.buttonTitle]}
-                  buttonStyle={[styles.registerButton, { marginTop: 20, backgroundColor: colors.RED}]}
-                />
-              }
-              <Button
-                onPress={() => saveLocation(address)}
-                title={t('save')}
-                loading={loading}
-                titleStyle={styles.buttonTitle}
-                buttonStyle={[styles.registerButton, { marginTop: 20}]}
-              />
-            </View>
-            : null }
-          </View>
-          {searchKeyword2 && isShowingResults2 && !address?
-            <FlatList
-              keyboardShouldPersistTaps='always'
-              data={searchResults2}
-              renderItem={({ item, index }) => {
-                return (
-                  <TouchableOpacity
-                    key={item.description}
-                    style={styles.resultItem}
-                    onPress={() => setAddress(item)}>
-                    <Text numberOfLines={1} style={{fontSize: 16, textAlign: isRTL ? "right" : "left", width: width-20}}>{item.description}</Text>
-                  </TouchableOpacity>
-                );
-              }}
-              style={[styles.searchResultsContainer,{marginTop: 10}]}
+            <MaterialIcons
+              name={isRTL ? "keyboard-arrow-left" : "keyboard-arrow-right"}
+              size={34}
+              color={colors.BLUE}
             />
-            : null}
-          
-          {(searchKeyword2 && isShowingResults2) || address || addressName?
-           null 
-          :
-            <View style={styles.savedaddlist}>
-              <ScrollView style={{flex: 1, width: width-15, height: 'auto'}} showsVerticalScrollIndicator={false}>
-                {savedAddresses && savedAddresses.length > 0 ?
-                  savedAddresses.map((address, index) => {
-                    return (
-                      <View key={index} style={{flexDirection:isRTL? 'row-reverse':'row', borderBottomWidth: 1, width: width-15, minHeight: 60, paddingVertical: 5}}>
-                        <TouchableOpacity onPress={() => updateLocation(address)} style={{flexDirection:isRTL? 'row-reverse':'row', alignItems: "center", width: width-50}}>
-                          <View style={styles.vew1}>
-                            {address.name == 'home' ?
-                              <AntDesign name="home" size={22} color= {colors.BLACK} />
-                            : address.name == 'work'?
-                              <MaterialIcons name="work-outline" size={22} color= {colors.BLACK} />
-                            :
-                              <Entypo name="location" size={22}  color= {colors.BLACK} />
-                            }
-                          </View>
-                          <View style={{ justifyContent: 'center', width: width-95, marginHorizontal: 5}}>
-                            <Text style={[styles.savedAddressesBox, { textAlign: isRTL ? "right" : "left"}]}>{(address.name).toUpperCase()}</Text>
-                            <Text style={[styles.savedAddressesBox, { textAlign: isRTL ? "right" : "left", fontSize: 13}]}>{address.description}</Text>
-                          </View>
-                        </TouchableOpacity>
-                        <View style={{width: 30}}>
-                          <MaterialCommunityIcons name="delete-circle-outline" size={28} color={colors.SECONDARY} onPress={() => onPressDelete(address)} />
-                        </View>
-                        
-                      </View>
-                    );
-                  })
-                : 
-                  <View style={styles.nosavedadd}>
-                    <Text style={{fontSize: 18, fontWeight:'bold'}}>{t('no_saved_address')}</Text> 
-                  </View>
-                }
-              </ScrollView>
+          </TouchableOpacity>
+        ) : null}
+
+        {searchKeyword && isShowingResults ? (
+          <FlatList
+            keyboardShouldPersistTaps="always"
+            data={searchResults}
+            renderItem={({ item, index }) => {
+              return (
+                <TouchableOpacity
+                  key={item.description}
+                  style={styles.resultItem}
+                  onPress={() => updateLocation(item)}
+                >
+                  <Icon
+                    name={"location-sharp"}
+                    type={"ionicon"}
+                    size={25}
+                    color="#1d74e7"
+                  />
+                  <Text
+                    numberOfLines={1}
+                    style={[
+                      styles.description,
+                      {
+                        fontSize: 16,
+                        textAlign: isRTL ? "right" : "left",
+                        width: width - 20,
+                      },
+                    ]}
+                  >
+                    {item.description}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+            style={styles.searchResultsContainer}
+          />
+        ) : null}
+
+        {loading ? (
+          <View style={styles.loading}>
+            <ActivityIndicator color={colors.BLUE} size="large" />
+          </View>
+        ) : null}
+        {selLocations.length > 0 && locationType == "drop" ? (
+          <TouchableOpacity onPress={okClicked} style={styles.floting}>
+            <Text style={styles.headerTitleStyle}>{t("ok")}</Text>
+          </TouchableOpacity>
+        ) : null}
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert("Modal has been closed.");
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View
+            style={[styles.centeredView, { marginTop: hasNotch ? 35 : null }]}
+          >
+            <View style={styles.modalView}>
+              <View
+                style={{
+                  flexDirection: isRTL ? "row-reverse" : "row",
+                  alignItems: "center",
+                  backgroundColor: MAIN_COLOR,
+                }}
+              >
+                <View style={{ width: 40, height: 45 }}>
+                  {(searchKeyword2 && isShowingResults2) ||
+                  address ||
+                  addressName ? (
+                    !address ? (
+                      <Entypo
+                        name="cross"
+                        size={35}
+                        color={colors.WHITE}
+                        onPress={() => searchSaveLocation()}
+                        style={{ marginTop: 4 }}
+                      />
+                    ) : null
+                  ) : (
+                    <MaterialIcons
+                      name={
+                        isRTL ? "keyboard-arrow-right" : "keyboard-arrow-left"
+                      }
+                      size={40}
+                      color={colors.WHITE}
+                      onPress={() => closeModel()}
+                    />
+                  )}
+                </View>
+                <View style={styles.savedbox}>
+                  <Text style={styles.savesadd}>{t("saved_address")}</Text>
+                </View>
+              </View>
             </View>
-          }
-        </View>
-      </Modal>
+
+            <View style={{ height: 65, alignItems: "center" }}>
+              {(searchKeyword2 && isShowingResults2) ||
+              address ||
+              addressName ? (
+                <View
+                  style={{
+                    height: 10,
+                    width: width,
+                    backgroundColor: MAIN_COLOR,
+                  }}
+                >
+                  <View
+                    style={{
+                      height: 10,
+                      width: width,
+                      backgroundColor: colors.WHITE,
+                      borderTopRightRadius: 10,
+                      borderTopLeftRadius: 10,
+                    }}
+                  ></View>
+                </View>
+              ) : null}
+
+              <View
+                style={[
+                  styles.addressStyle2,
+                  {
+                    borderRadius: 5,
+                    marginTop:
+                      (searchKeyword2 && isShowingResults2) ||
+                      address ||
+                      addressName
+                        ? 0
+                        : 10,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.autocompleteMain,
+                    {
+                      flexDirection: isRTL ? "row-reverse" : "row",
+                      marginTop: 0,
+                      width: width - 15,
+                      marginLeft: 0,
+                    },
+                  ]}
+                >
+                  <FontAwesome
+                    name="search"
+                    size={20}
+                    color={colors.BLUE}
+                    style={{ marginHorizontal: 5, marginLeft: 10 }}
+                  />
+                  <TextInput
+                    placeholder={t("search_for_an_address")}
+                    returnKeyType="search"
+                    style={[
+                      styles.searchBox,
+                      isRTL
+                        ? { textAlign: "right" }
+                        : { textAlign: "left", width: width - 75 },
+                    ]}
+                    placeholderTextColor={colors.BLACK}
+                    onChangeText={(text) => searchSaveLocation(text)}
+                    value={address ? address.description : searchKeyword2}
+                  />
+                  {address ? (
+                    <TouchableOpacity
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: 48,
+                      }}
+                      onPress={() => setAddress("")}
+                    >
+                      <Entypo
+                        name="cross"
+                        size={24}
+                        color={colors.SECONDARY}
+                        style={{
+                          borderLeftWidth: 1,
+                          borderLeftColor: colors.SECONDARY,
+                        }}
+                      />
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </View>
+
+              {address ? (
+                <View
+                  style={[
+                    styles.categoryBox,
+                    { flexDirection: isRTL ? "row-reverse" : "row" },
+                  ]}
+                >
+                  {saveName.map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.categoryItem,
+                        {
+                          backgroundColor:
+                            item.value == saveNameValue
+                              ? MAIN_COLOR
+                              : colors.WHITE,
+                          marginHorizontal: 2,
+                        },
+                      ]}
+                      onPress={() => {
+                        setSaveNameValue(item.value);
+                      }}
+                    >
+                      <Icon
+                        name={item.icon}
+                        type={item.type}
+                        color={colors.BLACK}
+                        size={22}
+                        containerStyle={{ margin: 1 }}
+                      />
+                      <Text style={styles.categoryLabel}>{item.lable}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : null}
+
+              {address && saveNameValue == t("other") ? (
+                <View style={{ width: width - 15, marginTop: 10 }}>
+                  <TextInput
+                    style={{
+                      borderBottomColor: colors.SECONDARY,
+                      borderBottomWidth: 1,
+                      height: 40,
+                    }}
+                    placeholder={t("name")}
+                    placeholderTextColor={colors.SECONDARY}
+                    value={addressName ? addressName : ""}
+                    keyboardType={"email-address"}
+                    onChangeText={(text) => {
+                      setAddressName(text);
+                    }}
+                    secureTextEntry={false}
+                    blurOnSubmit={true}
+                    errorStyle={styles.errorMessageStyle}
+                    inputContainerStyle={[
+                      styles.inputContainerStyle,
+                      { height: 50 },
+                    ]}
+                    autoCapitalize="none"
+                  />
+                </View>
+              ) : null}
+
+              {address ? (
+                <View
+                  style={{
+                    flexDirection: isRTL ? "row-reverse" : "row",
+                    width: width,
+                    justifyContent: "space-evenly",
+                  }}
+                >
+                  {loading ? null : (
+                    <Button
+                      onPress={() => cancelAddress()}
+                      title={t("cancel")}
+                      loading={false}
+                      titleStyle={[styles.buttonTitle]}
+                      buttonStyle={[
+                        styles.registerButton,
+                        { marginTop: 20, backgroundColor: colors.RED },
+                      ]}
+                    />
+                  )}
+                  <Button
+                    onPress={() => saveLocation(address)}
+                    title={t("save")}
+                    loading={loading}
+                    titleStyle={styles.buttonTitle}
+                    buttonStyle={[styles.registerButton, { marginTop: 20 }]}
+                  />
+                </View>
+              ) : null}
+            </View>
+            {searchKeyword2 && isShowingResults2 && !address ? (
+              <FlatList
+                keyboardShouldPersistTaps="always"
+                data={searchResults2}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      key={item.description}
+                      style={styles.resultItem}
+                      onPress={() => setAddress(item)}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        style={{
+                          fontSize: 16,
+                          textAlign: isRTL ? "right" : "left",
+                          width: width - 20,
+                        }}
+                      >
+                        {item.description}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                }}
+                style={[styles.searchResultsContainer, { marginTop: 10 }]}
+              />
+            ) : null}
+
+            {(searchKeyword2 && isShowingResults2) ||
+            address ||
+            addressName ? null : (
+              <View style={styles.savedaddlist}>
+                <ScrollView
+                  style={{ flex: 1, width: width - 15, height: "auto" }}
+                  showsVerticalScrollIndicator={false}
+                >
+                  {savedAddresses && savedAddresses.length > 0 ? (
+                    savedAddresses.map((address, index) => {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            flexDirection: isRTL ? "row-reverse" : "row",
+                            borderBottomWidth: 1,
+                            width: width - 15,
+                            minHeight: 60,
+                            paddingVertical: 5,
+                          }}
+                        >
+                          <TouchableOpacity
+                            onPress={() => updateLocation(address)}
+                            style={{
+                              flexDirection: isRTL ? "row-reverse" : "row",
+                              alignItems: "center",
+                              width: width - 50,
+                            }}
+                          >
+                            <View style={styles.vew1}>
+                              {address.name == "home" ? (
+                                <AntDesign
+                                  name="home"
+                                  size={22}
+                                  color={colors.BLACK}
+                                />
+                              ) : address.name == "work" ? (
+                                <MaterialIcons
+                                  name="work-outline"
+                                  size={22}
+                                  color={colors.BLACK}
+                                />
+                              ) : (
+                                <Entypo
+                                  name="location"
+                                  size={22}
+                                  color={colors.BLACK}
+                                />
+                              )}
+                            </View>
+                            <View
+                              style={{
+                                justifyContent: "center",
+                                width: width - 95,
+                                marginHorizontal: 5,
+                              }}
+                            >
+                              <Text
+                                style={[
+                                  styles.savedAddressesBox,
+                                  { textAlign: isRTL ? "right" : "left" },
+                                ]}
+                              >
+                                {address.name.toUpperCase()}
+                              </Text>
+                              <Text
+                                style={[
+                                  styles.savedAddressesBox,
+                                  {
+                                    textAlign: isRTL ? "right" : "left",
+                                    fontSize: 13,
+                                  },
+                                ]}
+                              >
+                                {address.description}
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
+                          <View style={{ width: 30 }}>
+                            <MaterialCommunityIcons
+                              name="delete-circle-outline"
+                              size={28}
+                              color={colors.SECONDARY}
+                              onPress={() => onPressDelete(address)}
+                            />
+                          </View>
+                        </View>
+                      );
+                    })
+                  ) : (
+                    <View style={styles.nosavedadd}>
+                      <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                        {t("no_saved_address")}
+                      </Text>
+                    </View>
+                  )}
+                </ScrollView>
+              </View>
+            )}
+          </View>
+        </Modal>
       </View>
     </View>
   );
@@ -1047,7 +1329,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.WHITE,
   },
-  floting:{
+  floting: {
     width: "70%",
     height: 45,
     position: "absolute",
@@ -1067,14 +1349,14 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   loading: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingBottom: 40
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: 40,
   },
   autocompleteMain: {
     backgroundColor: colors.WHITE,
@@ -1095,8 +1377,8 @@ const styles = StyleSheet.create({
   },
   description: {
     color: colors.BLUE,
-    textAlign: 'left',
-    fontSize: 18
+    textAlign: "left",
+    fontSize: 18,
   },
   resultItem: {
     width: "95%",
@@ -1108,81 +1390,81 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 2,
-    marginLeft:10,
-    paddingLeft:10
+    marginLeft: 10,
+    paddingLeft: 10,
   },
   searchResultsContainer: {
     width: width,
-    paddingHorizontal: 5
+    paddingHorizontal: 5,
   },
   headerTitleStyle: {
     color: colors.WHITE,
-    fontFamily: 'Roboto-Bold',
-    fontSize: 20
+    fontFamily: "Roboto-Bold",
+    fontSize: 20,
   },
   multiLocation: {
-    width: width-10
+    width: width - 10,
   },
   addressBar: {
     marginVertical: 5,
     width: width - 10,
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: colors.WHITE,
     shadowColor: colors.BLACK,
     shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
     borderRadius: 8,
-    elevation: 3
+    elevation: 3,
   },
   contentStyle: {
-    justifyContent: 'center',
+    justifyContent: "center",
     width: width,
-    alignItems: 'center'
+    alignItems: "center",
   },
   addressBox: {
     height: 48,
     width: width - 20,
-    alignItems:'center',
-    paddingTop: 2
+    alignItems: "center",
+    paddingTop: 2,
   },
   addressStyle1: {
     borderBottomColor: colors.BLACK,
     borderBottomWidth: 1,
     height: 48,
     width: width - 55,
-    alignItems:'center'
+    alignItems: "center",
   },
   addressStyle2: {
     height: 45,
     width: width - 15,
-    justifyContent: 'center',
-    marginTop: 2
+    justifyContent: "center",
+    marginTop: 2,
   },
   hbox1: {
     height: 12,
     width: 12,
     borderRadius: 6,
     backgroundColor: colors.GREEN_DOT,
-    marginHorizontal: 3
+    marginHorizontal: 3,
   },
   hbox3: {
     height: 12,
     width: 12,
     backgroundColor: colors.RED,
-    marginHorizontal: 5
+    marginHorizontal: 5,
   },
   textStyle: {
-    fontFamily: 'Roboto-Regular',
+    fontFamily: "Roboto-Regular",
     fontSize: 14,
     color: colors.BLACK,
-    width: width - 36
+    width: width - 36,
   },
-  saveBox:{
+  saveBox: {
     height: 50,
-    width: width-30,
-    justifyContent:'space-between',
-    alignItems: 'center',
+    width: width - 30,
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 10,
     backgroundColor: colors.WHITE,
     shadowColor: colors.BLACK,
@@ -1191,14 +1473,14 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     borderRadius: 10,
     elevation: 3,
-    marginTop:20
+    marginTop: 20,
   },
   centeredView: {
     flex: 1,
-    backgroundColor: colors.WHITE
+    backgroundColor: colors.WHITE,
   },
   modalView: {
-    backgroundColor:  colors.WHITE,
+    backgroundColor: colors.WHITE,
     shadowColor: colors.BLACK,
     shadowOffset: {
       width: 0,
@@ -1215,7 +1497,7 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   vew1: {
     backgroundColor: colors.WHITE,
@@ -1224,20 +1506,20 @@ const styles = StyleSheet.create({
     padding: 5,
     shadowColor: colors.BLACK,
     shadowOffset: {
-        width:0,
-        height: 2,
+      width: 0,
+      height: 2,
     },
     shadowOpacity: 3,
     shadowRadius: 2,
-    elevation: 2
+    elevation: 2,
   },
-  savedAddressesBox:{
-      fontFamily: 'Roboto-Regular',
-      color:  colors.BLACK,
-      fontSize: 16
+  savedAddressesBox: {
+    fontFamily: "Roboto-Regular",
+    color: colors.BLACK,
+    fontSize: 16,
   },
   buttonTitle: {
-    fontSize: 14
+    fontSize: 14,
   },
   registerButton: {
     backgroundColor: MAIN_COLOR,
@@ -1257,52 +1539,52 @@ const styles = StyleSheet.create({
     right: 10,
     height: 60,
     backgroundColor: colors.BLACK,
-    borderRadius: 30
+    borderRadius: 30,
   },
-  savedbox:{
+  savedbox: {
     height: 45,
-    width: width-80,
-    justifyContent: 'center',
+    width: width - 80,
+    justifyContent: "center",
   },
-  savesadd:{
-    textAlign: 'center',
+  savesadd: {
+    textAlign: "center",
     fontSize: 20,
-    fontWeight:'bold',
-    color: colors.WHITE
+    fontWeight: "bold",
+    color: colors.WHITE,
   },
   savedaddlist: {
     flex: 1,
     backgroundColor: colors.WHITE,
     shadowColor: colors.BLACK,
     shadowOffset: {
-        width: 0,
-        height: 2,
+      width: 0,
+      height: 2,
     },
     shadowOpacity: 0.2,
     shadowRadius: 3,
     elevation: 2,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
-    width: width
+    width: width,
   },
-  nosavedadd:{
+  nosavedadd: {
     flex: 1,
-    width: width-15,
-    alignItems:'center',
+    width: width - 15,
+    alignItems: "center",
     backgroundColor: colors.WHITE,
-    marginTop: 50
+    marginTop: 50,
   },
-  dropremove:{
-    justifyContent: 'center',
-    alignItems: 'center',
+  dropremove: {
+    justifyContent: "center",
+    alignItems: "center",
     borderBottomColor: colors.BLACK,
     borderBottomWidth: 1,
-    height: 48
+    height: 48,
   },
   categoryBox: {
-    width: width-10,
+    width: width - 10,
     height: 60,
-    marginTop: 5
+    marginTop: 5,
   },
   categoryItem: {
     height: 50,
@@ -1317,7 +1599,7 @@ const styles = StyleSheet.create({
     borderColor: colors.SECONDARY,
     borderWidth: 1,
   },
-  categoryLabel:{
+  categoryLabel: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,
   },
@@ -1326,18 +1608,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     height: 48,
     width: width - 55,
-    alignItems:'center',
-    width: width-80
+    alignItems: "center",
+    width: width - 80,
   },
-  multiAddressChar:{
+  multiAddressChar: {
     height: 20,
     width: 20,
     marginHorizontal: 3,
     borderWidth: 1,
     backgroundColor: colors.SECONDARY,
     borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center",
   },
   dropdown: {
     height: 70,
@@ -1347,9 +1629,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     width: width - 30,
     marginLeft: 5,
-    elevation:20,
-    backgroundColor:colors.WHITE
-  },icon: {
+    elevation: 20,
+    backgroundColor: colors.WHITE,
+  },
+  icon: {
     marginRight: 5,
   },
   label: {
@@ -1370,10 +1653,10 @@ const styles = StyleSheet.create({
   iconStyle: {
     width: 0,
     height: 0,
-   Color:colors.BLUE
+    Color: colors.BLUE,
   },
   inputSearchStyle: {
     height: 40,
     fontSize: 20,
   },
-})
+});
