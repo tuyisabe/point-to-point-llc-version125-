@@ -773,7 +773,7 @@ const styles = StyleSheet.create({
   addressBar: {
     position: "absolute",
     marginHorizontal: 20,
-    top: Platform.OS == "android" ? (__DEV__ ? 60 : 100) : hasNotch ? 100 : 80,
+    top: Platform.OS == "android" ? (__DEV__ ? 60 : 60) : hasNotch ? 100 : 80,
     height: 100,
     width: width - 40,
     flexDirection: "row",
@@ -790,7 +790,7 @@ const styles = StyleSheet.create({
   addressBarMul: {
     position: "absolute",
     marginHorizontal: 20,
-    top: Platform.OS == "android" ? (__DEV__ ? 60 : 100) : hasNotch ? 100 : 80,
+    top: Platform.OS == "android" ? (__DEV__ ? 60 : 60) : hasNotch ? 100 : 80,
     width: width - 40,
     flexDirection: "row",
     backgroundColor: colors.WHITE,

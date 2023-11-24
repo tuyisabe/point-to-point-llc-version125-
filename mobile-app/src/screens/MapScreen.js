@@ -1903,6 +1903,7 @@ export default function MapScreen(props) {
                   tripdata.drop &&
                   tripdata.drop.source != "search1" ? (
                     <Text
+                      numberOfLines={1}
                       style={[
                         styles.textStyle,
                         tripdata.selected == "pickup"
@@ -1918,6 +1919,7 @@ export default function MapScreen(props) {
                   tripdata.drop.add &&
                   tripdata.drop.source == "search1" ? (
                     <Text
+                      numberOfLines={1}
                       style={[
                         styles.textStyle,
                         tripdata.selected == "pickup"
@@ -1929,7 +1931,9 @@ export default function MapScreen(props) {
                       {tripdata.drop.add}
                     </Text>
                   ) : null}
-                  {currentLocation.add == null ? (
+                  {tripdata.drop &&
+                  tripdata.drop.add == null &&
+                  currentLocation.add == null ? (
                     <Text
                       style={[
                         styles.textStyle,

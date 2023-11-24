@@ -215,6 +215,19 @@ export default function SearchScreen(props) {
     }
   }, [locationTypes, tripdata.pickup]);
 
+  useEffect(() => {
+    if (selLocationsDrop && selLocationsDrop.add == null && currentLocation) {
+      dispatch(
+        updateTripDrop({
+          lat: currentLocation.lat,
+          lng: currentLocation.lng,
+          add: currentLocation.add,
+          source: "search1",
+        })
+      );
+    }
+  }, []);
+
   const searchLocationDrop = async (text) => {
     setSearchKeywordDrop(text);
 
@@ -926,13 +939,13 @@ export default function SearchScreen(props) {
                     color="#1d74e7"
                   />
                   <Text
-                    numberOfLines={1}
+                    numberOfLines={3}
                     style={[
                       styles.description,
                       {
                         fontSize: 16,
                         textAlign: isRTL ? "right" : "left",
-                        width: width - 20,
+                        width: width - 60,
                       },
                     ]}
                   >
@@ -950,7 +963,8 @@ export default function SearchScreen(props) {
             <ActivityIndicator color={colors.BLUE} size="large" />
           </View>
         ) : null}
-        {selLocations.length > 0 && locationType == "drop" ? (
+        {(selLocationsDrop.length > 0 && locationType == "drop") ||
+        (selLocationsPickup.length > 0 && locationType == "pickup") ? (
           <TouchableOpacity onPress={okClicked} style={styles.floting}>
             <Text style={styles.headerTitleStyle}>{t("ok")}</Text>
           </TouchableOpacity>
@@ -1202,11 +1216,11 @@ export default function SearchScreen(props) {
                       onPress={() => setAddress(item)}
                     >
                       <Text
-                        numberOfLines={1}
+                        numberOfLines={3}
                         style={{
                           fontSize: 16,
                           textAlign: isRTL ? "right" : "left",
-                          width: width - 20,
+                          width: width - 40,
                         }}
                       >
                         {item.description}
@@ -1284,6 +1298,7 @@ export default function SearchScreen(props) {
                                 {address.name.toUpperCase()}
                               </Text>
                               <Text
+                                numberOfLines={2}
                                 style={[
                                   styles.savedAddressesBox,
                                   {
@@ -1398,12 +1413,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   headerTitleStyle: {
-    color: colors.WHITE,
+    color: colors.GREEN_DOT,
     fontFamily: "Roboto-Bold",
     fontSize: 20,
   },
   multiLocation: {
-    width: width - 10,
+    width: width - 50,
   },
   addressBar: {
     marginVertical: 5,
