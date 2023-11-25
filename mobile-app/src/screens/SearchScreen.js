@@ -222,11 +222,11 @@ export default function SearchScreen(props) {
           lat: currentLocation.lat,
           lng: currentLocation.lng,
           add: currentLocation.add,
-          source: "search1",
+          source: "init",
         })
       );
     }
-  }, []);
+  }, [selLocationsDrop.add]);
 
   const searchLocationDrop = async (text) => {
     setSearchKeywordDrop(text);
@@ -649,7 +649,7 @@ export default function SearchScreen(props) {
                     color={colors.BLUE}
                     size={35}
                     style={[
-                      { marginEnd: 15 },
+                      { marginEnd: 0 },
                       isRTL ? { left: 0, right: 5 } : { left: 5, right: 0 },
                     ]}
                   />
@@ -965,7 +965,10 @@ export default function SearchScreen(props) {
         ) : null}
         {(selLocationsDrop.length > 0 && locationType == "drop") ||
         (selLocationsPickup.length > 0 && locationType == "pickup") ? (
-          <TouchableOpacity onPress={okClicked} style={styles.floting}>
+          <TouchableOpacity
+            onPress={() => props.navigation.goBack()}
+            style={styles.floting}
+          >
             <Text style={styles.headerTitleStyle}>{t("ok")}</Text>
           </TouchableOpacity>
         ) : null}
@@ -1348,12 +1351,12 @@ const styles = StyleSheet.create({
     width: "70%",
     height: 45,
     position: "absolute",
-    bottom: 20,
+    bottom: 40,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
     borderRadius: 10,
-    backgroundColor: colors.WHITE,
+    backgroundColor: colors.BLUE,
     shadowColor: colors.BLACK,
     shadowOffset: {
       width: 0,
@@ -1413,7 +1416,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   headerTitleStyle: {
-    color: colors.GREEN_DOT,
+    color: colors.WHITE,
     fontFamily: "Roboto-Bold",
     fontSize: 20,
   },
@@ -1663,7 +1666,7 @@ const styles = StyleSheet.create({
     fontSize: 21,
   },
   selectedTextStyle: {
-    fontSize: 20,
+    fontSize: 18,
   },
   iconStyle: {
     width: 0,
@@ -1672,6 +1675,6 @@ const styles = StyleSheet.create({
   },
   inputSearchStyle: {
     height: 40,
-    fontSize: 20,
+    fontSize: 18,
   },
 });
