@@ -512,7 +512,6 @@ export default function SearchScreen(props) {
     arr1.splice(index, 1);
     setSelLocationsDrop(arr1);
   };
-  console.log("here we are at :", currentLocation);
   console.log("drop: ", selLocationsDrop);
   console.log("pick:", selLocationsPickup);
 
@@ -941,7 +940,7 @@ export default function SearchScreen(props) {
                   <Text
                     numberOfLines={3}
                     style={[
-                      styles.description,
+                      styles.lat,
                       {
                         fontSize: 16,
                         textAlign: isRTL ? "right" : "left",
@@ -1227,6 +1226,7 @@ export default function SearchScreen(props) {
                         }}
                       >
                         {item.description}
+                        {console.log("address: ", item)}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -1310,7 +1310,7 @@ export default function SearchScreen(props) {
                                   },
                                 ]}
                               >
-                                {address.description}
+                                {address}
                               </Text>
                             </View>
                           </TouchableOpacity>
@@ -1401,8 +1401,8 @@ const styles = StyleSheet.create({
   resultItem: {
     width: "95%",
     paddingVertical: 10,
-    borderBottomColor: colors.HEADER,
-    borderBottomWidth: 0.3,
+    borderBottomColor: colors.BLUE,
+    borderBottomWidth: 0.8,
     backgroundColor: colors.WHITE,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -1410,6 +1410,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     marginLeft: 10,
     paddingLeft: 10,
+    paddingRight: 15,
   },
   searchResultsContainer: {
     width: width,
