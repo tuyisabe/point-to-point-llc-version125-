@@ -52,8 +52,8 @@ const datas = [
   },
   {
     add: "Signature Aviation (SLC)",
-    lat: 40.78839,
-    lng: -111.97777,
+    lat: 40.780239105225,
+    lng: -111.95767974854,
   },
 ];
 const appcat = "taxi";
@@ -937,19 +937,38 @@ export default function SearchScreen(props) {
                     size={25}
                     color="#1d74e7"
                   />
-                  <Text
-                    numberOfLines={3}
-                    style={[
-                      styles.lat,
-                      {
-                        fontSize: 16,
-                        textAlign: isRTL ? "right" : "left",
-                        width: width - 60,
-                      },
-                    ]}
-                  >
-                    {item.description}
-                  </Text>
+                  <View style={{ display: "flex", flexDirection: "column" }}>
+                    <Text
+                      numberOfLines={3}
+                      style={[
+                        styles.lat,
+                        {
+                          fontSize: 16,
+                          textAlign: isRTL ? "right" : "left",
+                          width: width - 60,
+                          color: colors.BLUE,
+                        },
+                      ]}
+                    >
+                      {item.description.split(",", 1)}
+                    </Text>
+                    <Text
+                      numberOfLines={3}
+                      style={[
+                        styles.lat,
+                        {
+                          fontSize: 16,
+                          textAlign: isRTL ? "right" : "left",
+                          width: width - 60,
+                          color: "#7bbced",
+                        },
+                      ]}
+                    >
+                      {item.description.substring(
+                        item.description.indexOf(",") + 1
+                      )}
+                    </Text>
+                  </View>
                 </TouchableOpacity>
               );
             }}
