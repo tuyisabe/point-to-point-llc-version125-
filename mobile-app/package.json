@@ -47,6 +47,7 @@
     "expo-task-manager": "~11.3.0",
     "expo-updates": "~0.18.13",
     "firebase": "^9.17.2",
+    "functions": "^1.0.9",
     "fuse.js": "3.4.5",
     "google-libphonenumber": "^3.2.32",
     "i18n-js": "3.8.0",
