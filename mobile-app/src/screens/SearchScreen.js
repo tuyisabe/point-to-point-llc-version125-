@@ -291,7 +291,7 @@ export default function SearchScreen(props) {
             lat: data.lat,
             lng: data.lng,
             add: data.add,
-            source: "search1",
+            source: "default",
           })
         );
         props.navigation.pop();
@@ -330,7 +330,7 @@ export default function SearchScreen(props) {
                 lat: res.lat,
                 lng: res.lng,
                 add: data.description,
-                source: "search1",
+                source: "default",
               })
             );
             if (appcat == "taxi") {
@@ -368,7 +368,7 @@ export default function SearchScreen(props) {
                 lat: data.lat,
                 lng: data.lng,
                 add: data.description,
-                source: "search1",
+                source: "default",
               })
             );
             if (appcat == "taxi") {
@@ -380,7 +380,7 @@ export default function SearchScreen(props) {
                 lat: data.lat,
                 lng: data.lng,
                 add: data.description,
-                source: "search1",
+                source: "default",
               })
             );
           }
@@ -423,7 +423,7 @@ export default function SearchScreen(props) {
           lat: currentLocation.lat,
           lng: currentLocation.lng,
           add: currentLocation.add,
-          source: "search1",
+          source: "default",
         })
       );
     }
@@ -512,8 +512,8 @@ export default function SearchScreen(props) {
     arr1.splice(index, 1);
     setSelLocationsDrop(arr1);
   };
-  console.log("drop: ", selLocationsDrop);
-  console.log("pick:", selLocationsPickup);
+  // console.log("drop: ", selLocationsDrop);
+  // console.log("pick:", selLocationsPickup);
 
   return (
     <View style={{ flex: 1 }}>
@@ -769,7 +769,7 @@ export default function SearchScreen(props) {
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
                 data={datas}
-                returnKeyType="search1"
+                returnKeyType="default"
                 maxHeight={300}
                 labelField="add"
                 valueField="add"
@@ -878,7 +878,7 @@ export default function SearchScreen(props) {
                 >
                   <TextInput
                     placeholder={"Enter Drop Off Address"}
-                    returnKeyType="search1"
+                    returnKeyType="default"
                     style={[
                       styles.searchBox,
                       isRTL
@@ -960,7 +960,7 @@ export default function SearchScreen(props) {
                           fontSize: 16,
                           textAlign: isRTL ? "right" : "left",
                           width: width - 60,
-                          color: "#7bbced",
+                          color: colors.BLUE,
                         },
                       ]}
                     >
@@ -1245,7 +1245,6 @@ export default function SearchScreen(props) {
                         }}
                       >
                         {item.description}
-                        {console.log("address: ", item)}
                       </Text>
                     </TouchableOpacity>
                   );

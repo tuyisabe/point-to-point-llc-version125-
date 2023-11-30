@@ -1118,7 +1118,7 @@ export default function MapScreen(props) {
   };
 
   const reloadLocation = () => {
-    if (tripdata.drop && tripdata.drop.source == "search1") {
+    if (tripdata.drop && tripdata.drop.source == "default") {
       tripdata.drop = currentLocation;
     }
     if (tripdata.pickup && tripdata.pickup.source == "search") {
@@ -1362,8 +1362,8 @@ export default function MapScreen(props) {
       console.error("Couldn't load page", err)
     );
   };
-  console.log("loc", currentLocation);
-  console.log(tripdata);
+  // console.log("loc", currentLocation);
+  //console.log(tripdata);
   return (
     <View style={styles.container}>
       <StatusBar hidden={true} />
@@ -1901,7 +1901,7 @@ export default function MapScreen(props) {
                   {fromairportSelected &&
                   currentLocation &&
                   tripdata.drop &&
-                  tripdata.drop.source != "search1" ? (
+                  tripdata.drop.source != "default" ? (
                     <Text
                       numberOfLines={1}
                       style={[
@@ -1917,7 +1917,7 @@ export default function MapScreen(props) {
                   ) : null}
                   {tripdata.drop &&
                   tripdata.drop.add &&
-                  tripdata.drop.source == "search1" ? (
+                  tripdata.drop.source == "default" ? (
                     <Text
                       numberOfLines={1}
                       style={[
