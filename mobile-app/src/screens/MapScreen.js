@@ -2158,8 +2158,8 @@ export default function MapScreen(props) {
                         style={[
                           styles.imageStyle,
                           {
-                            width: prop.active ? width / 4.5 : width / 4.5,
-                            height: prop.active ? height / 18 : height / 18,
+                            width: prop.active ? width / 4.2 : width / 4.2,
+                            height: prop.active ? height / 13 : height / 13,
                           },
                         ]}
                       >
@@ -2711,12 +2711,12 @@ const styles = StyleSheet.create({
   imageStyle: {
     height: 50,
     width: "100%",
-    marginVertical: 15,
-    padding: 5,
+    //marginVertical: 15,
+    //padding: 5,
     borderRadius: 5,
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 5,
+    //paddingBottom: 5,
   },
   imageStyle1: {
     height: 40,

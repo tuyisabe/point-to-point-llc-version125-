@@ -513,7 +513,7 @@ export default function SearchScreen(props) {
     setSelLocationsDrop(arr1);
   };
   // console.log("drop: ", selLocationsDrop);
-  // console.log("pick:", selLocationsPickup);
+  console.log(locationTypes);
 
   return (
     <View style={{ flex: 1 }}>
@@ -990,7 +990,6 @@ export default function SearchScreen(props) {
             <Text style={styles.headerTitleStyle}>{t("ok")}</Text>
           </TouchableOpacity>
         ) : null}
-
         <Modal
           animationType="slide"
           transparent={true}
@@ -1068,7 +1067,7 @@ export default function SearchScreen(props) {
                 style={[
                   styles.addressStyle2,
                   {
-                    borderRadius: 5,
+                    borderRadius: 15,
                     marginTop:
                       (searchKeyword2 && isShowingResults2) ||
                       address ||
@@ -1081,19 +1080,14 @@ export default function SearchScreen(props) {
                 <View
                   style={[
                     styles.autocompleteMain,
-                    {
-                      flexDirection: isRTL ? "row-reverse" : "row",
-                      marginTop: 0,
-                      width: width - 15,
-                      marginLeft: 0,
-                    },
+                    { flexDirection: isRTL ? "row-reverse" : "row" },
                   ]}
                 >
                   <FontAwesome
                     name="search"
                     size={20}
                     color={colors.BLUE}
-                    style={{ marginHorizontal: 5, marginLeft: 10 }}
+                    style={{ marginHorizontal: 5 }}
                   />
                   <TextInput
                     placeholder={t("search_for_an_address")}
@@ -1120,11 +1114,8 @@ export default function SearchScreen(props) {
                       <Entypo
                         name="cross"
                         size={24}
-                        color={colors.SECONDARY}
-                        style={{
-                          borderLeftWidth: 1,
-                          borderLeftColor: colors.SECONDARY,
-                        }}
+                        color={colors.BLUE}
+                        style={{}}
                       />
                     </TouchableOpacity>
                   ) : null}
@@ -1158,7 +1149,7 @@ export default function SearchScreen(props) {
                       <Icon
                         name={item.icon}
                         type={item.type}
-                        color={colors.BLACK}
+                        color={colors.BLUE}
                         size={22}
                         containerStyle={{ margin: 1 }}
                       />
@@ -1225,6 +1216,7 @@ export default function SearchScreen(props) {
                 </View>
               ) : null}
             </View>
+
             {searchKeyword2 && isShowingResults2 && !address ? (
               <FlatList
                 keyboardShouldPersistTaps="always"
@@ -1236,16 +1228,56 @@ export default function SearchScreen(props) {
                       style={styles.resultItem}
                       onPress={() => setAddress(item)}
                     >
-                      <Text
-                        numberOfLines={3}
+                      <Icon
+                        name={"location-sharp"}
+                        type={"ionicon"}
+                        size={25}
+                        color="#1d74e7"
+                      />
+                      <View
+                        style={{ display: "flex", flexDirection: "column" }}
+                      >
+                        <Text
+                          numberOfLines={3}
+                          style={[
+                            styles.lat,
+                            {
+                              fontSize: 16,
+                              textAlign: isRTL ? "right" : "left",
+                              width: width - 60,
+                              color: colors.BLUE,
+                            },
+                          ]}
+                        >
+                          {item.description.split(",", 1)}
+                        </Text>
+                        <Text
+                          numberOfLines={3}
+                          style={[
+                            styles.lat,
+                            {
+                              fontSize: 16,
+                              textAlign: isRTL ? "right" : "left",
+                              width: width - 60,
+                              color: colors.BLUE,
+                            },
+                          ]}
+                        >
+                          {item.description.substring(
+                            item.description.indexOf(",") + 1
+                          )}
+                        </Text>
+                      </View>
+                      {/* <Text
+                        numberOfLines={1}
                         style={{
                           fontSize: 16,
                           textAlign: isRTL ? "right" : "left",
-                          width: width - 40,
+                          width: width - 20,
                         }}
                       >
                         {item.description}
-                      </Text>
+                      </Text> */}
                     </TouchableOpacity>
                   );
                 }}
@@ -1275,7 +1307,9 @@ export default function SearchScreen(props) {
                           }}
                         >
                           <TouchableOpacity
-                            onPress={() => updateLocation(address)}
+                            onPress={() => {
+                              updateLocation(address), closeModel();
+                            }}
                             style={{
                               flexDirection: isRTL ? "row-reverse" : "row",
                               alignItems: "center",
@@ -1287,19 +1321,19 @@ export default function SearchScreen(props) {
                                 <AntDesign
                                   name="home"
                                   size={22}
-                                  color={colors.BLACK}
+                                  color={colors.BLUE}
                                 />
                               ) : address.name == "work" ? (
                                 <MaterialIcons
                                   name="work-outline"
                                   size={22}
-                                  color={colors.BLACK}
+                                  color={colors.BLUE}
                                 />
                               ) : (
                                 <Entypo
                                   name="location"
                                   size={22}
-                                  color={colors.BLACK}
+                                  color={colors.BLUE}
                                 />
                               )}
                             </View>
@@ -1319,7 +1353,6 @@ export default function SearchScreen(props) {
                                 {address.name.toUpperCase()}
                               </Text>
                               <Text
-                                numberOfLines={2}
                                 style={[
                                   styles.savedAddressesBox,
                                   {
@@ -1328,7 +1361,7 @@ export default function SearchScreen(props) {
                                   },
                                 ]}
                               >
-                                {address}
+                                {address.description}
                               </Text>
                             </View>
                           </TouchableOpacity>
@@ -1336,7 +1369,7 @@ export default function SearchScreen(props) {
                             <MaterialCommunityIcons
                               name="delete-circle-outline"
                               size={28}
-                              color={colors.SECONDARY}
+                              color={colors.RED}
                               onPress={() => onPressDelete(address)}
                             />
                           </View>
@@ -1398,13 +1431,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.WHITE,
     alignItems: "center",
     marginHorizontal: 15,
-    marginTop: 10,
     borderRadius: 10,
-    elevation: 20,
+    height: 50,
   },
   searchBox: {
     width: "90%",
-    height: 50,
     fontSize: 20,
     borderColor: "#ccc",
     color: "#000",
@@ -1477,6 +1508,7 @@ const styles = StyleSheet.create({
     width: width - 15,
     justifyContent: "center",
     marginTop: 2,
+    elevation: 20,
   },
   hbox1: {
     height: 12,
