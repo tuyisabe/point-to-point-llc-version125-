@@ -2416,39 +2416,6 @@ export default function MapScreen(props) {
           ></View>
         </View>
       )}
-      {/* {isEditing == true && settings && !settings.horizontal_view ?
-                <View style={[styles.carShow, { paddingTop: 10, height: 250, minHeight: 80, alignItems: 'center', flexDirection: 'column', backgroundColor: isEditing == true ? colors.BACKGROUND_PRIMARY : colors.WHITE }]}
-                    onTouchStart={e => setTouchY(e.nativeEvent.pageY)}
-                    onTouchEnd={e => {
-                        if ((touchY - e.nativeEvent.pageY > 10) && !isEditing)
-                            setIsEditing(!isEditing);
-                        if ((e.nativeEvent.pageY - touchY > 10) && isEditing)
-                            setIsEditing(!isEditing);
-                    }}
-                >
-                    <View style={[styles.bar, { backgroundColor: MAIN_COLOR }]} ></View>
-
-                    <Animated.View style={{ alignItems: 'center', backgroundColor: colors.BACKGROUND_PRIMARY, flex: animation, paddingTop: 6 }}>
-                        {allCarTypes && allCarTypes.length > 0 ?
-                            <ScrollView vertical={true} showsVerticalScrollIndicator={false}>
-                                {allCarTypes.map((prop, index) => {
-                                    return (
-                                        <CarVertical
-                                            onPress={() => { selectCarType(prop, index) }}
-                                            carData={prop}
-                                            settings={settings}
-                                            styles={styles}
-                                            key={index}
-                                        />
-                                    );
-                                })}
-                            </ScrollView>
-                            :
-                            <Text style={{ color: colors.HEADER, fontWeight: 'bold', fontSize: 20, justifyContent: 'center' }}>{t("service_start_soon")}</Text>
-                        }
-                    </Animated.View>
-                </View>
-                : null} */}
 
       <OptionModal
         settings={settings}
@@ -2481,17 +2448,6 @@ export default function MapScreen(props) {
         auth={auth}
         bookModelLoading={bookModelLoading}
       />
-      {/* <DatePicker
-        modal
-        title={("Select Date")}
-        confirmText={t('confirm')}
-        cancelText={t('cancel')}
-        open={datePickerOpen}
-        date={initDate}
-        onConfirm={handleDateConfirm}
-        onCancel={hideDatePicker}
-        hideText={true}
-      /> */}
 
       <DateTimePickerModal
         date={pickerConfig.selectedDateTime}

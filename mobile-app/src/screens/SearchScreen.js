@@ -34,6 +34,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { Button } from "react-native-elements";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 const datas = [
   {
     add: "Kigali international airport",
@@ -127,16 +128,33 @@ export default function SearchScreen(props) {
     {
       value: t("home"),
       lable: t("home"),
-      icon: "home-outline",
-      type: "material-community",
+      icon: "house",
+      type: "materialIcons",
     },
     {
       value: t("work"),
       lable: t("work"),
-      icon: "work-outline",
+      icon: "business-center",
       type: "materialIcons",
     },
-    { value: t("other"), lable: t("other"), icon: "location", type: "entypo" },
+    {
+      value: "school",
+      lable: "School",
+      icon: "school",
+      type: "materialIcons",
+    },
+    {
+      value: "restaurant",
+      lable: "Restaurant",
+      icon: "restaurant",
+      type: "materialIcons",
+    },
+    {
+      value: t("other"),
+      lable: t("other"),
+      icon: "location-pin",
+      type: "materialIcons",
+    },
   ];
 
   useEffect(() => {
@@ -1126,93 +1144,116 @@ export default function SearchScreen(props) {
                 <View
                   style={[
                     styles.categoryBox,
-                    { flexDirection: isRTL ? "row-reverse" : "row" },
+                    { display: "flex", flexDirection: "column" },
                   ]}
                 >
-                  {saveName.map((item, index) => (
-                    <TouchableOpacity
-                      key={index}
+                  <TouchableOpacity
+                    onPress={() => cancelAddress()}
+                    loading={false}
+                  >
+                    <Text
                       style={[
-                        styles.categoryItem,
+                        styles.buttonTitle,
                         {
-                          backgroundColor:
-                            item.value == saveNameValue
-                              ? MAIN_COLOR
-                              : colors.WHITE,
-                          marginHorizontal: 2,
+                          fontSize: 20,
+                          fontWeight: "700",
+                          margin: 10,
+                          color: "gray",
                         },
                       ]}
-                      onPress={() => {
-                        setSaveNameValue(item.value);
+                    >
+                      {t("cancel")}
+                    </Text>
+                  </TouchableOpacity>
+                  <View
+                    style={[
+                      {
+                        flexDirection: isRTL ? "row-reverse" : "row",
+                        paddingTop: 10,
+                        marginLeft: 20,
+                      },
+                    ]}
+                  >
+                    {saveName.map((item, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={[
+                          styles.categoryItem,
+                          {
+                            backgroundColor:
+                              item.value == saveNameValue
+                                ? MAIN_COLOR
+                                : colors.WHITE,
+                            marginHorizontal: 8,
+                          },
+                        ]}
+                        onPress={() => {
+                          setSaveNameValue(item.value);
+                        }}
+                      >
+                        <Icon
+                          name={item.icon}
+                          type={item.type}
+                          color={
+                            item.value == saveNameValue
+                              ? colors.WHITE
+                              : colors.BLUE
+                          }
+                          size={40}
+                          containerStyle={{ margin: 1 }}
+                        />
+                        {/* <Text style={styles.categoryLabel}>{item.lable}</Text> */}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  {address && saveNameValue == t("other") ? (
+                    <View
+                      style={{
+                        width: width - 40,
+                        marginLeft: 20,
+                        marginTop: 40,
                       }}
                     >
-                      <Icon
-                        name={item.icon}
-                        type={item.type}
-                        color={colors.BLUE}
-                        size={22}
-                        containerStyle={{ margin: 1 }}
+                      <TextInput
+                        style={{
+                          borderBottomColor: colors.BLUE,
+                          borderBottomWidth: 1,
+                          height: 40,
+                        }}
+                        placeholder={t("name")}
+                        placeholderTextColor={colors.SECONDARY}
+                        value={addressName ? addressName : ""}
+                        keyboardType={"email-address"}
+                        onChangeText={(text) => {
+                          setAddressName(text);
+                        }}
+                        secureTextEntry={false}
+                        blurOnSubmit={true}
+                        errorStyle={styles.errorMessageStyle}
+                        inputContainerStyle={[
+                          styles.inputContainerStyle,
+                          { height: 50 },
+                        ]}
+                        autoCapitalize="none"
                       />
-                      <Text style={styles.categoryLabel}>{item.lable}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              ) : null}
+                    </View>
+                  ) : null}
 
-              {address && saveNameValue == t("other") ? (
-                <View style={{ width: width - 15, marginTop: 10 }}>
-                  <TextInput
+                  <View
                     style={{
-                      borderBottomColor: colors.SECONDARY,
-                      borderBottomWidth: 1,
-                      height: 40,
+                      flexDirection: isRTL ? "row-reverse" : "row",
+                      width: width,
+                      justifyContent: "space-evenly",
                     }}
-                    placeholder={t("name")}
-                    placeholderTextColor={colors.SECONDARY}
-                    value={addressName ? addressName : ""}
-                    keyboardType={"email-address"}
-                    onChangeText={(text) => {
-                      setAddressName(text);
-                    }}
-                    secureTextEntry={false}
-                    blurOnSubmit={true}
-                    errorStyle={styles.errorMessageStyle}
-                    inputContainerStyle={[
-                      styles.inputContainerStyle,
-                      { height: 50 },
-                    ]}
-                    autoCapitalize="none"
-                  />
-                </View>
-              ) : null}
-
-              {address ? (
-                <View
-                  style={{
-                    flexDirection: isRTL ? "row-reverse" : "row",
-                    width: width,
-                    justifyContent: "space-evenly",
-                  }}
-                >
-                  {loading ? null : (
+                  >
                     <Button
-                      onPress={() => cancelAddress()}
-                      title={t("cancel")}
-                      loading={false}
-                      titleStyle={[styles.buttonTitle]}
-                      buttonStyle={[
-                        styles.registerButton,
-                        { marginTop: 20, backgroundColor: colors.RED },
-                      ]}
+                      onPress={() => saveLocation(address)}
+                      title={"Save Location"}
+                      loading={loading}
+                      titleStyle={styles.buttonTitle}
+                      buttonStyle={[styles.registerButton, { marginTop: 20 }]}
                     />
-                  )}
-                  <Button
-                    onPress={() => saveLocation(address)}
-                    title={t("save")}
-                    loading={loading}
-                    titleStyle={styles.buttonTitle}
-                    buttonStyle={[styles.registerButton, { marginTop: 20 }]}
-                  />
+                  </View>
                 </View>
               ) : null}
             </View>
@@ -1268,16 +1309,6 @@ export default function SearchScreen(props) {
                           )}
                         </Text>
                       </View>
-                      {/* <Text
-                        numberOfLines={1}
-                        style={{
-                          fontSize: 16,
-                          textAlign: isRTL ? "right" : "left",
-                          width: width - 20,
-                        }}
-                      >
-                        {item.description}
-                      </Text> */}
                     </TouchableOpacity>
                   );
                 }}
@@ -1318,20 +1349,32 @@ export default function SearchScreen(props) {
                           >
                             <View style={styles.vew1}>
                               {address.name == "home" ? (
-                                <AntDesign
-                                  name="home"
+                                <MaterialIcons
+                                  name="house"
                                   size={22}
                                   color={colors.BLUE}
                                 />
                               ) : address.name == "work" ? (
                                 <MaterialIcons
-                                  name="work-outline"
+                                  name="business-center"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "restaurant" ? (
+                                <MaterialIcons
+                                  name="restaurant"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "school" ? (
+                                <MaterialIcons
+                                  name="school"
                                   size={22}
                                   color={colors.BLUE}
                                 />
                               ) : (
-                                <Entypo
-                                  name="location"
+                                <MaterialIcons
+                                  name="location-pin"
                                   size={22}
                                   color={colors.BLUE}
                                 />
@@ -1588,16 +1631,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buttonTitle: {
-    fontSize: 14,
+    fontSize: 20,
   },
   registerButton: {
-    backgroundColor: MAIN_COLOR,
+    backgroundColor: colors.GREEN_DOT,
+    width: width - 40,
+    height: 50,
+    borderWidth: 0,
+    marginTop: 30,
+    borderRadius: 15,
+  },
+  registerButton1: {
     width: 120,
     height: 45,
     borderWidth: 0,
     marginTop: 30,
     borderRadius: 15,
   },
+
   floatButton: {
     borderWidth: 1,
     borderColor: colors.BLACK,
@@ -1631,9 +1682,9 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 2,
-    borderTopRightRadius: 10,
-    borderTopLeftRadius: 10,
+    elevation: 20,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
     width: width,
   },
   nosavedadd: {
@@ -1651,22 +1702,31 @@ const styles = StyleSheet.create({
     height: 48,
   },
   categoryBox: {
-    width: width - 10,
-    height: 60,
-    marginTop: 5,
+    height: height - 40,
+    width: width,
+    marginTop: 15,
+    backgroundColor: colors.WHITE,
+    shadowColor: colors.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 20,
+    borderTopRightRadius: 20,
+    borderTopLeftRadius: 20,
   },
   categoryItem: {
     height: 50,
-    width: 90,
+    width: 50,
     marginVertical: 5,
     paddingVertical: 5,
     backgroundColor: colors.WHITE,
     justifyContent: "center",
     alignItems: "center",
     justifyContent: "space-evenly",
-    borderRadius: 5,
-    borderColor: colors.SECONDARY,
-    borderWidth: 1,
+    borderRadius: 20,
   },
   categoryLabel: {
     fontFamily: "Roboto-Regular",
