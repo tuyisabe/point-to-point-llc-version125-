@@ -1833,6 +1833,18 @@ export default function MapScreen(props) {
             </View>
           </View>
           <View
+            style={{
+              borderLeftWidth: 3,
+              height: 55,
+              marginLeft: 54,
+              borderColor: colors.BLUE,
+              position: "absolute",
+              marginTop: 168,
+              zIndex: 1000,
+            }}
+          ></View>
+
+          <View
             style={[
               styles.addressBar1,
               { flexDirection: isRTL ? "row-reverse" : "row" },

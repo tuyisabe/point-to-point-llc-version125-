@@ -152,8 +152,8 @@ export default function SearchScreen(props) {
     {
       value: t("other"),
       lable: t("other"),
-      icon: "location-pin",
-      type: "materialIcons",
+      icon: "location",
+      type: "entypo",
     },
   ];
 
@@ -1101,11 +1101,16 @@ export default function SearchScreen(props) {
                     { flexDirection: isRTL ? "row-reverse" : "row" },
                   ]}
                 >
-                  <FontAwesome
-                    name="search"
-                    size={20}
-                    color={colors.BLUE}
-                    style={{ marginHorizontal: 5 }}
+                  <Icon
+                    name="map-marker-outline"
+                    type="material-community"
+                    color={colors.GREEN_DOT}
+                    size={25}
+                    style={{
+                      marginHorizontal: 5,
+                      marginRight: 10,
+                      marginLeft: 5,
+                    }}
                   />
                   <TextInput
                     placeholder={t("search_for_an_address")}
@@ -1113,8 +1118,9 @@ export default function SearchScreen(props) {
                     style={[
                       styles.searchBox,
                       isRTL
-                        ? { textAlign: "right" }
-                        : { textAlign: "left", width: width - 75 },
+                        ? { textAlign: "right", width: width - 65 }
+                        : { textAlign: "left", width: width - 65 },
+                      { marginLeft: -5 },
                     ]}
                     placeholderTextColor={colors.BLACK}
                     onChangeText={(text) => searchSaveLocation(text)}
@@ -1131,9 +1137,9 @@ export default function SearchScreen(props) {
                     >
                       <Entypo
                         name="cross"
-                        size={24}
+                        size={30}
                         color={colors.BLUE}
-                        style={{}}
+                        style={{ marginLeft: -32 }}
                       />
                     </TouchableOpacity>
                   ) : null}
@@ -1158,7 +1164,7 @@ export default function SearchScreen(props) {
                           fontSize: 20,
                           fontWeight: "700",
                           margin: 10,
-                          color: "gray",
+                          color: "red",
                         },
                       ]}
                     >
@@ -1199,10 +1205,20 @@ export default function SearchScreen(props) {
                               ? colors.WHITE
                               : colors.BLUE
                           }
-                          size={40}
+                          size={35}
                           containerStyle={{ margin: 1 }}
                         />
-                        {/* <Text style={styles.categoryLabel}>{item.lable}</Text> */}
+
+                        {item.lable == t("other") ? (
+                          <Text
+                            style={[
+                              styles.categoryLabel,
+                              { marginBottom: -15 },
+                            ]}
+                          >
+                            {item.lable}
+                          </Text>
+                        ) : null}
                       </TouchableOpacity>
                     ))}
                   </View>
@@ -1373,8 +1389,8 @@ export default function SearchScreen(props) {
                                   color={colors.BLUE}
                                 />
                               ) : (
-                                <MaterialIcons
-                                  name="location-pin"
+                                <Entypo
+                                  name="location"
                                   size={22}
                                   color={colors.BLUE}
                                 />
@@ -1547,8 +1563,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addressStyle2: {
-    height: 45,
-    width: width - 15,
+    height: 50,
+    width: width,
     justifyContent: "center",
     marginTop: 2,
     elevation: 20,
@@ -1731,6 +1747,7 @@ const styles = StyleSheet.create({
   categoryLabel: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,
+    marginTop: 7,
   },
   multiAddressStyle: {
     borderBottomColor: colors.BLACK,
