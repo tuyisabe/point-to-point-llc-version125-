@@ -3,7 +3,7 @@
 	"app_description": "Ride services",
 	"app_identifier": "com.ppt.customer",
 	"ios_app_version": "1.0.0",
-	"android_app_version": "140",
+	"android_app_version": "141",
 	"firebaseProjectId": "point-to-point-express-llc",
 	"googleApiKeys": {
 		"ios": "AIzaSyAyNeE-Ie21akTzLZew8T3PaQyyNHaYDro",

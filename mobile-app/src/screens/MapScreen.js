@@ -1835,11 +1835,11 @@ export default function MapScreen(props) {
           <View
             style={{
               borderLeftWidth: 3,
-              height: 55,
+              height: 50,
               marginLeft: 54,
               borderColor: colors.BLUE,
               position: "absolute",
-              marginTop: 168,
+              marginTop: 170,
               zIndex: 1000,
             }}
           ></View>

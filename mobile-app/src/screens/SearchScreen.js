@@ -124,6 +124,7 @@ export default function SearchScreen(props) {
   const [hidePic, setHidePic] = useState(false);
   const [add, setAdd] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const [iconRepresentation, setIconRepresentation] = useState("");
   const saveName = [
     {
       value: t("home"),
@@ -147,6 +148,96 @@ export default function SearchScreen(props) {
       value: "restaurant",
       lable: "Restaurant",
       icon: "restaurant",
+      type: "materialIcons",
+    },
+    {
+      value: "park",
+      lable: "park",
+      icon: "park",
+      type: "materialIcons",
+    },
+    {
+      value: "pets",
+      lable: "pets",
+      icon: "pets",
+      type: "materialIcons",
+    },
+    {
+      value: "Local bar",
+      lable: "Local bar",
+      icon: "local-bar",
+      type: "materialIcons",
+    },
+    {
+      value: "sports basketball",
+      lable: "sports basketball",
+      icon: "sports-basketball",
+      type: "materialIcons",
+    },
+    {
+      value: "Pharmacy",
+      lable: "Pharmacy",
+      icon: "local-pharmacy",
+      type: "materialIcons",
+    },
+    {
+      value: "FatFood",
+      lable: "Fast Food",
+      icon: "lunch-dining",
+      type: "materialIcons",
+    },
+    {
+      value: "Star",
+      lable: "Star",
+      icon: "star",
+      type: "materialIcons",
+    },
+    {
+      value: "Favorite",
+      lable: "Favorite",
+      icon: "favorite",
+      type: "materialIcons",
+    },
+    {
+      value: "Hospital",
+      lable: "Hospital",
+      icon: "local-hospital",
+      type: "materialIcons",
+    },
+    {
+      value: "Weekend",
+      lable: "Weekend",
+      icon: "weekend",
+      type: "materialIcons",
+    },
+    {
+      value: "Wine",
+      lable: "Wine",
+      icon: "wine-bar",
+      type: "materialIcons",
+    },
+    {
+      value: "Local cafe",
+      lable: "Local cafe",
+      icon: "local-cafe",
+      type: "materialIcons",
+    },
+    {
+      value: "Bookmark",
+      lable: "Bookmark",
+      icon: "bookmark",
+      type: "materialIcons",
+    },
+    {
+      value: "Store",
+      lable: "Store",
+      icon: "storefront",
+      type: "materialIcons",
+    },
+    {
+      value: "Child Care",
+      lable: "Child Care",
+      icon: "child-care",
       type: "materialIcons",
     },
     {
@@ -530,8 +621,41 @@ export default function SearchScreen(props) {
     arr1.splice(index, 1);
     setSelLocationsDrop(arr1);
   };
+  const renderItem = ({ item, index }) => (
+    <>
+      <TouchableOpacity
+        key={index}
+        style={[
+          styles.categoryItem,
+          {
+            backgroundColor:
+              item.value == saveNameValue ? MAIN_COLOR : colors.WHITE,
+            marginHorizontal: 7,
+            flexDirection: "column",
+          },
+        ]}
+        onPress={() => {
+          setSaveNameValue(item.value);
+          setIconRepresentation(item.value);
+        }}
+      >
+        <Icon
+          name={item.icon}
+          type={item.type}
+          color={item.value == saveNameValue ? colors.WHITE : colors.BLUE}
+          size={35}
+          containerStyle={{ margin: 3 }}
+        />
+        {item.lable == t("other") ? (
+          <Text style={[styles.categoryLabel, { marginBottom: -10 }]}>
+            {item.lable}
+          </Text>
+        ) : null}
+      </TouchableOpacity>
+    </>
+  );
   // console.log("drop: ", selLocationsDrop);
-  console.log(locationTypes);
+  console.log(iconRepresentation);
 
   return (
     <View style={{ flex: 1 }}>
@@ -1108,153 +1232,167 @@ export default function SearchScreen(props) {
                     size={25}
                     style={{
                       marginHorizontal: 5,
-                      marginRight: 10,
+                      marginRight: 5,
                       marginLeft: 5,
                     }}
                   />
-                  <TextInput
-                    placeholder={t("search_for_an_address")}
-                    returnKeyType="search"
-                    style={[
-                      styles.searchBox,
-                      isRTL
-                        ? { textAlign: "right", width: width - 65 }
-                        : { textAlign: "left", width: width - 65 },
-                      { marginLeft: -5 },
-                    ]}
-                    placeholderTextColor={colors.BLACK}
-                    onChangeText={(text) => searchSaveLocation(text)}
-                    value={address ? address.description : searchKeyword2}
-                  />
+
                   {address ? (
-                    <TouchableOpacity
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: 48,
-                      }}
-                      onPress={() => setAddress("")}
-                    >
-                      <Entypo
-                        name="cross"
-                        size={30}
-                        color={colors.BLUE}
-                        style={{ marginLeft: -32 }}
-                      />
-                    </TouchableOpacity>
-                  ) : null}
-                </View>
-              </View>
-
-              {address ? (
-                <View
-                  style={[
-                    styles.categoryBox,
-                    { display: "flex", flexDirection: "column" },
-                  ]}
-                >
-                  <TouchableOpacity
-                    onPress={() => cancelAddress()}
-                    loading={false}
-                  >
-                    <Text
-                      style={[
-                        styles.buttonTitle,
-                        {
-                          fontSize: 20,
-                          fontWeight: "700",
-                          margin: 10,
-                          color: "red",
-                        },
-                      ]}
-                    >
-                      {t("cancel")}
-                    </Text>
-                  </TouchableOpacity>
-                  <View
-                    style={[
-                      {
-                        flexDirection: isRTL ? "row-reverse" : "row",
-                        paddingTop: 10,
-                        marginLeft: 20,
-                      },
-                    ]}
-                  >
-                    {saveName.map((item, index) => (
-                      <TouchableOpacity
-                        key={index}
-                        style={[
-                          styles.categoryItem,
-                          {
-                            backgroundColor:
-                              item.value == saveNameValue
-                                ? MAIN_COLOR
-                                : colors.WHITE,
-                            marginHorizontal: 8,
-                          },
-                        ]}
-                        onPress={() => {
-                          setSaveNameValue(item.value);
-                        }}
-                      >
-                        <Icon
-                          name={item.icon}
-                          type={item.type}
-                          color={
-                            item.value == saveNameValue
-                              ? colors.WHITE
-                              : colors.BLUE
-                          }
-                          size={35}
-                          containerStyle={{ margin: 1 }}
-                        />
-
-                        {item.lable == t("other") ? (
-                          <Text
-                            style={[
-                              styles.categoryLabel,
-                              { marginBottom: -15 },
-                            ]}
-                          >
-                            {item.lable}
-                          </Text>
-                        ) : null}
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                  {address && saveNameValue == t("other") ? (
                     <View
                       style={{
-                        width: width - 40,
-                        marginLeft: 20,
-                        marginTop: 40,
+                        flexDirection: "row",
+                        width: "90%",
+                        alignItems: "center",
+                        height: 70,
                       }}
                     >
-                      <TextInput
+                      <Text
                         style={{
-                          borderBottomColor: colors.BLUE,
-                          borderBottomWidth: 1,
-                          height: 40,
+                          paddingLeft: 10,
+                          width: width - 100,
+                          color: colors.BLACK,
+                          fontFamily: "Uber Move",
+                          fontStyle: "normal",
+                          fontWeight: "500",
+                          lineHeight: 24,
+                          fontSize: 20,
                         }}
-                        placeholder={t("name")}
-                        placeholderTextColor={colors.SECONDARY}
-                        value={addressName ? addressName : ""}
-                        keyboardType={"email-address"}
-                        onChangeText={(text) => {
-                          setAddressName(text);
-                        }}
-                        secureTextEntry={false}
-                        blurOnSubmit={true}
-                        errorStyle={styles.errorMessageStyle}
-                        inputContainerStyle={[
-                          styles.inputContainerStyle,
-                          { height: 50 },
-                        ]}
-                        autoCapitalize="none"
-                      />
+                        numberOfLines={1}
+                      >
+                        {address.description}
+                      </Text>
+                      <TouchableOpacity
+                        style={{ paddingLeft: 0 }}
+                        onPress={() => setAddress("")}
+                      >
+                        <Icon
+                          name="close-sharp"
+                          type="ionicon"
+                          color="#1d74e7"
+                          size={30}
+                          style={[
+                            isRTL
+                              ? { left: 0, right: 5 }
+                              : { left: 0, right: 5 },
+                          ]}
+                        />
+                      </TouchableOpacity>
                     </View>
-                  ) : null}
+                  ) : (
+                    // <TouchableOpacity
+                    //   style={{
+                    //     justifyContent: "center",
+                    //     alignItems: "center",
+                    //     height: 48,
+                    //   }}
+                    //   onPress={() => setAddress("")}
+                    // >
+                    //   <Entypo
+                    //     name="cross"
+                    //     size={30}
+                    //     color={colors.BLUE}
+                    //     style={{ marginLeft: -32 }}
+                    //   />
+                    // </TouchableOpacity>
 
+                    <TextInput
+                      placeholder={t("search_for_an_address")}
+                      returnKeyType="search"
+                      style={[
+                        styles.searchBox,
+                        isRTL
+                          ? { textAlign: "right", width: width - 65 }
+                          : { textAlign: "left", width: width - 65 },
+                        { marginLeft: -5 },
+                      ]}
+                      placeholderTextColor={colors.BLACK}
+                      onChangeText={(text) => searchSaveLocation(text)}
+                      value={address ? address.description : searchKeyword2}
+                    />
+                  )}
+                </View>
+              </View>
+              {address ? (
+                <View style={[styles.categoryBox, {}]}>
+                  <View>
+                    <TouchableOpacity
+                      onPress={() => cancelAddress()}
+                      loading={false}
+                    >
+                      <Text
+                        style={[
+                          styles.buttonTitle,
+                          {
+                            fontSize: 20,
+                            fontWeight: "700",
+                            margin: 10,
+                            color: "red",
+                          },
+                        ]}
+                      >
+                        {t("cancel")}
+                      </Text>
+                    </TouchableOpacity>
+                    {address && saveNameValue == t("other") ? (
+                      <View
+                        style={{
+                          width: width - 40,
+                          marginLeft: 20,
+                          marginTop: 40,
+                        }}
+                      >
+                        <TextInput
+                          style={{
+                            borderBottomColor: colors.BLUE,
+                            borderBottomWidth: 1,
+                            height: 20,
+                            marginTop: -20,
+                            fontSize: 20,
+                          }}
+                          placeholder={t("name")}
+                          placeholderTextColor={colors.SECONDARY}
+                          value={addressName ? addressName : ""}
+                          keyboardType={"email-address"}
+                          onChangeText={(text) => {
+                            setAddressName(text);
+                          }}
+                          secureTextEntry={false}
+                          blurOnSubmit={true}
+                          errorStyle={styles.errorMessageStyle}
+                          inputContainerStyle={[
+                            styles.inputContainerStyle,
+                            { height: 50 },
+                          ]}
+                          autoCapitalize="none"
+                        />
+                      </View>
+                    ) : (
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          fontWeight: "bold",
+                          fontSize: 28,
+                          color: colors.BLUE,
+                        }}
+                      >
+                        {iconRepresentation}
+                      </Text>
+                    )}
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: isRTL ? "row-reverse" : "row",
+                      marginTop: 10,
+                      marginLeft: 25,
+                    }}
+                  >
+                    <FlatList
+                      data={saveName}
+                      renderItem={renderItem}
+                      keyExtractor={(item) => item.lable}
+                      numColumns={5}
+                    />
+                  </View>
                   <View
                     style={{
                       flexDirection: isRTL ? "row-reverse" : "row",
@@ -1385,6 +1523,90 @@ export default function SearchScreen(props) {
                               ) : address.name == "school" ? (
                                 <MaterialIcons
                                   name="school"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "pets" ? (
+                                <MaterialIcons
+                                  name="pets"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "local bar" ? (
+                                <MaterialIcons
+                                  name="local-bar"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "sports basketball" ? (
+                                <MaterialIcons
+                                  name="sports-basketball"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "pharmacy" ? (
+                                <MaterialIcons
+                                  name="local-pharmacy"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "fast food" ? (
+                                <MaterialIcons
+                                  name="lunch-dining"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "Star" ? (
+                                <MaterialIcons
+                                  name="star"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "favorite" ? (
+                                <MaterialIcons
+                                  name="favorite"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "hospital" ? (
+                                <MaterialIcons
+                                  name="local-hospital"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "weekend" ? (
+                                <MaterialIcons
+                                  name="weekend"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "wine" ? (
+                                <MaterialIcons
+                                  name="wine-bar"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "local cafe" ? (
+                                <MaterialIcons
+                                  name="local-cafe"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "bookmark" ? (
+                                <MaterialIcons
+                                  name="bookmark"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "store" ? (
+                                <MaterialIcons
+                                  name="storefront"
+                                  size={22}
+                                  color={colors.BLUE}
+                                />
+                              ) : address.name == "child care" ? (
+                                <MaterialIcons
+                                  name="child-care"
                                   size={22}
                                   color={colors.BLUE}
                                 />
@@ -1743,6 +1965,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-evenly",
     borderRadius: 20,
+    marginBottom: 10,
   },
   categoryLabel: {
     fontFamily: "Roboto-Regular",
