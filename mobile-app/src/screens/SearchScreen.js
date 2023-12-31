@@ -32,6 +32,7 @@ import {
   AntDesign,
   FontAwesome,
   MaterialCommunityIcons,
+  Feather,
 } from "@expo/vector-icons";
 import { Button } from "react-native-elements";
 import { Colors } from "react-native/Libraries/NewAppScreen";
@@ -125,6 +126,10 @@ export default function SearchScreen(props) {
   const [add, setAdd] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
   const [iconRepresentation, setIconRepresentation] = useState("");
+  const [editeLocationName, setEditeLocationName] = useState(false);
+  const [nameHold, setNameHold] = useState("");
+  const [iconName, setIconame] = useState("");
+  const [iconType, setIconType] = useState("");
   const saveName = [
     {
       value: t("home"),
@@ -562,7 +567,9 @@ export default function SearchScreen(props) {
             lat: res.lat,
             lng: res.lng,
             description: item.description,
-            name: name.toLowerCase(),
+            name: iconRepresentation.toLowerCase(),
+            icon_name: iconName,
+            icon_type: iconType,
           };
           dispatch(editAddress(profile.uid, dropObj, "Add"));
         }
@@ -637,6 +644,8 @@ export default function SearchScreen(props) {
         onPress={() => {
           setSaveNameValue(item.value);
           setIconRepresentation(item.value);
+          setIconame(item.icon);
+          setIconType(item.type);
         }}
       >
         <Icon
@@ -655,7 +664,7 @@ export default function SearchScreen(props) {
     </>
   );
   // console.log("drop: ", selLocationsDrop);
-  console.log(iconRepresentation);
+  console.log(address);
 
   return (
     <View style={{ flex: 1 }}>
@@ -1279,22 +1288,6 @@ export default function SearchScreen(props) {
                       </TouchableOpacity>
                     </View>
                   ) : (
-                    // <TouchableOpacity
-                    //   style={{
-                    //     justifyContent: "center",
-                    //     alignItems: "center",
-                    //     height: 48,
-                    //   }}
-                    //   onPress={() => setAddress("")}
-                    // >
-                    //   <Entypo
-                    //     name="cross"
-                    //     size={30}
-                    //     color={colors.BLUE}
-                    //     style={{ marginLeft: -32 }}
-                    //   />
-                    // </TouchableOpacity>
-
                     <TextInput
                       placeholder={t("search_for_an_address")}
                       returnKeyType="search"
@@ -1367,16 +1360,119 @@ export default function SearchScreen(props) {
                         />
                       </View>
                     ) : (
-                      <Text
-                        style={{
-                          textAlign: "center",
-                          fontWeight: "bold",
-                          fontSize: 28,
-                          color: colors.BLUE,
-                        }}
+                      <View
+                        style={[
+                          styles.flexView1,
+                          [
+                            isRTL
+                              ? { marginRight: 15, width: width - 70 }
+                              : { width: width - 70 },
+                          ],
+                          { marginLeft: 40 },
+                        ]}
                       >
-                        {iconRepresentation}
-                      </Text>
+                        <View
+                          style={{
+                            flexDirection: isRTL ? "row-reverse" : "row",
+                            justifyContent: "space-between",
+                            paddingRight: 15,
+                          }}
+                        >
+                          {editeLocationName ? (
+                            <View
+                              style={{
+                                width: width - 140,
+                                justifyContent: "center",
+                              }}
+                            >
+                              <TextInput
+                                style={[
+                                  styles.text2,
+                                  {
+                                    borderBottomColor: colors.BLUE,
+                                    borderBottomWidth: 1,
+                                    height: editeLocationName ? 40 : null,
+                                  },
+                                ]}
+                                placeholder={iconRepresentation}
+                                placeholderTextColor={
+                                  colors.PROFILE_PLACEHOLDER_TEXT
+                                }
+                                placeholderStyle={{ fontSize: 22 }}
+                                value={editeLocationName}
+                                onChangeText={(text) => {
+                                  setNameHold(text);
+                                }}
+                                secureTextEntry={false}
+                                errorStyle={styles.errorMessageStyle}
+                                inputContainerStyle={[
+                                  styles.inputContainerStyle,
+                                  { height: 50, fontSize: 20 },
+                                ]}
+                              />
+                            </View>
+                          ) : (
+                            <View style={{ width: width - 140, marginTop: 5 }}>
+                              <Text
+                                style={[
+                                  styles.text2,
+                                  isRTL
+                                    ? { textAlign: "right" }
+                                    : { textAlign: "left" },
+                                  {
+                                    fontSize: 22,
+                                    color: colors.BLUE,
+                                    fontWeight: "bold",
+                                  },
+                                ]}
+                              >
+                                {iconRepresentation}
+                              </Text>
+                            </View>
+                          )}
+                          {editeLocationName ? (
+                            <TouchableOpacity
+                              onPress={() => {
+                                setIconRepresentation(nameHold),
+                                  setEditeLocationName(false);
+                              }}
+                              style={[
+                                isRTL
+                                  ? { marginRight: 20 }
+                                  : { marginLeft: 20 },
+                              ]}
+                            >
+                              {loading ? (
+                                <ActivityIndicator
+                                  color={colors.BLUE}
+                                  size="small"
+                                />
+                              ) : (
+                                <MaterialIcons
+                                  name="check"
+                                  size={30}
+                                  color={colors.BLUE}
+                                />
+                              )}
+                            </TouchableOpacity>
+                          ) : iconRepresentation ? (
+                            <TouchableOpacity
+                              onPress={() => setEditeLocationName(true)}
+                              style={[
+                                isRTL
+                                  ? { marginRight: 20 }
+                                  : { marginLeft: 20 },
+                              ]}
+                            >
+                              <Feather
+                                name="edit-3"
+                                size={30}
+                                color={colors.BLUE}
+                              />
+                            </TouchableOpacity>
+                          ) : null}
+                        </View>
+                      </View>
                     )}
                   </View>
                   <View
@@ -1401,7 +1497,9 @@ export default function SearchScreen(props) {
                     }}
                   >
                     <Button
-                      onPress={() => saveLocation(address)}
+                      onPress={() => {
+                        saveLocation(address), setIconRepresentation("");
+                      }}
                       title={"Save Location"}
                       loading={loading}
                       titleStyle={styles.buttonTitle}
@@ -1502,121 +1600,13 @@ export default function SearchScreen(props) {
                             }}
                           >
                             <View style={styles.vew1}>
-                              {address.name == "home" ? (
-                                <MaterialIcons
-                                  name="house"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "work" ? (
-                                <MaterialIcons
-                                  name="business-center"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "restaurant" ? (
-                                <MaterialIcons
-                                  name="restaurant"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "school" ? (
-                                <MaterialIcons
-                                  name="school"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "pets" ? (
-                                <MaterialIcons
-                                  name="pets"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "local bar" ? (
-                                <MaterialIcons
-                                  name="local-bar"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "sports basketball" ? (
-                                <MaterialIcons
-                                  name="sports-basketball"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "pharmacy" ? (
-                                <MaterialIcons
-                                  name="local-pharmacy"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "fast food" ? (
-                                <MaterialIcons
-                                  name="lunch-dining"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "Star" ? (
-                                <MaterialIcons
-                                  name="star"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "favorite" ? (
-                                <MaterialIcons
-                                  name="favorite"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "hospital" ? (
-                                <MaterialIcons
-                                  name="local-hospital"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "weekend" ? (
-                                <MaterialIcons
-                                  name="weekend"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "wine" ? (
-                                <MaterialIcons
-                                  name="wine-bar"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "local cafe" ? (
-                                <MaterialIcons
-                                  name="local-cafe"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "bookmark" ? (
-                                <MaterialIcons
-                                  name="bookmark"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "store" ? (
-                                <MaterialIcons
-                                  name="storefront"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : address.name == "child care" ? (
-                                <MaterialIcons
-                                  name="child-care"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              ) : (
-                                <Entypo
-                                  name="location"
-                                  size={22}
-                                  color={colors.BLUE}
-                                />
-                              )}
+                              <Icon
+                                name={address.icon_name}
+                                type={address.icon_type}
+                                color={colors.BLUE}
+                                size={22}
+                                containerStyle={{ margin: 3 }}
+                              />
                             </View>
                             <View
                               style={{
@@ -1924,6 +1914,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
     width: width,
+    marginTop: 20,
   },
   nosavedadd: {
     flex: 1,

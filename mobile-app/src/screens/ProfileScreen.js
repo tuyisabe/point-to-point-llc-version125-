@@ -1177,7 +1177,6 @@ export default function ProfileScreen(props) {
           </View>
 
           <View style={styles.flexView3}>
-
             <TouchableOpacity
               style={[
                 styles.bottomTouchableStyle,
@@ -1185,7 +1184,7 @@ export default function ProfileScreen(props) {
                   flexDirection: isRTL ? "row-reverse" : "row",
                   backgroundColor: colors.RED,
                   marginTop: 10,
-                  padding:10
+                  padding: 10,
                 },
               ]}
               onPress={deleteAccount}
@@ -1197,7 +1196,12 @@ export default function ProfileScreen(props) {
                 size={20}
                 containerStyle={{ right: 0 }}
               />
-              <Text style={[styles.emailStyle, { fontSize: 20,color:colors.WHITE }]}>
+              <Text
+                style={[
+                  styles.emailStyle,
+                  { fontSize: 20, color: colors.WHITE },
+                ]}
+              >
                 {"Delete Account"}
               </Text>
             </TouchableOpacity>
@@ -1480,11 +1484,11 @@ const styles = StyleSheet.create({
     elevation: 10,
     paddingVertical: 15,
     borderRadius: 25,
-    height:55
+    height: 55,
   },
   flexView3: {
     marginTop: 20,
     marginBottom: 20,
-    marginLeft:30
+    marginLeft: 30,
   },
 });

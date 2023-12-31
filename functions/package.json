@@ -11,7 +11,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": ">=16"
+    "node": "16"
   },
   "dependencies": {
     "@iamtraction/google-translate": "^2.0.1",
